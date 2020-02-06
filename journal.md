@@ -26,9 +26,9 @@ We did however make our first commit using git!
 
 ### 14-02-2020
 Today we managed to implement a number of things. We wrote code that
-1  implements the force on each particle using the Lennard-Jones potential
-2  implements Euler's method of integration
-3  wrote the code for periodic boundary conditions
+1. implements the force on each particle using the Lennard-Jones potential
+2. implements Euler's method of integration
+3. wrote the code for periodic boundary conditions
 
 The following figure illustrates the implementation of these points:
 ** insert figure; maybe we want to provide one as an example of how to input an image in markdown **
