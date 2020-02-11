@@ -1,5 +1,7 @@
 # Weekly progress journal
 
+## Instructions
+
 In this journal you will document your progress of the project, making use of the weekly milestones.
 
 Every week you should 
@@ -9,7 +11,7 @@ Every week you should
    what pieces of code functionality need to be implemented. 
 2. write about your progress **before** the Tuesday in the next week with respect to the milestones.
    Substantiate your progress with links to code, pictures or test results. Reflect on the
-   relation to your original plan
+   relation to your original plan.
 
 We will give feedback on your progress on Tuesday before the following lecture. Consult the 
 [grading scheme](https://computationalphysics.quantumtinkerer.tudelft.nl/proj1-moldyn-grading/) 
