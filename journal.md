@@ -12,7 +12,7 @@ Every week you should
    relation to your original plan
 
 We will give feedback on your progress on Tuesday before the following lecture. Consult the 
-[grading scheme](https://computationalphysics.quantumtinkerer.tudelft.nl/proj1-moldyn-description/) 
+[grading scheme](https://computationalphysics.quantumtinkerer.tudelft.nl/proj1-moldyn-grading/) 
 for details how the journal enters your grade.
 
 Note that the file format of the journal is *markdown*. This is a flexible and easy method of 
