@@ -25,16 +25,16 @@ You will find how to include [links](https://docs.gitlab.com/ee/user/markdown.ht
 [images](https://docs.gitlab.com/ee/user/markdown.html#images) particularly
 useful.
 
-## Week 1
+## Week 1 (due before 18 February)
 
 
-## Week 2
+## Week 2 (due before 25 February)
 
 
-## Week 3
+## Week 3 (due before 3 March)
 
 
-## Week 4
+## Week 4 (due before 10 March)
 
 
-## Week 5
+## Week 5 (due before 17 March)
