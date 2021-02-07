@@ -6,10 +6,10 @@ In this journal you will document your progress of the project, making use of th
 
 Every week you should 
 
-1. write down **on Wednesday** a short plan (bullet list is sufficient) of how you want to 
+1. write down **on the day of the lecture** a short plan (bullet list is sufficient) of how you want to 
    reach the weekly milestones. Think about how to distribute work in the group, 
-   what pieces of code functionality need to be implemented. 
-2. write about your progress **before** the Tuesday in the next week with respect to the milestones.
+   what pieces of code functionality need to be implemented.
+2. write about your progress **until Sunday, 23:59** before the next lecture with respect to the milestones.
    Substantiate your progress with links to code, pictures or test results. Reflect on the
    relation to your original plan.
 
@@ -26,20 +26,20 @@ You will find how to include [links](https://docs.gitlab.com/ee/user/markdown.ht
 useful.
 
 ## Week 1
-(due before 18 February)
+(due 14 February 2021, 23:59)
 
 
 ## Week 2
-(due before 25 February)
+(due 21 February 2021, 23:59)
 
 
 ## Week 3
-(due before 3 March)
+(due 28 February 2021, 23:59)
 
 
 ## Week 4
-(due before 10 March)
+(due 7 March 2021, 23:59)
 
 
 ## Week 5
-(due before 17 March)
+(due 14 March 2021, 23:59)
