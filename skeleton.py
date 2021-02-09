@@ -14,11 +14,16 @@ dims = 2
 positions = np.zeros([N,dims])
 velocities = np.zeros([N,dims])
 # bounding box dimension
-M = 100
+M = 100 #meters
 # time parameters
 dt = 0.01 #s
 steps = 100
 
+# parameters Argon
+temperature = 119.8 #K
+kB = 1.38064852e-23 #m^2*kg/s^2/K
+sigma = 3.405e-10 #meters
+epsilon = temperature/kB
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
@@ -66,6 +71,7 @@ def atomic_distances(pos, box_dim):
         The distance between particles
     """
 
+
     return
 
 
@@ -85,8 +91,14 @@ def lj_force(rel_pos, rel_dist):
     np.ndarray
         The net force acting on particle i due to all other particles
     """
+    F = 0
 
-    return
+    for i in len(rel_pos):
+
+        dUdr =
+        F -=
+
+    return F
 
 
 def fcc_lattice(num_atoms, lat_const):
