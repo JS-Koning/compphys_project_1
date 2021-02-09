@@ -21,6 +21,7 @@ velocities = np.zeros([N,dims])
 
 
 
+
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
     Molecular dynamics simulation using the Euler or Verlet's algorithms
