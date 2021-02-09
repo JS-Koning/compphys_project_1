@@ -11,7 +11,7 @@ N = 2
 # dimensions
 dims = 2
 # bounding box dimension
-M = 100
+M = 100 #meters
 # time parameters
 dt = 0.01 #s
 steps = 100
@@ -19,6 +19,11 @@ steps = 100
 init_positions = np.random.random((N,dims))*M
 velocities = np.zeros([N,dims])
 
+# parameters Argon
+temperature = 119.8 #K
+kB = 1.38064852e-23 #m^2*kg/s^2/K
+sigma = 3.405e-10 #meters
+epsilon = temperature/kB
 
 
 
@@ -87,8 +92,16 @@ def lj_force(rel_pos, rel_dist):
     np.ndarray
         The net force acting on particle i due to all other particles
     """
+    F = 0
 
     return
+    for i in len(rel_pos):
+
+        dUdr = 0
+        F -= dUdr
+
+    return F
+
 
 
 def fcc_lattice(num_atoms, lat_const):
