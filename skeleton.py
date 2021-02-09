@@ -6,9 +6,18 @@ you have a good reason to do so.
 
 import numpy as np
 
-N = 100
-positions = np.zeros([N,3])
-velocities = np.zeros([N,3])
+# amount of particles
+N = 2
+# dimensions
+dims = 2
+# particle information
+positions = np.zeros([N,dims])
+velocities = np.zeros([N,dims])
+# bounding box dimension
+M = 100
+# time parameters
+dt = 0.01 #s
+steps = 100
 
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
