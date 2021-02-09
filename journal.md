@@ -1,5 +1,5 @@
 # Weekly progress journal
-
+[[_TOC_]]
 ## Instructions
 
 In this journal you will document your progress of the project, making use of the weekly milestones.
@@ -26,7 +26,16 @@ You will find how to include [links](https://docs.gitlab.com/ee/user/markdown.ht
 useful.
 
 ## Week 1
-(due 14 February 2021, 23:59)
+1. General
+    - Get used to gitlab, make first commits and verify that these work.
+    - Discuss working method, match schedules to work together.
+    
+2. Objectives
+    - [ ] Calculate the force on each particle using the Lennard-Jones potential
+    - [ ] Implement the Euler method for time evolution
+    - [ ] Implement the periodic boundary condition
+    - [ ] Define a function that calculates the total energy of the system
+    - [ ] Make sure that you commit your code regularly to Gitlab.
 
 
 ## Week 2
