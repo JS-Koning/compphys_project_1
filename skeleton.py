@@ -10,14 +10,15 @@ import numpy as np
 N = 2
 # dimensions
 dims = 2
-# particle information
-positions = np.zeros([N,dims])
-velocities = np.zeros([N,dims])
 # bounding box dimension
 M = 100
 # time parameters
 dt = 0.01 #s
 steps = 100
+# particle information
+init_positions = np.random.random((N,dims))*M
+velocities = np.zeros([N,dims])
+
 
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
