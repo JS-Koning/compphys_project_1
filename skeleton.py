@@ -6,21 +6,24 @@ you have a good reason to do so.
 
 import numpy as np
 
+global positions_store, velocities_store;
+
 # amount of particles
 N = 2
 # dimensions
 dims = 2
 # bounding box dimension
-M = 100 #meters
+M = 100  # meters
 # time parameters
-dt = 0.01 #s
+dt = 0.01  # s
 steps = 100
 
 # parameters Argon
-temperature = 119.8 #K
-kB = 1.38064852e-23 #m^2*kg/s^2/K
-sigma = 3.405e-10 #meters
-epsilon = temperature/kB
+temperature = 119.8  # K
+kB = 1.38064852e-23  # m^2*kg/s^2/K
+sigma = 3.405e-10  # meters
+epsilon = temperature / kB
+
 
 def init_velocity(num_atoms, temp, dim):
     """
@@ -43,6 +46,7 @@ def init_velocity(num_atoms, temp, dim):
 
     return
 
+
 def init_position(num_atoms, box_dim, dim):
     """
     Initializes the system with random positions.
@@ -64,11 +68,11 @@ def init_position(num_atoms, box_dim, dim):
     pos_vec = np.random.random((num_atoms, dim)) * box_dim
     return pos_vec
 
-# particle information
-positions = init_position(N,M,dims)
-velocities = init_velocity(N,temperature,dims) #//np.zeros([N,dims])
 
-global positions_store, velocities_store;
+# particle information
+positions = init_position(N, M, dims)
+velocities = init_velocity(N, temperature, dims)  # //np.zeros([N,dims])
+
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
@@ -145,7 +149,6 @@ def lj_force(rel_pos, rel_dist):
     return F
 
 
-
 def fcc_lattice(num_atoms, lat_const):
     """
     Initializes a system of atoms on an fcc lattice.
@@ -154,7 +157,7 @@ def fcc_lattice(num_atoms, lat_const):
     ----------
     num_atoms : int
         The number of particles in the system
-    lattice_const : float
+    lat_const : float
         The lattice constant for an fcc lattice
 
     Returns
@@ -200,3 +203,24 @@ def potential_energy(rel_dist):
     """
 
     return
+
+
+def total_energy(vel, rel_dist):
+    """
+        Computes the total energy of an atomic system.
+
+        Parameters
+        ----------
+        vel: np.ndarray
+            Velocity of particle
+        rel_dist : np.ndarray
+            Relative particle distances as obtained from atomic_distances
+
+        Returns
+        -------
+        float
+            The total energy of the system.
+
+        """
+
+    return kinetic_energy(vel) + potential_energy(rel_dist)
