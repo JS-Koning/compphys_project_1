@@ -9,7 +9,7 @@ import numpy as np
 global positions_store, velocities_store;
 
 # amount of particles
-N = 2
+N = 3
 # dimensions
 dims = 2
 # bounding box dimension
@@ -120,7 +120,20 @@ def atomic_distances(pos, box_dim):
         The distance between particles
     """
 
-    return
+    dims = len(pos[0]);
+    rel_pos = np.zeros([len(pos),len(pos),dims])
+
+    for i in range(0,len(pos)):
+        for j in range(0,len(pos)):
+            for k in range(0,dims):
+                rel_pos[i][j][k] = pos[j][k] - pos[i][k]
+
+    rel_dist = np.zeros([len(pos), len(pos)])
+    for i in range(0,len(rel_pos)):
+        for j in range(0, len(rel_pos)):
+             rel_dist[i][j] = np.math.sqrt(sum(i**2 for i in rel_pos[i][j]))
+
+    return rel_pos,rel_dist
 
 
 def lj_force(rel_pos, rel_dist):
