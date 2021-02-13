@@ -15,9 +15,6 @@ M = 100 #meters
 # time parameters
 dt = 0.01 #s
 steps = 100
-# particle information
-init_positions = np.random.random((N,dims))*M
-velocities = np.zeros([N,dims])
 
 # parameters Argon
 temperature = 119.8 #K
@@ -25,7 +22,53 @@ kB = 1.38064852e-23 #m^2*kg/s^2/K
 sigma = 3.405e-10 #meters
 epsilon = temperature/kB
 
+def init_velocity(num_atoms, temp, dim):
+    """
+    Initializes the system with Gaussian distributed velocities.
 
+    Parameters
+    ----------
+    num_atoms : int
+        The number of particles in the system.
+    temp : float
+        The (unitless) temperature of the system.
+    dim : int
+        The dimensions of the system.
+
+    Returns
+    -------
+    vel_vec : np.ndarray
+        Array of particle velocities
+    """
+
+    return
+
+def init_position(num_atoms, box_dim, dim):
+    """
+    Initializes the system with random positions.
+
+    Parameters
+    ----------
+    num_atoms : int
+        The number of particles in the system.
+    box_dim : float
+        The dimension of the simulation box
+    dim : int
+        The dimensions of the system.
+
+    Returns
+    -------
+    pos_vec : np.ndarray
+        Array of particle positions
+    """
+    pos_vec = np.random.random((num_atoms, dim)) * box_dim
+    return pos_vec
+
+# particle information
+positions = init_position(N,M,dims)
+velocities = init_velocity(N,temperature,dims) #//np.zeros([N,dims])
+
+global positions_store, velocities_store;
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
@@ -95,8 +138,7 @@ def lj_force(rel_pos, rel_dist):
     F = 0
 
     return
-    for i in len(rel_pos):
-
+    for i in len(rel_dist):
         dUdr = 0
         F -= dUdr
 
@@ -155,26 +197,6 @@ def potential_energy(rel_dist):
     -------
     float
         The total potential energy of the system.
-    """
-
-    return
-
-
-def init_velocity(num_atoms, temp):
-    """
-    Initializes the system with Gaussian distributed velocities.
-
-    Parameters
-    ----------
-    num_atoms : int
-        The number of particles in the system.
-    temp : float
-        The (unitless) temperature of the system.
-
-    Returns
-    -------
-    vel_vec : np.ndarray
-        Array of particle velocities
     """
 
     return
