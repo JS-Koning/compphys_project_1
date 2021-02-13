@@ -162,7 +162,8 @@ def lj_force(rel_pos, rel_dist):
                 # do not include contributions to self
                 continue
 
-            du_dr = 1/rel_dist[i][j]
+            # du = 4*epsilon*((sigma/rel_dist[i][j])**12-(sigma/rel_dist[i][j])**6)
+            du_dr = 4*epsilon*(((sigma**12)*(-12)/(rel_dist[i][j]**13))-((sigma**6)*(-6)/(rel_dist[i][j])**7))
             force[i] -= du_dr
 
     return force
@@ -207,7 +208,12 @@ def kinetic_energy(vel):
         The total kinetic energy of the system.
     """
 
-    return
+    ke = 0;
+
+    for i in range(0, len(vel)):
+        ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+
+    return ke
 
 
 def potential_energy(rel_dist):
