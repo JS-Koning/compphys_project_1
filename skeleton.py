@@ -8,24 +8,23 @@ import numpy as np
 
 global positions_store, velocities_store
 
-# amount of particles
-N = 3
-# dimensions
-dims = 2
-# bounding box dimension
-M = 100  # meters
-# time parameters
-dt = 0.01  # s
-steps = 100
+# initalizing self defined system parameters
+num_atoms = 100    # amount of particles
+dim = 2            # dimensions
+box_dim = 100      # meters; bounding box dimension
+dt = 0.01          # s; stepsize
+steps = 100        # amount of steps
 
-# parameters Argon
-temperature = 119.8  # K
-kB = 1.38064852e-23  # m^2*kg/s^2/K
-sigma = 3.405e-10  # meters
-epsilon = temperature / kB
+# Physical parameters supplied by course, or related to Argon
+temp = 119.8                # K
+KB = 1.38064852e-23         # m^2*kg/s^2/K
+SIGMA = 3.405e-10           # m
+EPSILON = temp / KB         # depth of potential well/dispersion energy
 
 
 def init_velocity(num_atoms, temp, dim):
+    
+    
     """
     Initializes the system with Gaussian distributed velocities.
 
@@ -162,8 +161,8 @@ def lj_force(rel_pos, rel_dist):
                 # do not include contributions to self
                 continue
 
-            # du = 4*epsilon*((sigma/rel_dist[i][j])**12-(sigma/rel_dist[i][j])**6)
-            du_dr = 4*epsilon*(((sigma**12)*(-12)/(rel_dist[i][j]**13))-((sigma**6)*(-6)/(rel_dist[i][j])**7))
+            # du = 4*EPSILON*((SIGMA/rel_dist[i][j])**12-(SIGMA/rel_dist[i][j])**6)
+            du_dr = 4*EPSILON*(((SIGMA**12)*(-12)/(rel_dist[i][j]**13))-((SIGMA**6)*(-6)/(rel_dist[i][j])**7))
             force[i] -= du_dr
 
     return force
