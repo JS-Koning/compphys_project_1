@@ -81,10 +81,6 @@ def init_position(num_atoms, box_dim, dim):
     return pos_vec
 
 
-# particle information
-positions = init_position(N, M, dims)
-velocities = init_velocity(N, temperature, dims)  # //np.zeros([N,dims])
-
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
@@ -173,8 +169,8 @@ def lj_force(rel_pos, rel_dist):
     rel_dist = positions[1]
     rel_pos = positions[0]
     """
-    dUdt = np.zeros([num_atoms, num_atoms])
-    force = np.zeros([len(rel_pos[1]), len(rel_pos[1]), dim])
+    dUdt = np.zeros([len(rel_dist), len(rel_dist)])
+    force = np.zeros([len(rel_pos[1]), len(rel_pos[1]), len(rel_pos[0][0])])
 
     for i in range (0,len(rel_pos[1])): #particle i
         for j in range (0, len(rel_pos[1])): #particle i rel to j (!=i)
@@ -185,14 +181,11 @@ def lj_force(rel_pos, rel_dist):
     for i in range (0,len(rel_pos[1])): #particle i
         for j in range (0, len(rel_pos[1])): #particle i rel to j (!=i)
             force[i, j, :] = dUdt[i, j]*rel_pos[i, j, :]
-   # while this looks horrible, and is horrible, it works. However, needs significant optimazation
+    # while this looks horrible, and is horrible, it works. However, needs significant optimazation
 
     force_atom = np.sum(force, axis=1)
 
     return force, force_atom
-    
-# x,y = atomic_distances(positions, M)
-# print(lj_force(x,y))
 
 
 def fcc_lattice(num_atoms, lat_const):
