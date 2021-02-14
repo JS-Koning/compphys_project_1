@@ -162,7 +162,9 @@ def lj_force(rel_pos, rel_dist):
 
     Returns
     -------
-    np.ndarray
+    force : np.ndarray
+        The force of atom j, on atom i. Where j are total-1 atoms.
+    force_atom : np.ndarray
         The net force acting on particle i due to all other particles
         
     NOTE: THIS IS HOW INPUT CAN BE FOUND:
@@ -224,7 +226,7 @@ def kinetic_energy(vel):
 
     Returns
     -------
-    float
+    ke : float
         The total kinetic energy of the system.
     """
 
