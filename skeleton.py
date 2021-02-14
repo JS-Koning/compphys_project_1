@@ -149,6 +149,25 @@ def atomic_distances(pos, box_dim):
     return rel_pos, rel_dist
 
 
+loc = init_position(num_atoms, box_dim, dim)
+rel_loc = atomic_distances(loc, box_dim)
+print(rel_loc[1][0])
+print(len(rel_loc[1]))
+
+# +
+loc = init_position(num_atoms, box_dim, dim)
+rel_loc = atomic_distances(loc, box_dim)
+dUdt = np.zeros([num_atoms, num_atoms])
+
+for i in range (0,len(rel_loc[1])): #particle i
+    for j in range (0, len(rel_loc[1])): #particle i rel to j!=i
+        if i != j:
+            dUdt[i, j] = -24*EPSILON*((2*SIGMA**12/(rel_loc[1]**13)) - (SIGMA**6/rel_loc[1]**13))
+        else:
+            dUdt[i, j]
+
+# -
+
 def lj_force(rel_pos, rel_dist):
     """
     Calculates the net forces on each atom.
