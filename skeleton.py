@@ -11,15 +11,20 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 100    # amount of particles
 dim = 2            # dimensions
-box_dim = 100      # meters; bounding box dimension
+box_dim = 10      # meters; bounding box dimension
 dt = 0.01          # s; stepsize
 steps = 100        # amount of steps
 
-# Physical parameters supplied by course, or related to Argon
-temp = 119.8                # K
+# Parameters physical, supplied by course, or related to Argon
+temp = 119.8                # Kelvin
 KB = 1.38064852e-23         # m^2*kg/s^2/K
-SIGMA = 3.405e-10           # m
-EPSILON = temp / KB         # depth of potential well/dispersion energy
+SIGMA = 3.405e-10           # meter
+EPSILON = temp * KB         # depth of potential well/dispersion energy
+N_b = 6.02214076e23         # Avagadros number
+R = 8.31446261815324        # J/K/mole; universal gas constant
+ARG_UMASS = 39.95           # u; atomic mass of argon
+ARG_MMASS = ARG_UMASS/1000  # kg/mol; mole mass of argon
+
 
 
 def init_velocity(num_atoms, temp, dim):
@@ -42,8 +47,16 @@ def init_velocity(num_atoms, temp, dim):
     vel_vec : np.ndarray
         Array of particle velocities
     """
-
-    return
+    # define most probable speed (vel_p), then use this to find mean speed, using Maxwell-Boltzmann distribution
+    vel_p = np.sqrt(2*R*temp/ARG_MMASS)
+    vel_mean = 2*vel_p/np.sqrt(np.pi)
+    # define the standard deviation, assuming the standard deviation: std = sqrt(meansquarevelocity^2 - mean velocity^2) 
+    # again, using Maxwell-Boltzmann distributions
+    vel_msq = (3*vel_p**2)/2
+    vel_std = vel_msq-(vel_mean**2)
+    # find the final distribution
+    vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
+    return vel_vec
 
 
 def init_position(num_atoms, box_dim, dim):
