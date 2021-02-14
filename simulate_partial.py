@@ -103,10 +103,22 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     -------
     Any quantities or observables that you wish to study.
     """
-    loc_steps = np.zeros((steps, num_atoms, dim))
-    loc_steps 
-    
-    return
+     # first initialize matrix starting with initial velocity and position
+    pos_steps = np.zeros((num_tsteps, num_atoms, dim))
+    vel_steps = np.zeros((num_tsteps, num_atoms, dim))
+    init_pos = init_position(num_atoms, box_dim, dim)
+    init_vel = init_velocity(num_atoms, box_dim, dim)
+    # everything need fixing <start>
+    init_rel_pos = atomic_distances(pos, box_dim, dim)
+    init_force = lj_force(rel_pos, rel_dist, dim)
+    # everything need fixing </end>
+    pos_steps[0, :, :] = init_pos
+    vel_steps[0, :, :] = init_vel
+    for i in range steps:
+        pos_steps[i+1, :, :] = pos_steps[i, :, :] + vel_steps[i, :, :]*timestep
+        vel_steps[i+1, :, :] = vel_steps[i, :, :] + force[i, :, :]*timestep/ARG_UMASS # NOTE, this mass is not yet correct! 
+        return pos_steps, vel_steps
+    return pos_steps, vel_steps
 
 
 loc = init_position(num_atoms, box_dim, dim)
