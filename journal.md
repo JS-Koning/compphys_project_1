@@ -36,7 +36,8 @@ useful.
     - [ ] Implement the periodic boundary condition
     - [ ] Define a function that calculates the total energy of the system
     - [ ] Make sure that you commit your code regularly to Gitlab.
-
+3. Things that need improvement
+    - Velocity initial vector needs some improvements, this looks not right.  
 
 ## Week 2
 (due 21 February 2021, 23:59)
