@@ -24,7 +24,7 @@ N_b = 6.02214076e23         # Avagadros number
 R = 8.31446261815324        # J/K/mole; universal gas constant
 ARG_UMASS = 39.95           # u; atomic mass of argon
 ARG_MMASS = ARG_UMASS/1000  # kg/mol; mole mass of argon
-U_TO_KG = 1.6605402E-27     # 1 u in kg
+
 
 
 def init_velocity(num_atoms, temp, dim):
@@ -112,7 +112,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     init_vel = init_velocity(num_atoms, box_dim, dim)
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
-    for i in range(1, steps-1):
+    for i in range(steps-1):
 
         pos_steps[i+1, :, :] = pos_steps[i, :, :] + vel_steps[i, :, :]*timestep
         
@@ -241,10 +241,9 @@ def kinetic_energy(vel):
     """
 
     ke = 0;
-    mass_argon = ARG_UMASS * U_TO_KG;
 
     for i in range(0, len(vel)):
-        ke += 0.5 * mass_argon * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+        ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
 
     return ke
 
@@ -301,16 +300,5 @@ def total_energy(vel, rel_dist):
             The total energy of the system.
 
         """
-    #print(kinetic_energy(vel))
-    #print(potential_energy(rel_dist)[2])
 
-    return kinetic_energy(vel) + potential_energy(rel_dist)[2]
-
-
-# test stuff
-#pos = init_position(num_atoms,box_dim,dim)
-#vel = init_velocity(num_atoms,temp,dim)
-#
-#rpos,rdist = atomic_distances(pos, box_dim)
-#
-#print(total_energy(vel,rdist))
+    return kinetic_energy(vel) + potential_energy(rel_dist)
