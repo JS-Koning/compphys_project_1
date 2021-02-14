@@ -254,7 +254,7 @@ def potential_energy(rel_dist):
         The total potential energy of the system
     """
     num_atoms = len(rel_dist[0])
-    # pot_e = np.zeros([num_atoms, num_atoms]) initializing causes problems, function still works
+    pot_e = np.zeros([num_atoms, num_atoms])
     for j in range(0, num_atoms):
         for i in range(0, num_atoms):
             if i != j:
