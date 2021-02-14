@@ -31,7 +31,7 @@ def init_velocity(num_atoms, temp, dim):
     
     
     """
-    Initializes the system with Gaussian distributed velocities.
+    Initializes the system with Gaussian distributed velocities. This init_velocity is based on 3D
 
     Parameters
     ----------
