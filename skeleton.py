@@ -299,8 +299,7 @@ def total_energy(vel, rel_dist):
         float
             The total energy of the system.
         -------
-        This is simply potential_energy[2]+kinetic+
-
+        This is simply potential_energy[2]+kinetic_energy[0]
 
         """
         
