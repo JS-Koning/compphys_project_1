@@ -259,7 +259,7 @@ def potential_energy(rel_dist):
             else:
                 pot_e[i][j] = 0
     pot_eparticle = np.sum(pot_e, axis=1)
-    pot_total = np.sum(pot_eparticle)
+    pot_total = np.sum(pot_eparticle)/2
     return pot_e, pot_eparticle, pot_total
 
 
