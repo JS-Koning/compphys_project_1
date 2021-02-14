@@ -31,14 +31,23 @@ useful.
     - Discuss working method, match schedules to work together.
     
 2. Objectives
-    - [ ] Calculate the force on each particle using the Lennard-Jones potential
-    - [ ] Implement the Euler method for time evolution
+    - [x] Calculate the force on each particle using the Lennard-Jones potential
+        - still needs checking whether this is correct with literature, mistakes might be in mass used for example.
+    - [x] Implement the Euler method for time evolution
+        - basic concept is implemented, however lacks basic checking due to time constraints. It runs, but might be incorrect.
     - [ ] Implement the periodic boundary condition
-    - [ ] Define a function that calculates the total energy of the system
-    - [ ] Make sure that you commit your code regularly to Gitlab.
+        - hardest part of this week, and did not know where to start. Especially since the force changes direction when a particle leaves the box. duplicating boxes seems to be an option, but then we should approach an infinite amount of boxes for the simulation to be correct? That seems incorrect.
+    - [x] Define a function that calculates the total energy of the system
+        - Still needs mass scaling, see pseudocode comment in the code. Would have been better implemented if we started checking our code for simulation errors, however due to boundary conditions failure this was not included. 
+    - [x] Make sure that you commit your code regularly to Gitlab.
 3. Things that need improvement
     - Velocity initial vector needs some improvements, this looks not right.  Also, it is based on a 3D function.
-
+    - Simulation is still not finished totally
+    - Overall code "running". Currently, it is function after function to tackle the problems, not yet a working running program. Still a lot of work in progress thus. 
+4. Things that went right
+    - We implemented the code for many particles, not just 2. debugging will be harder in future.
+5. Things that went wrong
+    - Underestimated the time requirement for programming. There is so much more to do and improve, although our code has decent functionality, it needs a whole lot more attention to details.
 ## Week 2
 (due 21 February 2021, 23:59)
 
