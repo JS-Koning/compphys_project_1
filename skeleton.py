@@ -17,16 +17,15 @@ steps = 100                 # amount of steps
 dimless_mode = True         # use dimensionless units
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 119.8                                        # Kelvin
-KB = 1.38064852e-23                                 # m^2*kg/s^2/K
-SIGMA = 3.405e-10                                   # meter
-EPSILON = temp * KB                                 # depth of potential well/dispersion energy
-N_b = 6.02214076e23                                 # Avagadros number; 1/mol
-R = 8.31446261815324                                # J/K/mole; universal gas constant
-ARG_UMASS = 39.95                                   # u; atomic mass of argon
-ARG_MMASS = ARG_UMASS/1000                          # kg/mol; mole mass of argon
-TAU = np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON)  # s; dimensionless time
-
+temp = 119.8                                            # Kelvin
+KB = 1.38064852e-23                                     # m^2*kg/s^2/K
+SIGMA = 3.405e-10                                       # meter
+EPSILON = temp * KB                                     # depth of potential well/dispersion energy
+N_b = 6.02214076e23                                     # Avagadros number; 1/mol
+R = 8.31446261815324                                    # J/K/mole; universal gas constant
+ARG_UMASS = 39.95                                       # u; atomic mass of argon
+ARG_MMASS = ARG_UMASS/1000                              # kg/mol; mole mass of argon
+TAU = np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON)    # s; dimensionless time
 
 
 def init_velocity(num_atoms, temp, dim):
