@@ -14,19 +14,23 @@ dim = 2                     # dimensions
 box_dim = 10                # meters; bounding box dimension
 dt = 0.01                   # s; stepsize
 steps = 100                 # amount of steps
-dimless_mode = True         # use dimensionless units
+dimless = True              # use dimensionless units
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 119.8                                            # Kelvin
-KB = 1.38064852e-23                                     # m^2*kg/s^2/K
-SIGMA = 3.405e-10                                       # meter
-EPSILON = temp * KB                                     # depth of potential well/dispersion energy
-N_b = 6.02214076e23                                     # Avagadros number; 1/mol
-R = 8.31446261815324                                    # J/K/mole; universal gas constant
-ARG_UMASS = 39.95                                       # u; atomic mass of argon
-ARG_MMASS = ARG_UMASS/1000                              # kg/mol; mole mass of argon
-TAU = np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON)    # s; dimensionless time
+temp = 119.8                # Kelvin
+KB = 1.38064852e-23         # m^2*kg/s^2/K
+SIGMA = 3.405e-10           # meter
+EPSILON = temp * KB         # depth of potential well/dispersion energy
+N_b = 6.02214076e23         # Avagadros number; 1/mol
+R = 8.31446261815324        # J/K/mole; universal gas constant
+ARG_UMASS = 39.95           # u; atomic mass of argon
+ARG_MMASS = ARG_UMASS/1000  # kg/mol; mole mass of argon
 
+# conversion values for dimensionless units
+dimless_time = 1.0 / np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON) # s; dimensionless time
+dimless_energy = 1.0 / EPSILON                                      # J; dimensionless energy
+dimless_distance = 1.0 / SIGMA                                      # m; dimensionless distance
+dimless_velocity = 1.0 / np.math.sqrt(EPSILON/(ARG_MMASS/N_b))      # m/s; dimensionless velocity
 
 def init_velocity(num_atoms, temp, dim):
     
@@ -50,6 +54,10 @@ def init_velocity(num_atoms, temp, dim):
     """
     # define most probable speed (vel_p), then use this to find mean speed, using Maxwell-Boltzmann distribution
     vel_p = np.sqrt(2*R*temp/ARG_MMASS)
+
+    if dimless:
+        vel_p *= dimless_velocity
+
     vel_mean = 2*vel_p/np.sqrt(np.pi)
     # define the standard deviation, assuming the standard deviation: std = sqrt(meansquarevelocity^2 - mean velocity^2) 
     # again, using Maxwell-Boltzmann distributions
@@ -79,6 +87,10 @@ def init_position(num_atoms, box_dim, dim):
         Array of particle positions
     """
     pos_vec = np.random.random((num_atoms, dim)) * box_dim
+
+    if dimless:
+        pos_vec *= dimless_distance
+
     return pos_vec
 
 
@@ -109,24 +121,31 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
      # first initialize matrix starting with initial velocity and position
     pos_steps = np.zeros((num_tsteps, num_atoms, dim))
     vel_steps = np.zeros((num_tsteps, num_atoms, dim))
-    init_pos = init_position(num_atoms, box_dim, dim)
-    init_vel = init_velocity(num_atoms, box_dim, dim)
+
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
-    for i in range(steps-1):
+    for i in range(num_tsteps-1):
+        pos = pos_steps[i, :, :]
 
         # make sure it's inside box dimension -> modulus gives periodicity
-        pos_steps[i+1, :, :] = (pos_steps[i, :, :] + vel_steps[i, :, :]*timestep) % box_dim
+        if dimless:
+            pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep*dimless_time) % box_dim*dimless_distance
+        else:
+            pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep ) % box_dim
 
-        pos = pos_steps[i, :, :]
         rel_pos = atomic_distances(pos, box_dim)[0]
         rel_dis = atomic_distances(pos, box_dim)[1]
         force = lj_force(rel_pos, rel_dis)[1]
-        
-        vel_steps[i+1, :, :] = vel_steps[i, :, :] + force*timestep/ARG_UMASS # NOTE, this mass is not yet correct! 
 
-    positions_store = pos_steps;
-    velocities_store = vel_steps;
+        if dimless:
+            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep*dimless_time / (ARG_MMASS / N_b)
+        else:
+            vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / (ARG_MMASS/N_b)
+
+    global positions_store
+    positions_store = pos_steps
+    global velocities_store
+    velocities_store = vel_steps
 
     return pos_steps, vel_steps
 
@@ -250,6 +269,9 @@ def kinetic_energy(vel):
     for i in range(0, len(vel)):
         ke += 0.5 * (ARG_MMASS/N_b) * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
 
+    if dimless:
+        ke *= dimless_energy
+
     return ke
 
 
@@ -285,6 +307,12 @@ def potential_energy(rel_dist):
                 pot_e[i][j] = 0
     pot_eparticle = np.sum(pot_e, axis=1)
     pot_total = np.sum(pot_eparticle)/2
+
+    if dimless:
+        pot_e *= dimless_energy
+        pot_eparticle *= dimless_energy
+        pot_total *= dimless_energy
+
     return pot_e, pot_eparticle, pot_total
 
 
@@ -310,3 +338,27 @@ def total_energy(vel, rel_dist):
         
 
     return kinetic_energy(vel) + potential_energy(rel_dist)[2]
+
+
+def main():
+    """"
+        Beginning of program
+    """
+    init_pos = init_position(num_atoms, box_dim, dim)
+    init_vel = init_velocity(num_atoms, box_dim, dim)
+
+    simulate(init_pos, init_vel, steps, dt, box_dim)
+
+    #print((positions_store,velocities_store))
+    pos1 = positions_store[0, :, :]
+    pos2 = positions_store[steps-1, :, :]
+
+    vel1 = velocities_store[0, :, :]
+    vel2 = velocities_store[steps-1, :, :]
+
+    rpos1 = atomic_distances(pos1, box_dim)
+    rpos2 = atomic_distances(pos2, box_dim)
+
+    print(total_energy(vel1,rpos1[1]))
+    print(total_energy(vel2, rpos2[1]))
+main()
