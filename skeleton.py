@@ -9,21 +9,23 @@ import numpy as np
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 100    # amount of particles
-dim = 2            # dimensions
-box_dim = 10      # meters; bounding box dimension
-dt = 0.01          # s; stepsize
-steps = 100        # amount of steps
+num_atoms = 100             # amount of particles
+dim = 2                     # dimensions
+box_dim = 10                # meters; bounding box dimension
+dt = 0.01                   # s; stepsize
+steps = 100                 # amount of steps
+dimless_mode = True         # use dimensionless units
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 119.8                # Kelvin
-KB = 1.38064852e-23         # m^2*kg/s^2/K
-SIGMA = 3.405e-10           # meter
-EPSILON = temp * KB         # depth of potential well/dispersion energy
-N_b = 6.02214076e23         # Avagadros number
-R = 8.31446261815324        # J/K/mole; universal gas constant
-ARG_UMASS = 39.95           # u; atomic mass of argon
-ARG_MMASS = ARG_UMASS/1000  # kg/mol; mole mass of argon
+temp = 119.8                                        # Kelvin
+KB = 1.38064852e-23                                 # m^2*kg/s^2/K
+SIGMA = 3.405e-10                                   # meter
+EPSILON = temp * KB                                 # depth of potential well/dispersion energy
+N_b = 6.02214076e23                                 # Avagadros number; 1/mol
+R = 8.31446261815324                                # J/K/mole; universal gas constant
+ARG_UMASS = 39.95                                   # u; atomic mass of argon
+ARG_MMASS = ARG_UMASS/1000                          # kg/mol; mole mass of argon
+TAU = np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON)  # s; dimensionless time
 
 
 
@@ -247,7 +249,7 @@ def kinetic_energy(vel):
     ke = 0;
 
     for i in range(0, len(vel)):
-        ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+        ke += 0.5 * (ARG_MMASS/N_b) * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
 
     return ke
 
@@ -308,4 +310,4 @@ def total_energy(vel, rel_dist):
         """
         
 
-    return kinetic_energy(vel) + potential_energy(rel_dist)
+    return kinetic_energy(vel) + potential_energy(rel_dist)[2]
