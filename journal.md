@@ -29,7 +29,7 @@ useful.
 1. General
     - Get used to Gitlab, make first commits and verify that these work.
     - Discuss working method, match schedules to work together.
-    - Distribution of work:
+    - Planned distribution of work:
     
         - Storage of positions/velocities (Abi)
         - Lennard-Jones potential (Abi)
@@ -61,7 +61,19 @@ useful.
 
 5. Things that went wrong
     - Underestimated the time requirement for programming. There is so much more to do and improve, although our code has decent functionality, it needs a whole lot more attention to details.
+
+6. Review (w.r.t) original plan
+    - The original plan was followed more or less as intended. The only differences are that Abi started the Lennard-Jones potential code, which Jim improved later on. And Abi started on the necessary constants, which Jim improved later on as well.
+    - Final distribution of work:
     
+        - Storage of positions/velocities (Abi)
+        - Lennard-Jones potential (Abi/Jim)
+        - Euler method (Jim)
+        - Periodic boundary condition (Abi)
+        - Total energy (Abi)
+        - Journal-keeping (Jim)
+        - Initialize positions/velocities (Jim)
+        - Define necessary constants (Abi/Jim)
 ## Week 2
 (due 21 February 2021, 23:59)
 
