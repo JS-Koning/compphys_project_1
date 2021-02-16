@@ -114,15 +114,19 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     vel_steps[0, :, :] = init_vel
     for i in range(steps-1):
 
-        pos_steps[i+1, :, :] = pos_steps[i, :, :] + vel_steps[i, :, :]*timestep
-        
+        # make sure it's inside box dimension -> modulus gives periodicity
+        pos_steps[i+1, :, :] = (pos_steps[i, :, :] + vel_steps[i, :, :]*timestep) % box_dim
+
         pos = pos_steps[i, :, :]
         rel_pos = atomic_distances(pos, box_dim)[0]
         rel_dis = atomic_distances(pos, box_dim)[1]
         force = lj_force(rel_pos, rel_dis)[1]
         
         vel_steps[i+1, :, :] = vel_steps[i, :, :] + force*timestep/ARG_UMASS # NOTE, this mass is not yet correct! 
-    
+
+    positions_store = pos_steps;
+    velocities_store = vel_steps;
+
     return pos_steps, vel_steps
 
 
