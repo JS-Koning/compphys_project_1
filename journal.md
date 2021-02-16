@@ -63,7 +63,7 @@ useful.
     - Underestimated the time requirement for programming. There is so much more to do and improve, although our code has decent functionality, it needs a whole lot more attention to details.
 
 6. Review (w.r.t) original plan
-    - The original plan was followed more or less as intended. The only differences are that Abi started the Lennard-Jones potential code, which Jim improved later on. And Abi started on the necessary constants, which Jim improved later on as well.
+    - The original plan was followed more or less as intended as can be seen in the GitLab commits history. The only differences are that Abi started the Lennard-Jones potential code, which Jim improved later on. And Abi started on the necessary constants, which Jim improved later on as well.
     - Final distribution of work:
     
         - Storage of positions/velocities (Abi)
