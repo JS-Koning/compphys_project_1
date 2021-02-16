@@ -297,23 +297,23 @@ def potential_energy(rel_dist):
     pot_total : float
         The total potential energy of the system
     """
-    num_atoms = len(rel_dist[0])
-    pot_e = np.zeros([num_atoms, num_atoms])
-    for j in range(0, num_atoms):
-        for i in range(0, num_atoms):
+    num_atoms1 = len(rel_dist[0])
+    pot_e = np.zeros([num_atoms1, num_atoms1])
+    for j in range(0, num_atoms1):
+        for i in range(0, num_atoms1):
             if i != j:
                 pot_e[i][j] = 4*EPSILON*((SIGMA/rel_dist[i][j])**12-(SIGMA/rel_dist[i][j])**6)
             else:
                 pot_e[i][j] = 0
-    pot_eparticle = np.sum(pot_e, axis=1)
-    pot_total = np.sum(pot_eparticle)/2
+    pot_e_particle = np.sum(pot_e, axis=1)
+    pot_total = np.sum(pot_e_particle)/2
 
     if dimless:
         pot_e *= dimless_energy
-        pot_eparticle *= dimless_energy
+        pot_e_particle *= dimless_energy
         pot_total *= dimless_energy
 
-    return pot_e, pot_eparticle, pot_total
+    return pot_e, pot_e_particle, pot_total
 
 
 def total_energy(vel, rel_dist):
@@ -335,7 +335,6 @@ def total_energy(vel, rel_dist):
         This is simply potential_energy[2]+kinetic_energy[0]
 
         """
-        
 
     return kinetic_energy(vel) + potential_energy(rel_dist)[2]
 
@@ -349,16 +348,19 @@ def main():
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
 
-    #print((positions_store,velocities_store))
+    print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
     pos2 = positions_store[steps-1, :, :]
 
     vel1 = velocities_store[0, :, :]
     vel2 = velocities_store[steps-1, :, :]
 
-    rpos1 = atomic_distances(pos1, box_dim)
-    rpos2 = atomic_distances(pos2, box_dim)
+    r_pos1 = atomic_distances(pos1, box_dim)
+    r_pos2 = atomic_distances(pos2, box_dim)
 
-    print(total_energy(vel1,rpos1[1]))
-    print(total_energy(vel2, rpos2[1]))
+    print("Initial total energy: " + str(total_energy(vel1, r_pos1[1])))
+    print("Final total energy:   " + str(total_energy(vel2, r_pos2[1])))
+
+
 main()
+
