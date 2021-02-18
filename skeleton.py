@@ -15,6 +15,7 @@ box_dim = 10                # meters; bounding box dimension
 dt = 0.01                   # s; stepsize
 steps = 100                 # amount of steps
 dimless = True              # use dimensionless units
+periodic = True             # use periodicity
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 119.8                # Kelvin
@@ -128,10 +129,16 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
         pos = pos_steps[i, :, :]
 
         # make sure it's inside box dimension -> modulus gives periodicity
-        if dimless:
-            pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep*dimless_time) % box_dim*dimless_distance
+        if periodic:
+            if dimless:
+                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep*dimless_time) % box_dim*dimless_distance
+            else:
+                pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep ) % box_dim
         else:
-            pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep ) % box_dim
+            if dimless:
+                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep*dimless_time)
+            else:
+                pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep )
 
         rel_pos = atomic_distances(pos, box_dim)[0]
         rel_dis = atomic_distances(pos, box_dim)[1]
@@ -176,7 +183,19 @@ def atomic_distances(pos, box_dim):
     for i in range(0, len(pos)):
         for j in range(0, len(pos)):
             for k in range(0, dim):
-                rel_pos[i][j][k] = pos[j][k] - pos[i][k]
+                dis = pos[j][k] - pos[i][k]
+                if periodic:
+                    if dimless:
+                        if dis > (box_dim * dimless_distance * 0.5):
+                            dis = dis - box_dim * dimless_distance
+                        if dis <= -(box_dim * dimless_distance * 0.5):
+                            dis = dis + box_dim * dimless_distance
+                    else:
+                        if dis > (box_dim * 0.5):
+                            dis = dis - box_dim
+                        if dis <= -(box_dim * 0.5):
+                            dis = dis + box_dim
+                rel_pos[i][j][k] = dis
 
     rel_dist = np.zeros([len(pos), len(pos)])
     for i in range(0, len(rel_pos)):
@@ -360,6 +379,7 @@ def main():
 
     print("Initial total energy: " + str(total_energy(vel1, r_pos1[1])))
     print("Final total energy:   " + str(total_energy(vel2, r_pos2[1])))
+    print("Delta total energy:   " + str(total_energy(vel2, r_pos2[1])-total_energy(vel1, r_pos1[1])))
 
 
 main()
