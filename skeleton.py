@@ -389,13 +389,32 @@ def main():
     print("Delta total energy:   " + str(total_energy(vel2, r_pos2[1])-total_energy(vel1, r_pos1[1])))
 
     if num_atoms == 2:
-        print("Plot inter-atom distance")
-        distances = [np.max(atomic_distances(positions_store[x, :, :],box_dim)[1]) for x in range(steps)]
+        print("Plot inter-atom distance over time")
+        if dimless:
+            distances = [np.max(atomic_distances(positions_store[x, :, :],box_dim)[1])/dimless_distance
+                         for x in range(steps)]
+        else:
+            distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         times = np.linspace(0, dt*steps, steps)
         plt.plot(times, distances)
-        plt.xlabel('Time')
-        plt.ylabel('Distance')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Distance (m)')
         plt.show()
+
+        print("Print energy levels over time")
+        if dimless:
+            energies = [(kinetic_energy(velocities_store[x, :, :])/dimless_energy,
+                         potential_energy(atomic_distances(positions_store[x, :, :],box_dim)[1])[2]/dimless_energy,
+                        total_energy(velocities_store[x, :, :],atomic_distances(positions_store[x, :, :],box_dim)[1])/dimless_energy)
+                        for x in range(steps)]
+        else:
+            energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
+        # times = np.linspace(0, dt*steps, steps)
+        plt.plot(times, energies)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Energy (J)')
+        plt.show()
+
 
 main()
 
