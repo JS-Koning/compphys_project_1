@@ -5,11 +5,12 @@ you have a good reason to do so.
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 100             # amount of particles
+num_atoms = 2               # amount of particles
 dim = 2                     # dimensions
 box_dim = 10                # meters; bounding box dimension
 dt = 0.01                   # s; stepsize
@@ -87,7 +88,13 @@ def init_position(num_atoms, box_dim, dim):
     pos_vec : np.ndarray
         Array of particle positions
     """
-    pos_vec = np.random.random((num_atoms, dim)) * box_dim
+
+    random = np.random.random((num_atoms, dim))
+
+    # to test close to boundary
+    #random *= 0.001
+
+    pos_vec = random * box_dim
 
     if dimless:
         pos_vec *= dimless_distance
@@ -381,6 +388,14 @@ def main():
     print("Final total energy:   " + str(total_energy(vel2, r_pos2[1])))
     print("Delta total energy:   " + str(total_energy(vel2, r_pos2[1])-total_energy(vel1, r_pos1[1])))
 
+    if num_atoms == 2:
+        print("Plot inter-atom distance")
+        distances = [np.max(atomic_distances(positions_store[x, :, :],box_dim)[1]) for x in range(steps)]
+        times = np.linspace(0, dt*steps, steps)
+        plt.plot(times, distances)
+        plt.xlabel('Time')
+        plt.ylabel('Distance')
+        plt.show()
 
 main()
 
