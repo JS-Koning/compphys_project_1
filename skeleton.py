@@ -158,9 +158,9 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
         force = lj_force(rel_pos, rel_dis)[1]
 
         if dimless:
-            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep*dimless_time / (ARG_MMASS / N_b)
+            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep*dimless_time / ARG_MASS
         else:
-            vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / (ARG_MMASS/N_b)
+            vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
     global positions_store
     positions_store = pos_steps
@@ -299,7 +299,7 @@ def kinetic_energy(vel):
     ke = 0;
 
     for i in range(0, len(vel)):
-        ke += 0.5 * (ARG_MMASS/N_b) * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+        ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
 
     if dimless:
         ke *= dimless_energy
