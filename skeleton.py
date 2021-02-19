@@ -27,12 +27,13 @@ N_b = 6.02214076e23         # Avagadros number; 1/mol
 R = 8.31446261815324        # J/K/mole; universal gas constant
 ARG_UMASS = 39.95           # u; atomic mass of argon
 ARG_MMASS = ARG_UMASS/1000  # kg/mol; mole mass of argon
+ARG_MASS = ARG_UMASS*1.6605e-27 #Kg mass of a single atom in Kg
 
 # conversion values for dimensionless units
-dimless_time = 1.0 / np.math.sqrt((ARG_MMASS/N_b)*SIGMA**2/EPSILON) # s; dimensionless time
+dimless_time = 1.0 / np.math.sqrt((ARG_MASS*SIGMA**2/EPSILON)) # s; dimensionless time
 dimless_energy = 1.0 / EPSILON                                      # J; dimensionless energy
 dimless_distance = 1.0 / SIGMA                                      # m; dimensionless distance
-dimless_velocity = 1.0 / np.math.sqrt(EPSILON/(ARG_MMASS/N_b))      # m/s; dimensionless velocity
+dimless_velocity = 1.0 / np.math.sqrt(EPSILON/(ARG_MASS))      # m/s; dimensionless velocity
 
 def init_velocity(num_atoms, temp, dim):
     
