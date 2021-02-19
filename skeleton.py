@@ -39,8 +39,13 @@ def init_velocity(num_atoms, temp, dim):
     
     
     """
-    Initializes the system with Gaussian distributed velocities. This init_velocity is based on 3D
-
+    Initializes the system with Gaussian distributed velocities. This
+    init_velocity is loosely based on 3D system, however it will output 2D just
+    fine, although more pertubated. Note, relativity is ignored.
+    For more information, please visit articles related to Maxwell Boltzmann
+    distributions.
+    https://en.wikipedia.org/wiki/Maxwell%E2%80%93Boltzmann_distribution
+    
     Parameters
     ----------
     num_atoms : int
@@ -56,7 +61,7 @@ def init_velocity(num_atoms, temp, dim):
         Array of particle velocities
     """
     # define most probable speed (vel_p), then use this to find mean speed, using Maxwell-Boltzmann distribution
-    vel_p = np.sqrt(2*R*temp/ARG_MMASS)
+    vel_p = np.sqrt(2*KB*temp/ARG_MASS)
 
     if dimless:
         vel_p *= dimless_velocity
