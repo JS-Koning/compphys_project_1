@@ -11,7 +11,7 @@ global positions_store, velocities_store
 
 # initalizing self defined system parameters
 num_atoms = 2               # amount of particles
-dim = 3                     # dimensions
+dim = 2                     # dimensions
 box_dim = 10                # meters; bounding box dimension
 dt = 1e-4                # s; stepsize
 steps = 100000                 # amount of steps
@@ -258,10 +258,10 @@ def atomic_distances(pos, box_dim):
                 dis = pos[j][k] - pos[i][k]
                 if periodic:
                     if dimless:
-                        if dis > (box_dim * dimless_distance * 0.5):
-                            dis = dis - box_dim * dimless_distance
-                        if dis <= -(box_dim * dimless_distance * 0.5):
-                            dis = dis + box_dim * dimless_distance
+                        if dis > (box_dim * 0.5):
+                            dis = dis - box_dim
+                        if dis <= -(box_dim * 0.5):
+                            dis = dis + box_dim
                     else:
                         if dis > (box_dim * 0.5):
                             dis = dis - box_dim
@@ -444,12 +444,12 @@ def main():
 
     """
     #    random initial positions and velocities
-    # init_pos = init_position(num_atoms, box_dim, dim)
-    # init_vel = init_velocity(num_atoms, box_dim, dim)
+    init_pos = init_position(num_atoms, box_dim, dim)
+    init_vel = init_velocity(num_atoms, box_dim, dim)
 
     #    easy, handpicked initial positions and velocities.
-    init_pos = [[0.1, 0.1, 0.1], [0.1, 1.1, 0.1]]
-    init_vel = [[1.0, 1.0, 1.0], [1.0, 0.0, 0.0]]
+    init_pos = [[9.9, 9.9], [9.8, 9.6]]
+    init_vel = [[1.0, 1.0], [1.0, 0.0]]
 
     
     simulate(init_pos, init_vel, steps, dt, box_dim)
