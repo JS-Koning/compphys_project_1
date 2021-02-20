@@ -470,6 +470,7 @@ def main():
                          for x in range(steps)]
         else:
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
+
         times = np.linspace(0, dt*steps, steps)
         plt.plot(times, distances)
         plt.xlabel('Time (s)')
@@ -486,6 +487,20 @@ def main():
             energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
         # times = np.linspace(0, dt*steps, steps)
         plt.plot(times, energies)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Energy (J)')
+        plt.show()
+
+        print("Print kinetic energy over time")
+
+        plt.plot(times, [kinetic_energy(velocities_store[x, :, :])/dimless_energy for x in range(steps)])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Energy (J)')
+        plt.show()
+
+        print("Print potential energy over time")
+
+        plt.plot(times, [potential_energy(atomic_distances(positions_store[x, :, :],box_dim)[1])[2]/dimless_energy for x in range(steps)])
         plt.xlabel('Time (s)')
         plt.ylabel('Energy (J)')
         plt.show()
