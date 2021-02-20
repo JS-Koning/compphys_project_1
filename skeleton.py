@@ -13,9 +13,9 @@ global positions_store, velocities_store
 num_atoms = 2               # amount of particles
 dim = 2                     # dimensions
 box_dim = 10                # meters; bounding box dimension
-dt = 0.01                   # s; stepsize
-steps = 100                 # amount of steps
-dimless = True              # use dimensionless units
+dt = 0.0000000000000001                # s; stepsize
+steps = 1000000                 # amount of steps
+dimless = False              # use dimensionless units
 periodic = True             # use periodicity
 
 # Parameters physical, supplied by course, or related to Argon
@@ -109,7 +109,7 @@ def init_position(num_atoms, box_dim, dim):
 
 
 
-def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
+def simulate_old(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
     Molecular dynamics simulation using the Euler or Verlet's algorithms
     to integrate the equations of motion. Calculates energies and other
@@ -168,6 +168,67 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     velocities_store = vel_steps
 
     return pos_steps, vel_steps
+
+def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
+    """
+    Molecular dynamics simulation using the Euler or Verlet's algorithms
+    to integrate the equations of motion. Calculates energies and other
+    observables at each timestep.
+
+    Parameters
+    ----------
+    init_pos : np.ndarray
+        The initial positions of the atoms in Cartesian space
+    init_vel : np.ndarray
+        The initial velocities of the atoms in Cartesian space
+    num_tsteps : int
+        The total number of simulation steps
+    timestep : float
+        Duration of a single simulation step
+    box_dim : float
+        Dimensions of the simulation box
+
+    Returns
+    -------
+    Any quantities or observables that you wish to study.
+    """
+     # first initialize matrix starting with initial velocity and position
+    pos_steps = np.zeros((num_tsteps, num_atoms, dim))
+    vel_steps = np.zeros((num_tsteps, num_atoms, dim))
+
+    pos_steps[0, :, :] = init_pos
+    vel_steps[0, :, :] = init_vel
+    for i in range(num_tsteps-1):
+        pos = pos_steps[i, :, :]
+
+        # make sure it's inside box dimension -> modulus gives periodicity
+        if periodic:
+            if dimless:
+                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dim
+            else:
+                pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep ) % box_dim
+        else:
+            if dimless:
+                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep )
+            else:
+                pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :] * timestep )
+
+        rel_pos = atomic_distances(pos, box_dim)[0]
+        rel_dis = atomic_distances(pos, box_dim)[1]
+        force = lj_force(rel_pos, rel_dis)[1]
+
+        if dimless:
+            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
+        else:
+            vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
+
+    global positions_store
+    positions_store = pos_steps
+    global velocities_store
+    velocities_store = vel_steps
+
+    return pos_steps, vel_steps
+
 
 
 def atomic_distances(pos, box_dim):
@@ -374,10 +435,20 @@ def total_energy(vel, rel_dist):
 def main():
     """"
         Beginning of program
-    """
-    init_pos = init_position(num_atoms, box_dim, dim)
-    init_vel = init_velocity(num_atoms, box_dim, dim)
+        to start with "easy" locations and velocities,
+        init_pos = [[0, 0], [0, 1]]
+        init_vel = [[1, 1], [1, 1]]
 
+    """
+    #    random initial positions and velocities
+    # init_pos = init_position(num_atoms, box_dim, dim)
+    # init_vel = init_velocity(num_atoms, box_dim, dim)
+
+    #    easy, handpicked initial positions and velocities.
+    init_pos = [[0, 0], [0, 1]]
+    init_vel = [[1, 1], [1, 1]]
+
+    
     simulate(init_pos, init_vel, steps, dt, box_dim)
 
     print("Test if the total energy is conserved")
@@ -420,7 +491,6 @@ def main():
         plt.xlabel('Time (s)')
         plt.ylabel('Energy (J)')
         plt.show()
-
 
 main()
 
