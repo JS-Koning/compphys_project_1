@@ -13,9 +13,9 @@ global positions_store, velocities_store
 num_atoms = 2               # amount of particles
 dim = 2                     # dimensions
 box_dim = 10                # meters; bounding box dimension
-dt = 0.0000000000000001                # s; stepsize
-steps = 1000000                 # amount of steps
-dimless = False              # use dimensionless units
+dt = 1e-4                # s; stepsize
+steps = 100000                 # amount of steps
+dimless = True              # use dimensionless units
 periodic = True             # use periodicity
 
 # Parameters physical, supplied by course, or related to Argon
@@ -102,10 +102,9 @@ def init_position(num_atoms, box_dim, dim):
     # to test close to boundary
     #random *= 0.001
 
-    pos_vec = random * box_dim/2
+    pos_vec = random * box_dim
     
     return pos_vec
-
 
 
 def simulate_old(init_pos, init_vel, num_tsteps, timestep, box_dim):
