@@ -102,7 +102,7 @@ def init_position(num_atoms, box_dim, dim):
     # to test close to boundary
     #random *= 0.001
 
-    pos_vec = random * box_dim
+    pos_vec = random * box_dim/2
     
     return pos_vec
 
