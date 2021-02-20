@@ -472,9 +472,9 @@ def main():
         times = np.linspace(0, dt*steps, steps)
         plt.plot(times, distances)
         plt.xlabel('Time (s)')
-        if dimless
+        if dimless:
             plt.ylabel('Distance (nondim)')
-        else
+        else:
             plt.ylabel('Distance (m)')
         plt.show()
 
