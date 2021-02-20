@@ -466,14 +466,16 @@ def main():
     if num_atoms == 2:
         print("Plot inter-atom distance over time")
         if dimless:
-            distances = [np.max(atomic_distances(positions_store[x, :, :],box_dim)[1])/dimless_distance
-                         for x in range(steps)]
+            distances = [np.max(atomic_distances(positions_store[x, :, :],box_dim)[1]) for x in range(steps)]
         else:
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         times = np.linspace(0, dt*steps, steps)
         plt.plot(times, distances)
         plt.xlabel('Time (s)')
-        plt.ylabel('Distance (m)')
+        if dimless
+            plt.ylabel('Distance (nondim)')
+        else
+            plt.ylabel()
         plt.show()
 
         print("Print energy levels over time")
