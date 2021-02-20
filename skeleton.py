@@ -11,7 +11,7 @@ global positions_store, velocities_store
 
 # initalizing self defined system parameters
 num_atoms = 2               # amount of particles
-dim = 2                     # dimensions
+dim = 3                     # dimensions
 box_dim = 10                # meters; bounding box dimension
 dt = 1e-4                # s; stepsize
 steps = 100000                 # amount of steps
@@ -448,8 +448,8 @@ def main():
     # init_vel = init_velocity(num_atoms, box_dim, dim)
 
     #    easy, handpicked initial positions and velocities.
-    init_pos = [[0.1, 0.1], [0.1, 1.1]]
-    init_vel = [[1.0, 1.0], [1.0, 0.0]]
+    init_pos = [[0.1, 0.1, 0.1], [0.1, 1.1, 0.1]]
+    init_vel = [[1.0, 1.0, 1.0], [1.0, 0.0, 0.0]]
 
     
     simulate(init_pos, init_vel, steps, dt, box_dim)
