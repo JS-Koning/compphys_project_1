@@ -448,8 +448,8 @@ def main():
     init_vel = init_velocity(num_atoms, box_dim, dim)
 
     #    easy, handpicked initial positions and velocities.
-    init_pos = [[9.9, 9.9], [9.8, 9.6]]
-    init_vel = [[1.0, 1.0], [1.0, 0.0]]
+    init_pos = [[9.9, 6.9], [9.8, 9.6]]
+    init_vel = [[1.0, 1.0], [1.0, 0.3]]
 
     
     simulate(init_pos, init_vel, steps, dt, box_dim)
