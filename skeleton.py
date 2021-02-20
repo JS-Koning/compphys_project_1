@@ -216,7 +216,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
         force = lj_force(rel_pos, rel_dis)[1]
 
         if dimless:
-            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
+            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep
         else:
             vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
@@ -400,9 +400,14 @@ def potential_energy(rel_dist):
     pot_total = np.sum(pot_e_particle)/2
 
     if dimless:
-        pot_e *= dimless_energy
-        pot_e_particle *= dimless_energy
-        pot_total *= dimless_energy
+        for j in range(0, num_atoms1):
+            for i in range(0, num_atoms1):
+                if i != j:
+                    pot_e[i][j] = 4*((1/rel_dist[i][j])**12-(1/rel_dist[i][j])**6)
+                else:
+                    pot_e[i][j] = 0
+        pot_e_particle = np.sum(pot_e, axis=1)
+        pot_total = np.sum(pot_e_particle)/2
 
     return pot_e, pot_e_particle, pot_total
 
@@ -444,7 +449,7 @@ def main():
 
     #    easy, handpicked initial positions and velocities.
     init_pos = [[0.1, 0.1], [0.1, 1.1]]
-    init_vel = [[1.0, 1.0], [1.0, 1.0]]
+    init_vel = [[1.0, 1.0], [1.0, 0.0]]
 
     
     simulate(init_pos, init_vel, steps, dt, box_dim)
