@@ -216,7 +216,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
         force = lj_force(rel_pos, rel_dis)[1]
 
         if dimless:
-            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
+            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep
         else:
             vel_steps[i+1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
