@@ -79,6 +79,8 @@ def init_velocity(num_atoms, temp, dim):
 def init_position(num_atoms, box_dim, dim):
     """
     Initializes the system with random positions.
+    This does not require non dimensionalization scaling, since it is not
+    based on physical parameters.
 
     Parameters
     ----------
@@ -101,10 +103,7 @@ def init_position(num_atoms, box_dim, dim):
     #random *= 0.001
 
     pos_vec = random * box_dim
-
-    if dimless:
-        pos_vec *= dimless_distance
-
+    
     return pos_vec
 
 
