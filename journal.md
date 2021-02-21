@@ -70,13 +70,38 @@ useful.
         - Journal-keeping (Jim)
         - Initialize positions/velocities (Jim)
         - Define necessary constants (Abi/Jim)
+        
 ## Week 2
-1. Milestones
+
+1. General
+    - No planned distribution of work this week, beforehand knowing how time consuming each objective is going to be is hard. We decided to update eachother personally on Whatsapp when:
+        - Problems were solved
+        - Remarks on code
+        - Bugfixes of the code of parter
+    - Periodic boundary conditions were implemented of last week.
+    
+2. Milestones
     - [x] Derive the expression of the kinetic energy in dimensionless units
     - [x] Change your existing molecular dynamics simulation to now use dimensionless units
     - [x] Implement the minimal image convention
-    - [ ]  Simulate 2 atoms in 3D space. Choose their initial positions close to the boundary. This way, you can clearly see if the periodic boundary conditions work. Plot their inter-atom distance over time. Furthermore, also plot the kinetic and potential energy, as well as their sum, over time.
+    - [x] Simulate 2 atoms in 3D space. Choose their initial positions close to the boundary. This way, you can clearly see if the periodic boundary conditions work. Plot their inter-atom distance over time. Furthermore, also plot the kinetic and potential energy, as well as their sum, over time.
+
+3. Things that need improvement
+    - Overall readability of code
+    - Axis scaling when switching from dimensional to non-dimensionality.
+    - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality.
     
+4. Things that went right
+    - Work ethic
+
+5. Things that went wrong
+    - Code could use more comments, especially when complexity/length increases during next weeks
+    
+6. Review (w.r.t) original plan
+    - No original plan was created, except meeting milestones.
+
+7. Notes
+    - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
     
 ## Week 3
 (due 28 February 2021, 23:59)
