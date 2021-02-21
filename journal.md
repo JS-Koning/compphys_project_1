@@ -42,13 +42,9 @@ useful.
     
 2. Objectives
     - [x] Calculate the force on each particle using the Lennard-Jones potential
-        - still needs checking whether this is correct with literature, mistakes might be in mass used for example.
     - [x] Implement the Euler method for time evolution
-        - basic concept is implemented, however lacks basic checking due to time constraints. It runs, but might be incorrect.
     - [x] Implement the periodic boundary condition
-        - hardest part of this week, and did not know where to start. Especially since the force changes direction when a particle leaves the box. duplicating boxes seems to be an option, but then we should approach an infinite amount of boxes for the simulation to be correct? That seems incorrect.
     - [x] Define a function that calculates the total energy of the system
-        - Still needs mass scaling, see pseudocode comment in the code. Would have been better implemented if we started checking our code for simulation errors, however due to boundary conditions failure this was not included. 
     - [x] Make sure that you commit your code regularly to Gitlab.
     
 3. Things that need improvement
@@ -75,9 +71,13 @@ useful.
         - Initialize positions/velocities (Jim)
         - Define necessary constants (Abi/Jim)
 ## Week 2
-(due 21 February 2021, 23:59)
-
-
+1. Milestones
+    - [x] Derive the expression of the kinetic energy in dimensionless units
+    - [x] Change your existing molecular dynamics simulation to now use dimensionless units
+    - [x] Implement the minimal image convention
+    - [ ]  Simulate 2 atoms in 3D space. Choose their initial positions close to the boundary. This way, you can clearly see if the periodic boundary conditions work. Plot their inter-atom distance over time. Furthermore, also plot the kinetic and potential energy, as well as their sum, over time.
+    
+    
 ## Week 3
 (due 28 February 2021, 23:59)
 
