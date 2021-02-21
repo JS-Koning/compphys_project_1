@@ -358,10 +358,10 @@ def kinetic_energy(vel):
     ke = 0;
 
     for i in range(0, len(vel)):
-        ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
-
-    if dimless:
-        ke *= dimless_energy
+        if dimless:
+            ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+        else:
+            ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
 
     return ke
 
