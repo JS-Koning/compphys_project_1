@@ -476,25 +476,27 @@ def main():
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         times = np.linspace(0, dt*steps, steps)
         plt.plot(times, distances)
-        plt.xlabel('Time (s)')
         if dimless:
             plt.ylabel('Distance (nondim)')
+            plt.xlabel('Time (nondim)')
+
         else:
             plt.ylabel('Distance (m)')
+            plt.xlabel('Time (s)')
+
         plt.show()
 
         print("Print energy levels over time")
         if dimless:
-            energies = [(kinetic_energy(velocities_store[x, :, :])/dimless_energy,
-                         potential_energy(atomic_distances(positions_store[x, :, :],box_dim)[1])[2]/dimless_energy,
-                        total_energy(velocities_store[x, :, :],atomic_distances(positions_store[x, :, :],box_dim)[1])/dimless_energy)
+            energies = [(kinetic_energy(velocities_store[x, :, :]), potential_energy(atomic_distances(positions_store[x, :, :],box_dim)[1])[2],
+                        total_energy(velocities_store[x, :, :], atomic_distances(positions_store[x, :, :],box_dim)[1]))
                         for x in range(steps)]
         else:
             energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
         # times = np.linspace(0, dt*steps, steps)
         plt.plot(times, energies)
-        plt.xlabel('Time (s)')
-        plt.ylabel('Energy (J)')
+        plt.xlabel('Time (dimless)')
+        plt.ylabel('Energy (dimless)')
         plt.show()
 
 main()
