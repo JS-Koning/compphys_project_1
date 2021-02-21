@@ -78,7 +78,6 @@ useful.
         - Problems were solved
         - Remarks on code
         - Bugfixes of the code of parter
-    - This is not the first project we have done together, thus strict rules regarding workload distributions 
     - Periodic boundary conditions were implemented of last week.
     
     
