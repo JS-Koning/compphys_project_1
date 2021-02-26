@@ -13,10 +13,11 @@ global positions_store, velocities_store
 num_atoms = 2               # amount of particles
 dim = 3                     # dimensions
 box_dim = 10                # meters; bounding box dimension
-dt = 1e-4                # s; stepsize
-steps = 100000                 # amount of steps
+dt = 1e-4                   # s; stepsize
+steps = 10000                # amount of steps
 dimless = True              # use dimensionless units
 periodic = True             # use periodicity
+verlet = True               # use Verlet's algorithm
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 119.8                # Kelvin
