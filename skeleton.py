@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 2  # amount of particles
+num_atoms = 9  # amount of particles
 dim = 3  # dimensions
 box_dim = 10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 10000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
-verlet = False  # use Verlet's algorithm
+verlet = True  # use Verlet's algorithm
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 119.8  # Kelvin
@@ -192,6 +192,11 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     -------
     Any quantities or observables that you wish to study.
     """
+    if verlet:
+        print("Simulating using Verlet's algorithm")
+    else:
+        print("Simulating using Euler's algorithm")
+
     # first initialize matrix starting with initial velocity and position
     pos_steps = np.zeros((num_tsteps, num_atoms, dim))
     vel_steps = np.zeros((num_tsteps, num_atoms, dim))
@@ -210,10 +215,10 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 # make sure it's inside box dimension -> modulus gives periodicity
                 if dimless:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (
-                                timestep ** 2) * force / 2) % box_dim
+                            timestep ** 2) * force / 2) % box_dim
                 else:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (
-                                timestep ** 2) * force / 2) % box_dim
+                            timestep ** 2) * force / 2) % box_dim
             else:
                 if dimless:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (timestep ** 2) * force / 2)
@@ -467,24 +472,7 @@ def total_energy(vel, rel_dist):
     return kinetic_energy(vel) + potential_energy(rel_dist)[2]
 
 
-def main():
-    """"
-        Beginning of program
-        to start with "easy" locations and velocities,
-        init_pos = [[0, 0], [0, 1]]
-        init_vel = [[1, 1], [1, 1]]
-
-    """
-    #    random initial positions and velocities
-    init_pos = init_position(num_atoms, box_dim, dim)
-    init_vel = init_velocity(num_atoms, box_dim, dim)
-
-    #    easy, handpicked initial positions and velocities.
-    init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3]]
-    init_vel = [[1.2, 0.9, 1.2], [-0.9, -0.9, -0.6]]
-
-    simulate(init_pos, init_vel, steps, dt, box_dim)
-
+def process_data():
     print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
     pos2 = positions_store[steps - 1, :, :]
@@ -499,17 +487,17 @@ def main():
     print("Final total energy:   " + str(total_energy(vel2, r_pos2[1])))
     print("Delta total energy:   " + str(total_energy(vel2, r_pos2[1]) - total_energy(vel1, r_pos1[1])))
 
+    times = np.linspace(0, dt * steps, steps)
     if num_atoms == 2:
         print("Plot inter-atom distance over time")
         if dimless:
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         else:
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
-        times = np.linspace(0, dt * steps, steps)
         plt.plot(times, distances)
         if dimless:
-            plt.ylabel('Distance (nondim)')
-            plt.xlabel('Time (nondim)')
+            plt.ylabel('Distance (dimless)')
+            plt.xlabel('Time (dimless)')
 
         else:
             plt.ylabel('Distance (m)')
@@ -517,20 +505,59 @@ def main():
 
         plt.show()
 
-        print("Print energy levels over time")
-        if dimless:
-            energies = [(kinetic_energy(velocities_store[x, :, :]),
-                         potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
-                         total_energy(velocities_store[x, :, :],
-                                      atomic_distances(positions_store[x, :, :], box_dim)[1]))
-                        for x in range(steps)]
-        else:
-            energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
-        # times = np.linspace(0, dt*steps, steps)
-        plt.plot(times, energies)
-        plt.xlabel('Time (dimless)')
-        plt.ylabel('Energy (dimless)')
-        plt.show()
+    print("Print energy levels over time")
+    if dimless:
+        energies = [(kinetic_energy(velocities_store[x, :, :]),
+                     potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
+                     total_energy(velocities_store[x, :, :],
+                                  atomic_distances(positions_store[x, :, :], box_dim)[1]))
+                    for x in range(steps)]
+    else:
+        energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
+    # times = np.linspace(0, dt*steps, steps)
+    plt.plot(times, energies)
+    plt.xlabel('Time (dimless)')
+    plt.ylabel('Energy (dimless)')
+    plt.show()
 
+def main(init_p = None, init_v = None):
+    """"
+        Beginning of program
+        to start with "easy" locations and velocities,
+        init_pos = [[0, 0], [0, 1]]
+        init_vel = [[1, 1], [1, 1]]
+
+    """
+    #    easy, handpicked initial positions and velocities.
+    init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
+                [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
+    init_vel = [[1.2, 0.9, 1.2], [-0.9, -0.9, -0.6], [-0.9, 0.9, 1.5], [1.5, -0.3, 0.9], [0.0, -1.5, 0.3]
+        , [-0.2, 1.5, -0.3], [1.2, 0.6, -0.9], [-0.3, -1.2, 0.0], [1.2, 0.0, -0.6]]
+
+    #    random initial positions and velocities (uncomment to overwrite)
+    init_pos = init_position(num_atoms, box_dim, dim)
+    init_vel = init_velocity(num_atoms, box_dim, dim)
+
+    if init_v is not None and init_p is not None:
+        init_pos = init_p;
+        init_vel = init_v;
+
+    simulate(init_pos, init_vel, steps, dt, box_dim)
+    process_data()
+    p1 = positions_store
+    v1 = velocities_store
+
+    global verlet
+    verlet = False
+
+    simulate(init_pos, init_vel, steps, dt, box_dim)
+    process_data()
+    p2 = positions_store
+    v2 = velocities_store
+
+    print("Differences in positions")
+    print(p2-p1)
+    print("Differences in velocities")
+    print(v2-v1)
 
 main()
