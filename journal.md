@@ -70,13 +70,54 @@ useful.
         - Journal-keeping (Jim)
         - Initialize positions/velocities (Jim)
         - Define necessary constants (Abi/Jim)
+        
 ## Week 2
-1. Milestones
+
+1. General
+    - No planned distribution of work this week, beforehand knowing how time consuming each objective is going to be is hard. We decided to update eachother personally on Whatsapp when:
+        - Problems were solved
+        - Remarks on code
+        - Bugfixes of the code of parter
+    - Periodic boundary conditions were implemented of last week.
+    
+    
+2. Milestones
     - [x] Derive the expression of the kinetic energy in dimensionless units
     - [x] Change your existing molecular dynamics simulation to now use dimensionless units
     - [x] Implement the minimal image convention
-    - [ ]  Simulate 2 atoms in 3D space. Choose their initial positions close to the boundary. This way, you can clearly see if the periodic boundary conditions work. Plot their inter-atom distance over time. Furthermore, also plot the kinetic and potential energy, as well as their sum, over time.
+    - [x] Simulate 2 atoms in 3D space. Choose their initial positions close to the boundary. This way, you can clearly see if the periodic boundary conditions work. Plot their inter-atom distance over time. Furthermore, also plot the kinetic and potential energy, as well as their sum, over time.
+
+3. Things that need improvement
+    - Overall readability of code
+    - Axis scaling when switching from dimensional to non-dimensionality.
+    - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality.
     
+4. Things that went right
+    - Work ethic.
+
+5. Things that went wrong
+    - Code could use more comments, especially when complexity/length increases during next weeks.
+    
+6. Review (w.r.t) original plan
+    - No original plan was created, except meeting milestones.
+    
+7. Figures and plots
+
+    ![](https://hub.compphys.quantumtinkerer.tudelft.nl/user/jskoning/files/Project-1_akanagaratnam_jskoning/Week2/Figure_7.png?_xsrf=2%7C7792e9cb%7C0b55de1a8c05941f380b594f3c8d1495%7C1612396577)
+    ![](https://hub.compphys.quantumtinkerer.tudelft.nl/user/jskoning/files/Project-1_akanagaratnam_jskoning/Week2/Figure_8.png?_xsrf=2%7C7792e9cb%7C0b55de1a8c05941f380b594f3c8d1495%7C1612396577)
+    - In the figures above a plot is shown of 2 particles in 3 dimensions, with initial vecotrs
+             init_pos = [[9.9, 9.8, 8.7], [0.3, 0.6, 0.3]]
+             init_vel = [[1.0, 1.0, 1.2], [-1.0, -1.2, -0.9]]
+             Box size = 10 (dimless)
+    - Here we can clearly see that periodic boundary conditions work in the first figure.
+    - In the second figure, we see the kinetic energy of the particles in blue, which clearly increases when  they get closer. Also, the energy first "dips", this is probably due to the nature of the potential energy having a dependance on r^6 and r^12.
+    - However, total energy is not fully conserved, but "quite" close (delta total energy:   -0.35808706086647657)
+             
+              
+
+
+7. Notes
+    - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
     
 ## Week 3
 (due 28 February 2021, 23:59)
