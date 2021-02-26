@@ -520,7 +520,7 @@ def process_data():
     plt.ylabel('Energy (dimless)')
     plt.show()
 
-def main(init_p = None, init_v = None):
+def main():
     """"
         Beginning of program
         to start with "easy" locations and velocities,
@@ -534,13 +534,9 @@ def main(init_p = None, init_v = None):
     init_vel = [[1.2, 0.9, 1.2], [-0.9, -0.9, -0.6], [-0.9, 0.9, 1.5], [1.5, -0.3, 0.9], [0.0, -1.5, 0.3]
         , [-0.2, 1.5, -0.3], [1.2, 0.6, -0.9], [-0.3, -1.2, 0.0], [1.2, 0.0, -0.6]]
 
-    #    random initial positions and velocities (uncomment to overwrite)
-    init_pos = init_position(num_atoms, box_dim, dim)
-    init_vel = init_velocity(num_atoms, box_dim, dim)
-
-    if init_v is not None and init_p is not None:
-        init_pos = init_p;
-        init_vel = init_v;
+    #    random initial positions and velocities (uncomment to overwrite handpicked values)
+    #init_pos = init_position(num_atoms, box_dim, dim)
+    #init_vel = init_velocity(num_atoms, box_dim, dim)
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data()
