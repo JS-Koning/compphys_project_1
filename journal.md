@@ -147,8 +147,8 @@ useful.
     - Updated readme file
 
 5. Things that went wrong
-    - Code could use more comments, especially when complexity/length increases during next weeks.
-    
+    - No mentionable things
+
 6. Review (w.r.t) original plan
     - No original plan was created, except meeting milestones.
     
