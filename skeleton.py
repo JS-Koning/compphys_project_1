@@ -551,9 +551,8 @@ def main():
     p2 = positions_store
     v2 = velocities_store
 
-    print("Differences in positions")
-    print(p2-p1)
-    print("Differences in velocities")
-    print(v2-v1)
+    print("Maximum error in positions data: ", np.max(p2-p1))
+    print("Maximum error in velocities data: ", np.max(v2-v1))
+
 
 main()
