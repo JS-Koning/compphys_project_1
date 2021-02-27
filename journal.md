@@ -168,8 +168,8 @@ useful.
     - The plots show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
     - The first plot is created by a simulation using Verlet's algorithm, the second plot is created by a simulation using Euler's algorithm.
     - It can be seen that the difference between these plots cannot be seen; this is to be expected as the difference between both algorithms is negligible.
-    - The numerical (non-dimensional) values are 9.547073186545731, 11.378621347254516 and 1.8315481607087847 for the initial total energy, final total energy and delta total energy respectively.
-    - The maximum (non-dimensional) error in the position-data is 0.0. The maximum error in the velocity data is 2.6716075737639904e-83. (Both Verlet's and Euler's algorithms have these values)
+    - The numerical (non-dimensional) values are 9.547073186545731, 11.378621347254516 and 1.8315481607087847 for the initial total energy, final total energy and delta total energy respectively. (Both Verlet's and Euler's algorithms have these values identically)
+    - The maximum (non-dimensional) error in the position-data is 0.0. The maximum error in the velocity data is 2.6716075737639904e-83.
     - For random initial positions and velocities, the simulations show better that the energy is conserved than in this example.
 
 8. Notes
