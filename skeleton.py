@@ -361,6 +361,7 @@ def fcc_lattice(num_atoms, lat_const):
     """
     Initializes a system of atoms on an fcc lattice.
     
+    NOTE CURRENTLY, ONLY WORKS FOR 4 ATOMS
     Initial vectors are:
     a1 = [D,0,0]
     a2 = [0,D,0]
@@ -395,6 +396,9 @@ def fcc_lattice(num_atoms, lat_const):
         print('N = multiple of 4')
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
         pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
+        # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
+        offset = [0, 0, 0] 
+        pos_vec = np.add(pos_vec, offset)
         print('fcc lattice vector is', pos_vec)
     else:
         print('N is not multiple of 4, FCC lattice not possible ')
