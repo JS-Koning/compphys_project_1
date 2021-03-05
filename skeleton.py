@@ -360,6 +360,20 @@ def lj_force(rel_pos, rel_dist):
 def fcc_lattice(num_atoms, lat_const):
     """
     Initializes a system of atoms on an fcc lattice.
+    
+    Initial vectors are:
+    a1 = [D,0,0]
+    a2 = [0,D,0]
+    a3 = [0,0,D]
+    Here, D is the distance between 2 adjecent corner atoms.
+    
+    lattice basis vectors are:
+    r1 = [0,0,0]
+    r2 = 1/2(a1+a2)
+    r3 = 1/2(a2+a3)
+    r4 = 1/2(a3+a1)
+    
+    https://solidstate.quantumtinkerer.tudelft.nl/10_xray/ can be used as a source.    
 
     Parameters
     ----------
@@ -374,6 +388,9 @@ def fcc_lattice(num_atoms, lat_const):
         Array of particle coordinates
     """
 
+
+    
+    
     return
 
 
@@ -531,8 +548,8 @@ def main():
     #    easy, handpicked initial positions and velocities.
     init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
                 [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
-    init_vel = [[1.2, 0.9, 1.2], [-0.9, -0.9, -0.6], [-0.9, 0.9, 1.5], [1.5, -0.3, 0.9], [0.0, -1.5, 0.3]
-        , [-0.2, 1.5, -0.3], [1.2, 0.6, -0.9], [-0.3, -1.2, 0.0], [1.2, 0.0, -0.6]]
+    init_vel = [[1.2, 0.8, 1.2], [-0.9, -0.67, -0.88], [-0.89, 0.94, 1.55], [1.52, -0.53, 0.97], [0.60, -1.55, 0.32]
+        , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     #    random initial positions and velocities (uncomment to overwrite handpicked values)
     #init_pos = init_position(num_atoms, box_dim, dim)
