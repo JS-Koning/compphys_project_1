@@ -392,18 +392,17 @@ def fcc_lattice(num_atoms, lat_const):
     if num_atoms % 4 == 0:
         a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
         BZ = np.int(num_atoms/4)
-        #print(a[0,:])
         print('N = multiple of 4')
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
-        print(a)
         pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
+        print('fcc lattice vector is', pos_vec)
     else:
         print('N is not multiple of 4, FCC lattice not possible ')
         exit()
     return pos_vec
 
 
-print(fcc_lattice(8, 1))
+fcc_lattice(8, 1)
 
 
 def kinetic_energy(vel):
