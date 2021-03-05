@@ -13,11 +13,48 @@ def simulate(timesteps, x_init):
 
 
 
-timestep = 100
+timestep = 20
+t = np.linspace(0, timestep, timestep-1)
 x_init = np.array([1., 0., 0.])
-a = simulate(100, x_init)
-print(a.shape)
+locp = simulate(100, x_init)
+#print(a.shape)
+#print(locp)
+
+# +
+# %matplotlib notebook
+plt.rcParams["animation.html"] = "html5"
+
+import numpy as np
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.animation
+import pandas as pd
+
+const = timestep
+a = np.random.rand(timestep * const, 3)*10
+#a = locp
+t = np.array([np.ones(const)*i for i in range(timestep)]).flatten()
+df = pd.DataFrame({"time": t ,"x" : a[:,0], "y": a[:,1], "z" : a[:,2]})
+
+def update_graph(num):
+    data=df[df['time']==num]
+    graph._offsets3d = (data.x, data.y, data.z)
+    title.set_text('3D Test, time={}'.format(num))
+
+ax = fig.add_subplot(111, projection='3d')
+title = ax.set_title('3D Test')
+
+data=df[df['time']==0]
+graph = ax.scatter(data.x, data.y, data.z)
+
+ani = matplotlib.animation.FuncAnimation(fig, update_graph, 19, 
+                               interval=40, blit=False)
+
 print(a)
+print(a.shape)
+print(t)
+ani
+# found a helpfull source at https://stackoverflow.com/questions/41602588/matplotlib-3d-scatter-animations
 
 # +
 # %matplotlib inline
@@ -35,18 +72,18 @@ ax = fig.add_subplot(111, projection='3d')
 
 
 
-ax.scatter(a[0,[0]], a[0,[1]], a[0,[2]], c='r', marker='o')
+#ax.scatter(a[0,[0]], a[0,[1]], a[0,[2]], c='r', marker='o')
 ax.set(xlim=(-1, 5), ylim=(-1, 1), zlim = (-1, 1))
 
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 
-plt.show()
-animate = lambda i: l.set_data(t[:i], x[:i])
+
+animate = lambda i: l.set_data(t[:i], a[:i,])
 ani = matplotlib.animation.FuncAnimation(fig, animate, frames=len(t))
 ani
-
+#plt.show()
 
 # +
 # %matplotlib inline
@@ -55,7 +92,7 @@ plt.rcParams["animation.html"] = "html5"
 import matplotlib.animation
 import numpy as np
 
-t = np.linspace(0, timestep, timestep-1)
+t = np.linspace(0,2*np.pi)
 x = np.sin(t)
 
 fig, ax = plt.subplots()
