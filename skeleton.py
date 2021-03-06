@@ -428,6 +428,37 @@ def kinetic_energy(vel):
 
     for i in range(0, len(vel)):
         if dimless:
+            velsquared = np.power(vel, 2.0)
+            vel_summed = np.sum(velsquared, axis=1)
+            vel_abs = np.power(vel_summed, 0.5) #the total velocity, of 1 particle stored in an array for each particle. Since a bug was present, This is rewritten in, over simplified steps.
+            ke_part = 0.5 * np.power(vel_abs, 2)
+            ke_total = np.sum(ke_part)
+
+        else:
+            ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+
+    return ke_part, ke_total
+
+
+def kinetic_energyold(vel):
+    """
+    Computes the kinetic energy of an atomic system.
+
+    Parameters
+    ----------
+    vel: np.ndarray
+        Velocity of particle
+
+    Returns
+    -------
+    ke : float
+        The total kinetic energy of the system.
+    """
+
+    ke = 0;
+
+    for i in range(0, len(vel)):
+        if dimless:
             ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
         else:
             ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
@@ -501,7 +532,7 @@ def total_energy(vel, rel_dist):
 
         """
 
-    return kinetic_energy(vel) + potential_energy(rel_dist)[2]
+    return kinetic_energy(vel)[1] + potential_energy(rel_dist)[2]
 
 
 def process_data():
@@ -539,17 +570,18 @@ def process_data():
 
     print("Print energy levels over time")
     if dimless:
-        energies = [(kinetic_energy(velocities_store[x, :, :]),
+        energies = [(kinetic_energy(velocities_store[x, :, :])[1],
                      potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
                      total_energy(velocities_store[x, :, :],
                                   atomic_distances(positions_store[x, :, :], box_dim)[1]))
                     for x in range(steps)]
     else:
-        energies = [kinetic_energy(velocities_store[x, :, :]) for x in range(steps)]
+        energies = [kinetic_energy(velocities_store[x, :, :])[1] for x in range(steps)]
     # times = np.linspace(0, dt*steps, steps)
     plt.plot(times, energies)
     plt.xlabel('Time (dimless)')
     plt.ylabel('Energy (dimless)')
+    plt.legend(('kinetic energy', 'potential energy', 'total energy'))
     plt.show()
 
 def main():
