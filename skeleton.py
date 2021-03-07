@@ -726,7 +726,7 @@ def main():
 
     # random initial positions and velocities (uncomment to overwrite handpicked values)
     init_pos = fcc_lattice(num_atoms, 1.547)
-    init_vel = np.random.normal(0, temp, (num_atoms, dim))
+    init_vel = init_velocity(num_atoms,temp,dim)
 
     test_initial_velocities(init_vel)
 
