@@ -15,7 +15,7 @@ num_atoms = 16  # amount of particles
 dim = 3  # dimensions
 box_dim = 2 * 1.547  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
-steps = 100000  # amount of steps
+steps = 10000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
@@ -315,6 +315,15 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
+
+        # Rescale velocity
+        #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
+        v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
+        v_lambda = max(0.5,v_lambda)
+        v_lambda = min(2.0,v_lambda)
+        vel_steps[i + 1, :, :] *= v_lambda
+        #print(v_lambda)
+
 
     global positions_store
     positions_store = pos_steps
