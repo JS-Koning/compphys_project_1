@@ -177,7 +177,59 @@ useful.
 
 
 ## Week 4
-(due 7 March 2021, 23:59)
+1. General
+    - No planned distribution of work this week, beforehand knowing that we already met some milestones of this week already. We decided to update eachother personally on Whatsapp when:
+        - Problems were solved
+        - Remarks on code
+        - Bugfixes of the code of parter
+    - In case of help or not understanding each other's code, Discord calls were made to discuss.
+    
+2. Milestones
+    - Implement the initialization of positions onto an fcc lattice.
+    - Show that the initial velocities obey a Maxwell-Boltzmann distribution.
+    Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
+    Study at least one observable, and compare its behaviour to literature.
+
+3. Things that need improvement
+    - simulate_old function should be removed when we feel confident that the new function is a proper replacement
+    - Axis scaling when switching from dimensional to non-dimensionality.
+    - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality. (optional)
+    
+4. Things that went right
+    - Work ethic.
+    - Reduced amount of steps as was advised in previous feedback (from Week 2)
+    - Split plotting code in a different function outside the main() function to allow re-runs/re-simulations.
+    - Updated readme file
+
+5. Things that went wrong
+    - No mentionable things
+
+6. Review (w.r.t) original plan
+    - No original plan was created, except meeting milestones.
+    
+7. Figures and plots
+
+    ![](Week3/Figure_1.png)
+    ![](Week3/Figure_2.png)
+    - In the figures above a plot is shown of 9 particles in 3 dimensions, with initial vectors
+    
+        init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
+                [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
+                
+        init_vel = [[1.2, 0.9, 1.2], [-0.9, -0.9, -0.6], [-0.9, 0.9, 1.5], [1.5, -0.3, 0.9], [0.0, -1.5, 0.3]
+        , [-0.2, 1.5, -0.3], [1.2, 0.6, -0.9], [-0.3, -1.2, 0.0], [1.2, 0.0, -0.6]]
+        
+        box size = 10 (dimless)
+    - The plots show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
+    - The first plot is created by a simulation using Verlet's algorithm, the second plot is created by a simulation using Euler's algorithm.
+    - It can be seen that the difference between these plots cannot be seen; this is to be expected as the difference between both algorithms is negligible.
+    - The numerical (non-dimensional) values are 9.547073186545731, 11.378621347254516 and 1.8315481607087847 for the initial total energy, final total energy and delta total energy respectively. (Both Verlet's and Euler's algorithms have these values identically)
+    - The maximum (non-dimensional) error in the position-data is 0.0. The maximum error in the velocity data is 2.6716075737639904e-83.
+    - For random initial positions and velocities, the simulations show better that the energy is conserved than in this example.
+
+8. Notes
+    - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
+
 
 
 ## Week 5
