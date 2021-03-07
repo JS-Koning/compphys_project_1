@@ -12,7 +12,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 1  # meters; bounding box dimension
+box_dim = 1.547  # meters; bounding box dimension
 dt = 1e-5  # s; stepsize
 steps = 50000  # amount of steps
 dimless = True  # use dimensionless units
@@ -658,7 +658,7 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # random initial positions and velocities (uncomment to overwrite handpicked values)
-    init_pos = fcc_lattice(num_atoms, 1)
+    init_pos = fcc_lattice(num_atoms, 1.547)
     init_vel = np.random.normal(0, 0.1, (num_atoms, dim))
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
