@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 9  # amount of particles
+num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 10  # meters; bounding box dimension
-dt = 1e-4  # s; stepsize
-steps = 10000  # amount of steps
+box_dim = 1  # meters; bounding box dimension
+dt = 1e-5  # s; stepsize
+steps = 50000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
@@ -719,14 +719,14 @@ def main():
 
     """
     #    easy, handpicked initial positions and velocities.
-    init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
-                [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
-    init_vel = [[1.2, 0.8, 1.2], [-0.9, -0.67, -0.88], [-0.89, 0.94, 1.55], [1.52, -0.53, 0.97], [0.60, -1.55, 0.32]
-        , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
+    # init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
+    #            [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
+    # init_vel = [[1.2, 0.8, 1.2], [-0.9, -0.67, -0.88], [-0.89, 0.94, 1.55], [1.52, -0.53, 0.97], [0.60, -1.55, 0.32]
+    #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
-    #    random initial positions and velocities (uncomment to overwrite handpicked values)
-    #init_pos = init_position(num_atoms, box_dim, dim)
-    init_vel = init_velocity(num_atoms, temp, dim)
+    # random initial positions and velocities (uncomment to overwrite handpicked values)
+    init_pos = fcc_lattice(num_atoms, 1)
+    init_vel = np.random.normal(0, temp, (num_atoms, dim))
 
     test_initial_velocities(init_vel)
 
