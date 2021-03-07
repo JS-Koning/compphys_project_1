@@ -22,9 +22,10 @@ verlet = True  # use Verlet's algorithm
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 119.8  # Kelvin
+TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
-EPSILON = temp * KB  # depth of potential well/dispersion energy
+EPSILON = TEMP * KB  # depth of potential well/dispersion energy
 N_b = 6.02214076e23  # Avagadros number; 1/mol
 R = 8.31446261815324  # J/K/mole; universal gas constant
 ARG_UMASS = 39.95  # u; atomic mass of argon
@@ -101,10 +102,14 @@ def init_velocity(num_atoms, temp, dim):
         Array of particle velocities
     """
     # define most probable speed (vel_p)
+    print(temp)
     vel_p = np.sqrt(2 * KB * temp / ARG_MASS)
+    print(vel_p)
 
     if dimless:
         vel_p *= dimless_velocity
+
+    print(vel_p)
 
     # then use this to find mean speed, using Maxwell-Boltzmann distribution
     vel_mean = 2 * vel_p / np.sqrt(np.pi)
