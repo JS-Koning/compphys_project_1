@@ -21,7 +21,7 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 119.8  # Kelvin
+temp = 85  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -480,7 +480,7 @@ def lj_force_old(rel_pos, rel_dist):
     return force, force_atom
 
 
-def fcc_lattice(num_atoms, lat_const):
+def fcc_lattice_old(num_atoms, lat_const):
     """
     Initializes a system of atoms on an fcc lattice.
     
@@ -529,7 +529,63 @@ def fcc_lattice(num_atoms, lat_const):
     return pos_vec
 
 
-fcc_lattice(8, 1)
+def fcc_lattice(num_atoms, lat_const):
+    """
+    Initializes a system of atoms on an fcc lattice.
+    
+    NOTE CURRENTLY, ONLY WORKS FOR 4 ATOMS
+    Initial vectors are:
+    a1 = [D,0,0]
+    a2 = [0,D,0]
+    a3 = [0,0,D]
+    Here, D is the distance between 2 adjecent corner atoms.
+    
+    lattice basis vectors are:
+    r1 = [0,0,0]
+    r2 = 1/2(a1+a2)
+    r3 = 1/2(a2+a3)
+    r4 = 1/2(a3+a1)
+    
+    FCC lattice is only possible in 3D due to definition of FCC lattice
+    
+    https://solidstate.quantumtinkerer.tudelft.nl/10_xray/ can be used as a reference
+
+    Parameters
+    ----------
+    num_atoms : int
+        The number of particles in the system
+    lat_const : float
+        The lattice constant for an fcc lattice
+
+    Returns
+    -------
+    pos_vec : np.ndarray
+        Array of particle coordinates
+    """
+    if num_atoms >=4:
+        a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
+        BZ = np.int(num_atoms/4)
+        print('N = multiple of 4')
+        # below is not elegant at all, but it works without writing over complex code for a simple thing.
+        pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
+        # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
+        offset = [0, 0, 0] 
+        pos_vec = np.add(pos_vec, offset)
+        if num_atoms>4:
+            for i in range(3):
+                pos_ext = pos_vec+a[i,:]
+                pos_vec = np.append(pos_vec, pos_ext, axis=1)
+            print('fcc lattice vector is', pos_vec)
+    else:
+        print('N is not multiple of 4, FCC lattice not possible ')
+        exit()
+    return pos_vec
+
+
+bb = fcc_lattice(17, 1) 
+print(bb)
+bb = bb+[0,0,1]
+print(bb)
 
 
 def kinetic_energy(vel):
