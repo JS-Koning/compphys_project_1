@@ -188,7 +188,7 @@ useful.
     - [x] Implement the initialization of positions onto an FCC lattice.
     - [x] Show that the initial velocities obey a Maxwell-Boltzmann distribution.
     - [ ] Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
-    - [x] Study at least one observable, and compare its behaviour to literature.
+    - [ ] Study at least one observable, and compare its behaviour to literature.
 
 3. Things that need improvement
     - simulate_old function should be removed when we feel confident that the new function is a proper replacement
@@ -198,19 +198,22 @@ useful.
     - Cleaning up old/unused code
     
 4. Things that went right
-    - Work ethic.
     - Fixed kinetic energy as was advised in the feedback from Week 3.
-    - Improved velocity initialization so negative values are also used
-    - Improved velocity initialization so it is temperature dependant
-    - Improved velocity initialization so the expected mean (from MB-distibution) also works in higher dimensions
+        - Bug was not present in kinetic energy
+    - Fixed velocity initialization so negative values are also used
+    - Fixed initialization so now it is temperature dependant
+    - Fixed velocity initialization so the expected mean (from MB-distibution) also works in higher dimensions
     - Improved velocity initialization so the final mean over all particles is 0 to avoid 'drift velocity'.
 
 5. Things that went wrong
-    - We did not understand the rescaling of temperature (yet) to implement it properly...
+    - We did not understand the rescaling of temperature (yet!) to implement this properly...
+        - Lack of understanding is most probable due to time constraints.
+        - Due to multiple deadlines, and an exam coming up for both of us next Tuesday we could not put enough time in the project as we wanted to.
+        - However, due to a course ending next Tuesday we have the ability to make this project our full priority for next week. 
 
 6. Review (w.r.t) original plan
     - No original plan was created, except meeting milestones.
-    - Maybe for next time a better plan should be created so all milestones are properly met.
+    - For next week, due to increased load of missed milestones for this week we do need to set internal deadlines and make plans.
     
 7. Figures and plots
 
@@ -232,7 +235,7 @@ useful.
 
 8. Notes
     - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
-
+    
 
 
 ## Week 5
