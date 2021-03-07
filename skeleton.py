@@ -11,17 +11,17 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 4  # amount of particles
+num_atoms = 16  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.547  # meters; bounding box dimension
-dt = 1e-5  # s; stepsize
-steps = 50000  # amount of steps
+box_dim = 2 * 1.547  # meters; bounding box dimension
+dt = 1e-4  # s; stepsize
+steps = 100000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 85  # Kelvin
+temp = 30  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -571,21 +571,17 @@ def fcc_lattice(num_atoms, lat_const):
         # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
         offset = [0, 0, 0] 
         pos_vec = np.add(pos_vec, offset)
+        print(pos_vec)
+        print(a[0,:])
         if num_atoms>4:
-            for i in range(3):
+            for i in range(2):
                 pos_ext = pos_vec+a[i,:]
-                pos_vec = np.append(pos_vec, pos_ext, axis=1)
+                pos_vec = np.append(pos_vec, pos_ext, axis=0)
             print('fcc lattice vector is', pos_vec)
     else:
         print('N is not multiple of 4, FCC lattice not possible ')
         exit()
     return pos_vec
-
-
-bb = fcc_lattice(17, 1) 
-print(bb)
-bb = bb+[0,0,1]
-print(bb)
 
 
 def kinetic_energy(vel):
