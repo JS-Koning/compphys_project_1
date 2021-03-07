@@ -5,6 +5,7 @@ you have a good reason to do so.
 """
 
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 
 global positions_store, velocities_store
@@ -37,7 +38,7 @@ dimless_distance = 1.0 / SIGMA  # m; dimensionless distance
 dimless_velocity = 1.0 / np.math.sqrt(EPSILON / (ARG_MASS))  # m/s; dimensionless velocity
 
 
-def init_velocity(num_atoms, temp, dim):
+def init_velocity_old(num_atoms, temp, dim):
     """
     Initializes the system with Gaussian distributed velocities. This
     init_velocity is loosely based on 3D system, however it will output 2D just
@@ -73,6 +74,64 @@ def init_velocity(num_atoms, temp, dim):
     vel_std = vel_msq - (vel_mean ** 2)
     # find the final distribution
     vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
+    return vel_vec
+
+
+def init_velocity(num_atoms, temp, dim):
+    """
+    Initializes the system with Gaussian distributed velocities. This
+    init_velocity is loosely based on 3D system, however it will output 2D just
+    fine, although more pertubated. Note, relativity is ignored.
+    For more information, please visit articles related to Maxwell Boltzmann
+    distributions.
+    https://en.wikipedia.org/wiki/Maxwell%E2%80%93Boltzmann_distribution
+
+    Parameters
+    ----------
+    num_atoms : int
+        The number of particles in the system.
+    temp : float
+        The (unitless) temperature of the system.
+    dim : int
+        The dimensions of the system.
+
+    Returns
+    -------
+    vel_vec : np.ndarray
+        Array of particle velocities
+    """
+    # define most probable speed (vel_p)
+    vel_p = np.sqrt(2 * KB * temp / ARG_MASS)
+
+    if dimless:
+        vel_p *= dimless_velocity
+
+    # then use this to find mean speed, using Maxwell-Boltzmann distribution
+    vel_mean = 2 * vel_p / np.sqrt(np.pi)
+
+    # define the standard deviation, assuming the standard deviation: std = sqrt(meansquarevelocity^2 - mean velocity^2)
+    # again, using Maxwell-Boltzmann distributions
+    vel_msq = (3 * vel_p ** 2) / 2
+    vel_std = vel_msq - (vel_mean ** 2)
+
+    # find the distribution
+    vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
+
+    # get the magnitudes of the velocities
+    vel_mag = [np.sqrt(np.sum([v[i]**2 for i in range(dim)])) for v in vel_vec]
+
+    # rescale the magnitudes to match the vel_mean speed
+    vel_vec *= vel_mean / np.mean(vel_mag)
+
+    # create random negativity
+    for v in range(num_atoms):
+        for i in range(dim):
+            # either *1 or *-1
+            vel_vec[v,i] *= (1 - 2*random.getrandbits(1))
+
+    # remove the mean velocity to keep 0 mean (no drift velocity)
+    vel_vec -= np.mean(vel_vec)
+
     return vel_vec
 
 
@@ -643,6 +702,14 @@ def process_data():
     plt.legend(('kinetic energy', 'potential energy', 'total energy'))
     plt.show()
 
+def test_initial_velocities(init_velocities):
+    init_velocities = init_velocity(1000, temp, dim)
+
+    vel_mag = [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in init_velocities]
+
+    plt.hist(vel_mag, bins=15)
+    plt.show()
+
 def main():
     """"
         Beginning of program
@@ -659,7 +726,9 @@ def main():
 
     #    random initial positions and velocities (uncomment to overwrite handpicked values)
     #init_pos = init_position(num_atoms, box_dim, dim)
-    #init_vel = init_velocity(num_atoms, box_dim, dim)
+    init_vel = init_velocity(num_atoms, temp, dim)
+
+    test_initial_velocities(init_vel)
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data()
