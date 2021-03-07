@@ -195,6 +195,7 @@ useful.
     - init_velocityold function should be removed when we feel confident that the new function is a proper replacement
     - Axis scaling when switching from dimensional to non-dimensionality.
     - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality. (optional)
+    - Cleaning up old/unused code
     
 4. Things that went right
     - Work ethic.
@@ -204,7 +205,7 @@ useful.
     - Improved velocity initialization so the expected mean (from MB-distibution) also works in higher dimensions
 
 5. Things that went wrong
-    - No mentionable things
+    - We did not understand the rescaling of temperature (yet) to implement it properly...
 
 6. Review (w.r.t) original plan
     - No original plan was created, except meeting milestones.
