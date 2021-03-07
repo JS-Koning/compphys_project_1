@@ -203,16 +203,18 @@ useful.
     - Improved velocity initialization so negative values are also used
     - Improved velocity initialization so it is temperature dependant
     - Improved velocity initialization so the expected mean (from MB-distibution) also works in higher dimensions
+    - Improved velocity initialization so the final mean over all particles is 0 to avoid 'drift velocity'.
 
 5. Things that went wrong
     - We did not understand the rescaling of temperature (yet) to implement it properly...
 
 6. Review (w.r.t) original plan
     - No original plan was created, except meeting milestones.
+    - Maybe for next time a better plan should be created so all milestones are properly met.
     
 7. Figures and plots
 
-    ![](Week4/Figure_1.jpeg)
+    ![](Week4/Figure_5.jpeg)
     - In the figures above a plot is shown of 16 particles in 3 dimensions, with initial vectors
     
         init_pos = using fcc lattice function
@@ -221,9 +223,12 @@ useful.
         
         box size = 2 * 1.547
     - The top plot shows the distribution of 1000 initial velocities to show it holds to a Gaussian/MB distribution.
-    - The bottom plot show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
-    - The bottom plot is created by a simulation using Verlet's algorithm
-    - The Euler plot is missing due to Jupyterhub not working with long runtimes..?
+    - We can see the top plot somewhat matches a Maxwell-Boltzmann distribution.
+    - The middle and bottom plot show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
+    - The middle plot is created by a simulation using Verlet's algorithm
+    - The bottom plot is created by a simulation using Euler's algorithm
+    - We can see the errors are bigger in Euler's algorithm as expected
+    - Errors are now present in both position and velocity when comparing Verlet's and Euler's algorithms.
 
 8. Notes
     - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
