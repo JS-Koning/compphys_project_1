@@ -102,14 +102,10 @@ def init_velocity(num_atoms, temp, dim):
         Array of particle velocities
     """
     # define most probable speed (vel_p)
-    print(temp)
     vel_p = np.sqrt(2 * KB * temp / ARG_MASS)
-    print(vel_p)
 
     if dimless:
         vel_p *= dimless_velocity
-
-    print(vel_p)
 
     # then use this to find mean speed, using Maxwell-Boltzmann distribution
     vel_mean = 2 * vel_p / np.sqrt(np.pi)
