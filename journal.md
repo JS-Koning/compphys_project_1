@@ -187,7 +187,7 @@ useful.
 2. Milestones
     - [x] Implement the initialization of positions onto an FCC lattice.
     - [x] Show that the initial velocities obey a Maxwell-Boltzmann distribution.
-    - [ ] Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
+    - [x] Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
     - [ ] Study at least one observable, and compare its behaviour to literature.
 
 3. Things that need improvement

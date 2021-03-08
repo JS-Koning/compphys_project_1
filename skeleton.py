@@ -263,6 +263,11 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
 
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
+
+    rescale_counter = 0
+    rescale_max = 1.0
+    rescale_min = 1.0
+
     for i in range(num_tsteps - 1):
         pos = pos_steps[i, :, :]
 
@@ -327,9 +332,12 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             v_lambda = max(0.5,v_lambda)
             v_lambda = min(2.0,v_lambda)
             vel_steps[i + 1, :, :] *= v_lambda
-            print("Rescale:",v_lambda)
+            rescale_counter+=1
+            rescale_max = max(rescale_max,v_lambda)
+            rescale_min = min(rescale_min,v_lambda)
+            #print("Rescale:",v_lambda)
 
-
+    print("Rescaled",rescale_counter,"times [",rescale_min,"~",rescale_max,"]")
     global positions_store
     positions_store = pos_steps
     global velocities_store
