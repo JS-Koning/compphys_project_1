@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 16  # amount of particles
+num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 2 * 1.547  # meters; bounding box dimension
+box_dim = 1.547  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
-steps = 100000  # amount of steps
+steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
@@ -263,6 +263,11 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
 
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
+
+    rescale_counter = 0
+    rescale_max = 1.0
+    rescale_min = 1.0
+
     for i in range(num_tsteps - 1):
         pos = pos_steps[i, :, :]
 
@@ -316,6 +321,23 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
+        # Rescale velocity
+        average_kin = np.sum([kinetic_energy(vel_steps[i-x, :, :])[1] for x in range(min(i+1,10))])/min(i+1,10)
+        average_kin_new = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
+
+        if np.abs(average_kin_new - average_kin) < 0.0003:
+            #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
+            #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
+            v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) # / TEMP
+            v_lambda = max(0.5,v_lambda)
+            v_lambda = min(2.0,v_lambda)
+            vel_steps[i + 1, :, :] *= v_lambda
+            rescale_counter+=1
+            rescale_max = max(rescale_max,v_lambda)
+            rescale_min = min(rescale_min,v_lambda)
+            #print("Rescale:",v_lambda)
+
+    print("Rescaled",rescale_counter,"times [",rescale_min,"~",rescale_max,"]")
     global positions_store
     positions_store = pos_steps
     global velocities_store

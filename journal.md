@@ -187,7 +187,7 @@ useful.
 2. Milestones
     - [x] Implement the initialization of positions onto an FCC lattice.
     - [x] Show that the initial velocities obey a Maxwell-Boltzmann distribution.
-    - [ ] Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
+    - [x] Perform the rescaling of temperature and show how the desired temperature is attained after a certain amount of rescaling and equilibrating.
     - [ ] Study at least one observable, and compare its behaviour to literature.
 
 3. Things that need improvement
@@ -232,7 +232,30 @@ useful.
     - The bottom plot is created by a simulation using Euler's algorithm
     - We can see the errors are bigger in Euler's algorithm as expected
     - Errors are now present in both position and velocity when comparing Verlet's and Euler's algorithms.
-
+    
+    ![](Week4/Figure_1.png)
+    ![](Week4/Figure_2.png)
+    - Attempt to apply temperature rescaling to velocity.
+    - Uses time-averages for kinetic energy to see whether the later time-average has stabillized more than the previous time-average.
+    - The threshold value was chosen to be 0.0003 for better convergence.
+    - In the top plot Verlet's algorithm is used, in the bottom plot Euler's algorithm is used.
+    - Data values Verlet's algorithm:
+        - Rescaled 17719 times [ 0.8568022650005982 ~ 1.1492767191445308 ]
+        - Test if the total energy is conserved
+        - Initial total energy: -4.580495360788052
+        - Final total energy:   -5.097683492887791
+        - Delta total energy:   -0.5171881320997391
+    - Data values Euler's algorithm:
+        - Rescaled 16979 times [ 0.8446877607516494 ~ 1.245855408163942 ]
+        - Test if the total energy is conserved
+        - Initial total energy: -4.580495360788052
+        - Final total energy:   -5.091795563867885
+        - Delta total energy:   -0.5113002030798333
+    - Verlet's algorithm versus Euler's algorithm:
+        - Maximum error in positions data:  1.5387716436236905
+        - Maximum error in velocities data:  0.7546526287085809
+    - Minimum and maximum rescale values (lambda) are given in the data values between the square brackets.
+    
 8. Notes
     - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
     
