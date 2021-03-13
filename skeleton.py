@@ -15,7 +15,7 @@ num_atoms = 2  # amount of particles
 dim = 3  # dimensions
 box_dim = 10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
-steps = 50000  # amount of steps
+steps = 60000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
@@ -229,7 +229,6 @@ def simulate_old(init_pos, init_vel, num_tsteps, timestep, box_dim):
     return pos_steps, vel_steps
 
 
-# +
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     """
     Molecular dynamics simulation using the Euler or Verlet's algorithms
@@ -265,9 +264,9 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
 
-#    rescale_counter = 0
-#    rescale_max = 1.0
-#    rescale_min = 1.0
+    rescale_counter = 0
+    rescale_max = 1.0
+    rescale_min = 1.0
 
     for i in range(num_tsteps - 1):
         pos = pos_steps[i, :, :]
@@ -323,22 +322,22 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
         # Rescale velocity
-#        average_kin = np.sum([kinetic_energy(vel_steps[i-x, :, :])[1] for x in range(min(i+1,10))])/min(i+1,10)
-#        average_kin_new = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
+        average_kin = np.sum([kinetic_energy(vel_steps[i-x, :, :])[1] for x in range(min(i+1,10))])/min(i+1,10)
+        average_kin_new = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
 
-#        if np.abs(average_kin_new - average_kin) < 0.0003:
+        if np.abs(average_kin_new - average_kin) < 0.0003:
             #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
             #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
- #           v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) # / TEMP
- #           v_lambda = max(0.5,v_lambda)
- #           v_lambda = min(2.0,v_lambda)
- #           vel_steps[i + 1, :, :] *= v_lambda
- #           rescale_counter+=1
- #           rescale_max = max(rescale_max,v_lambda)
- #           rescale_min = min(rescale_min,v_lambda)
+            v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) # / TEMP
+            v_lambda = max(0.5,v_lambda)
+            v_lambda = min(2.0,v_lambda)
+            #vel_steps[i + 1, :, :] *= v_lambda
+            rescale_counter+=1
+            rescale_max = max(rescale_max,v_lambda)
+            rescale_min = min(rescale_min,v_lambda)
             #print("Rescale:",v_lambda)
 
- #   print("Rescaled",rescale_counter,"times [",rescale_min,"~",rescale_max,"]")
+    print("Rescaled",rescale_counter,"times [",rescale_min,"~",rescale_max,"]")
     global positions_store
     positions_store = pos_steps
     global velocities_store
@@ -346,8 +345,6 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
 
     return pos_steps, vel_steps
 
-
-# -
 
 def atomic_distances(pos, box_dim):
     """
@@ -428,20 +425,20 @@ def lj_force(rel_pos, rel_dist):
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
                 if i != j:
-                    dUdt[i, j] = -24 * ((2 / (rel_dist[i, j] ** 13)) - (1 / rel_dist[i, j] ** 13)) / (
+                    dUdt[i, j] = -24 * ((2 / (rel_dist[i, j] ** 13)) - (1 / rel_dist[i, j] ** 7)) / (
                                      rel_dist[i, j])
                 else:
                     dUdt[i, j] = 0
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-                force[i, j, :] = dUdt[i, j] * rel_pos[i, j, :]
+                force[i, j, :] = dUdt[i, j] * rel_pos[i, j, :] / 2.0
                 
     else:
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
                 if i != j:
                     dUdt[i, j] = -24 * EPSILON * (
-                            (2 * SIGMA ** 12 / (rel_dist[i, j] ** 13)) - (SIGMA ** 6 / rel_dist[i, j] ** 13)) / (
+                            (2 * SIGMA ** 12 / (rel_dist[i, j] ** 13)) - (SIGMA ** 6 / rel_dist[i, j] ** 7)) / (
                                      rel_dist[i, j])
                 else:
                     dUdt[i, j] = 0
@@ -624,10 +621,10 @@ def kinetic_energy(vel):
 
     for i in range(0, len(vel)):
         if dimless:
-            velsquared = np.power(vel, 2.0)
+            velsquared = vel**2 ##np.power(vel, 2.0)
             vel_summed = np.sum(velsquared, axis=1)
-            vel_abs = np.power(vel_summed, 0.5) #the total velocity, of 1 particle stored in an array for each particle. Since a bug was present, This is rewritten in, over simplified steps.
-            ke_part = 0.5 * np.power(vel_abs, 2)
+            vel_abs = vel_summed**0.5 #np.power(vel_summed, 0.5) #the total velocity, of 1 particle stored in an array for each particle. Since a bug was present, This is rewritten in, over simplified steps.
+            ke_part = 0.5 * vel_abs**2 #np.power(vel_abs, 2)
             ke_total = np.sum(ke_part)
 
         else:
@@ -802,15 +799,14 @@ def main():
     # init_vel = [[1.2, 0.8, 1.2], [-0.9, -0.67, -0.88], [-0.89, 0.94, 1.55], [1.52, -0.53, 0.97], [0.60, -1.55, 0.32]
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
-    # Below is the must be uncommented for the delivarble. 
+    # Below is the must be uncommented for the delivarble.
     #init_pos = fcc_lattice(num_atoms, 1.547)
     #init_vel = init_velocity(num_atoms,temp,dim)
-    
-    init_pos = [[5,5,5], [6,6,6]]
-    init_vel = [[0,0,0], [0,0,0]]
-    
 
-    #test_initial_velocities(init_vel)
+    init_pos = [[5,5,5], [6,5,5]]
+    init_vel = [[0,0,0], [0,0,0]]
+
+    test_initial_velocities(init_vel)
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data()
