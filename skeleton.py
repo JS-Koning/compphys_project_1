@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 4  # amount of particles
+num_atoms = 2  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.547#10  # meters; bounding box dimension
+box_dim = 50 #1.547#10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
-steps = 90000  # amount of steps
+steps = 300000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
@@ -440,7 +440,7 @@ def lj_force(rel_pos, rel_dist):
                     dUdt[i, j] = 0
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-                force[i, j, :] = dUdt[i, j] * rel_pos[i, j, :] / 2.0
+                force[i, j, :] = dUdt[i, j] * rel_pos[i, j, :]
                 
     else:
         for i in range(0, len(rel_pos[1])):  # particle i
@@ -809,11 +809,11 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # Below is the must be uncommented for the delivarble.
-    init_pos = fcc_lattice(num_atoms, 1.547)
-    init_vel = init_velocity(num_atoms,temp,dim)
+    #init_pos = fcc_lattice(num_atoms, 1.547)
+    #init_vel = init_velocity(num_atoms,temp,dim)
 
-    #init_pos = [[5,5,5], [6,5,5]]
-    #init_vel = [[0,0,0], [0,0,0]]
+    init_pos = [[25,25,25], [28,25,25]]
+    init_vel = [[1,0,0], [1,0,0]]
 
     test_initial_velocities(init_vel)
 
@@ -821,6 +821,7 @@ def main():
     process_data()
     p1 = positions_store
     v1 = velocities_store
+
 
     global verlet
     verlet = False
@@ -832,15 +833,14 @@ def main():
 
     print("Maximum error in positions data: ", np.max(p2-p1))
     print("Maximum error in velocities data: ", np.max(v2-v1))
+    return p1, v1, p2, v2
 
-main()
+program = main()
 
 print(velocities_store.shape)
 
-plt.plot(velocities_store[:,0,0])
+plt.plot(program[1][:,0,0])
 
-plt.plot(velocities_store[:,0,1])
-
-plt.plot(velocities_store[:,0,2])
+plt.plot(program[0][:,0,0])
 
 
