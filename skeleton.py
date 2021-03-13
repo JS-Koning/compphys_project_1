@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 2  # amount of particles
+num_atoms = 16  # amount of particles
 dim = 3  # dimensions
 box_dim = 2 * 1.547  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
@@ -778,13 +778,10 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # random initial positions and velocities (uncomment to overwrite handpicked values)
-    #init_pos = fcc_lattice(num_atoms, 1.547)
-    #init_vel = init_velocity(num_atoms,temp,dim)
+    init_pos = fcc_lattice(num_atoms, 1.547)
+    init_vel = init_velocity(num_atoms,temp,dim)
 
-    
-    init_pos = [[0.25, 0.25, 0.25], [1, 1, 1]]
-    init_vel = [[0, 0, 0], [0, 0, 0]]
-    #test_initial_velocities(init_vel)
+    test_initial_velocities(init_vel)
 
     simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data()
@@ -802,12 +799,5 @@ def main():
     print("Maximum error in positions data: ", np.max(p2-p1))
     print("Maximum error in velocities data: ", np.max(v2-v1))
 
+
 main()
-
-print(velocities_store)
-
-plt.plot(velocities_store[:,0,0])
-
-plt.plot(positions_store[:,0,0])
-
-
