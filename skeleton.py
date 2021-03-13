@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 2  # amount of particles
+num_atoms = 3  # amount of particles
 dim = 3  # dimensions
 box_dim = 50 #1.547#10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
@@ -812,8 +812,8 @@ def main():
     #init_pos = fcc_lattice(num_atoms, 1.547)
     #init_vel = init_velocity(num_atoms,temp,dim)
 
-    init_pos = [[25,25,25], [28,25,25]]
-    init_vel = [[1,0,0], [1,0,0]]
+    init_pos = [[25,25,25], [28,25,25], [25,25,27]]
+    init_vel = [[1,0,0], [1,0,0], [1,0,0]]
 
     test_initial_velocities(init_vel)
 
