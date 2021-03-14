@@ -24,7 +24,7 @@ rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
-rescaling_max_timesteps = 15000 # max timesteps
+rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 70  # Kelvin
