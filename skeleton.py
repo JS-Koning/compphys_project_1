@@ -14,7 +14,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.547 #10  # meters; bounding box dimension
+box_dim = 1* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -27,7 +27,7 @@ rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 70  # Kelvin
+temp = 50  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -463,7 +463,11 @@ def locationplot(locations, latmult):
     plt.show()
 
 
-# locationplot(vector,2)
+q = fcc_lattice(32,1)
+locationplot(q,2)
+
+# q = fcc_lattice(32,1)
+# locationplot(q,2)
 
 
 def kinetic_energy(vel):
@@ -630,69 +634,15 @@ def ms_displacement(loc, timestep):
     plt.plot(D)
     plt.show()
     print('the diff coeff is shown in the plot above', D)
+    plt.plot(p00[:,:,2])
+    plt.show()
+    print('the MSD  is shown in the plot above for all particles in the z dir')
     return msd_1, msd_2, msd_3, D
 
 
-def ms_displacement_old(loc, timestep):
-    """
-        Computes the mean square displacement of a single atom.
-
-        Parameters
-        ----------
-        loc: np.ndarray
-            locations of particles over time [timestep, particle, dims]
-        timestep : int
-            the timestep of the particle which is used as initial value
-
-        Returns
-        -------
-        msd_1: np.ndarray
-            The msq time dependent array, for N dimensions and M particles 
-        msd_2: np.ndarray
-            the msq time dependent array, summed over the dimensions, for M particles
-            [msd_part1(dtime=0), msd_part2(dtime=0),... ], [msd_part1(dtime=1), msd_part2(time=1),... ], ....
-        msd_3: np.ndarray
-            the msq time dependent vector, summed over both dimensions and particles
-            [msd_total(dtime=0), msd_total(dtime=1),.....]
-
-        -------
-
-        """
-
-    # make positions continuous
-    p = np.empty(np.shape(program[0]))
-    for i in range(num_atoms-1):
-        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-loc[:,i,:]))
-
-        
-    #initiate reference values
-
-    #initiate reference values
-    init_loc = p[timestep, :, :]
-    loc_usage = p[timestep:-1, :, :]
-    msd_1 = np.abs((loc_usage - init_loc)**2)
-    # next
-    for i in range(len(loc_usage[:,0,0])):
-        msd_1[i, :, :] = msd_1[i,:,:] / (i + 1)
-        
-    msd_2 = np.sum(msd_1, axis=2)
-    N = len(program[0][0,:,0]) #number of particles
-    msd_3 = np.sum(msd_2, axis=1)/N
-    print(len(msd_3))
-    D = np.empty(len(msd_3))
-    for i in range(len(msd_3)):
-        D[i] = msd_3[i] / (6*(i + 1))
-        
-    plt.plot(D)
-    plt.show()
-    print('the diff coeff is shown in the plot above', D)
-    return msd_1, msd_2, msd_3
-
+# +
 #q = ms_displacement(program[0], 15000)
 #plt.plot(program[0][:,:,2])
-
-
-# +
 #plt.plot(q[0][:,:,2])
 #plt.plot(q[3])
 
@@ -743,14 +693,16 @@ def auto_corr(data_values):
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
     return autoc
 
-
-# +
 #q = ms_displacement(program[0], 15000)
 #Q = auto_corr(q[3])
 
+
 # +
 #plt.plot(Q)
+#plt.plot(Q[0:4000])
 # -
+
+
 
 def process_data():
     print("Test if the total energy is conserved")
@@ -897,14 +849,17 @@ plt.show()
 plt.plot(p00[:,:,1])
 plt.show()
 
-plt.plot(p00[:,:,2])
+plt.plot(p00[:,:,0])
 plt.show()
 
-qq = ms_displacement(program[0], 14999)
-plt.plot(qq[2]) #plot of msd particle 0 in 0 axis
-plt.show()
+q = ms_displacement(program[0], 15000)
 
-qqq = ms_displacement(p00, 15000)
+qq = auto_corr(q[3])
+plt.plot(qq)
+
+# +
+#Above figure is the autocorrelation function using the same data as the previous figure
+# -
 
 a = ms_displacement(program[0], 15000)
 print(a)
@@ -915,5 +870,15 @@ plt.plot(b[1][:,0])
 
 plt.plot(p00[:,:,0])
 print(p00)
+
+q = ms_displacement(program[0], 15000)
+print(q[3])
+Q = auto_corr(q[3])
+
+
+plt.plot(Q[0:30000])
+plt.plot(Q[0:28000])
+
+plt.plot(program[0][:,:,2])
 
 
