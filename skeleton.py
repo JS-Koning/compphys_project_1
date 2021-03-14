@@ -19,7 +19,7 @@ dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
-verlet = True  # use Verlet's algorithm
+verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
@@ -43,45 +43,6 @@ dimless_time = 1.0 / np.math.sqrt((ARG_MASS * SIGMA ** 2 / EPSILON))  # s; dimen
 dimless_energy = 1.0 / EPSILON  # J; dimensionless energy
 dimless_distance = 1.0 / SIGMA  # m; dimensionless distance
 dimless_velocity = 1.0 / np.math.sqrt(EPSILON / (ARG_MASS))  # m/s; dimensionless velocity
-
-
-def init_velocity_old(num_atoms, temp, dim):
-    """
-    Initializes the system with Gaussian distributed velocities. This
-    init_velocity is loosely based on 3D system, however it will output 2D just
-    fine, although more pertubated. Note, relativity is ignored.
-    For more information, please visit articles related to Maxwell Boltzmann
-    distributions.
-    https://en.wikipedia.org/wiki/Maxwell%E2%80%93Boltzmann_distribution
-    
-    Parameters
-    ----------
-    num_atoms : int
-        The number of particles in the system.
-    temp : float
-        The (unitless) temperature of the system.
-    dim : int
-        The dimensions of the system.
-
-    Returns
-    -------
-    vel_vec : np.ndarray
-        Array of particle velocities
-    """
-    # define most probable speed (vel_p), then use this to find mean speed, using Maxwell-Boltzmann distribution
-    vel_p = np.sqrt(2 * KB * temp / ARG_MASS)
-
-    if dimless:
-        vel_p *= dimless_velocity
-
-    vel_mean = 2 * vel_p / np.sqrt(np.pi)
-    # define the standard deviation, assuming the standard deviation: std = sqrt(meansquarevelocity^2 - mean velocity^2) 
-    # again, using Maxwell-Boltzmann distributions
-    vel_msq = (3 * vel_p ** 2) / 2
-    vel_std = vel_msq - (vel_mean ** 2)
-    # find the final distribution
-    vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
-    return vel_vec
 
 
 def init_velocity(num_atoms, temp, dim):
@@ -171,68 +132,6 @@ def init_position(num_atoms, box_dim, dim):
     pos_vec = random * box_dim
 
     return pos_vec
-
-
-def simulate_old(init_pos, init_vel, num_tsteps, timestep, box_dim):
-    """
-    Molecular dynamics simulation using the Euler or Verlet's algorithms
-    to integrate the equations of motion. Calculates energies and other
-    observables at each timestep.
-
-    Parameters
-    ----------
-    init_pos : np.ndarray
-        The initial positions of the atoms in Cartesian space
-    init_vel : np.ndarray
-        The initial velocities of the atoms in Cartesian space
-    num_tsteps : int
-        The total number of simulation steps
-    timestep : float
-        Duration of a single simulation step
-    box_dim : float
-        Dimensions of the simulation box
-
-    Returns
-    -------
-    Any quantities or observables that you wish to study.
-    """
-    # first initialize matrix starting with initial velocity and position
-    pos_steps = np.zeros((num_tsteps, num_atoms, dim))
-    vel_steps = np.zeros((num_tsteps, num_atoms, dim))
-
-    pos_steps[0, :, :] = init_pos
-    vel_steps[0, :, :] = init_vel
-    for i in range(num_tsteps - 1):
-        pos = pos_steps[i, :, :]
-
-        # make sure it's inside box dimension -> modulus gives periodicity
-        if periodic:
-            if dimless:
-                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :,
-                                                :] * timestep * dimless_time) % box_dim * dimless_distance
-            else:
-                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dim
-        else:
-            if dimless:
-                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep * dimless_time)
-            else:
-                pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep)
-
-        rel_pos = atomic_distances(pos, box_dim)[0]
-        rel_dis = atomic_distances(pos, box_dim)[1]
-        force = lj_force(rel_pos, rel_dis)[1]
-
-        if dimless:
-            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep * dimless_time / ARG_MASS
-        else:
-            vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
-
-    global positions_store
-    positions_store = pos_steps
-    global velocities_store
-    velocities_store = vel_steps
-
-    return pos_steps, vel_steps
 
 
 def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
@@ -480,100 +379,6 @@ def lj_force(rel_pos, rel_dist):
     return force, force_atom
 
 
-def lj_force_old(rel_pos, rel_dist):
-    """
-    Calculates the net forces on each atom.
-
-    Parameters
-    ----------
-    rel_pos : np.ndarray
-        Relative particle positions as obtained from atomic_distances
-    rel_dist : np.ndarray
-        Relative particle distances as obtained from atomic_distances
-
-    Returns
-    -------
-    force : np.ndarray
-        The force of atom j, on atom i. Where j are total-1 atoms.
-    force_atom : np.ndarray
-        The net force acting on particle i due to all other particles
-        
-    NOTE: THIS IS HOW INPUT CAN BE FOUND:
-    loc = init_position(num_atoms, box_dim, dim)
-    positions = atomic_distances(loc, box_dim)
-    rel_dist = positions[1]
-    rel_pos = positions[0]
-    """
-    dUdt = np.zeros([len(rel_dist), len(rel_dist)])
-    force = np.zeros([len(rel_pos[1]), len(rel_pos[1]), len(rel_pos[0][0])])
-
-    for i in range(0, len(rel_pos[1])):  # particle i
-        for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-            if i != j:
-                dUdt[i, j] = -24 * EPSILON * (
-                        (2 * SIGMA ** 12 / (rel_dist[i, j] ** 13)) - (SIGMA ** 6 / rel_dist[i, j] ** 13)) / (
-                                 rel_dist[i, j])
-            else:
-                dUdt[i, j] = 0
-    for i in range(0, len(rel_pos[1])):  # particle i
-        for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-            force[i, j, :] = dUdt[i, j] * rel_pos[i, j, :]
-    # while this looks horrible, and is horrible, it works. However, needs significant optimazation
-
-    force_atom = np.sum(force, axis=1)
-
-    return force, force_atom
-
-
-def fcc_lattice_old(num_atoms, lat_const):
-    """
-    Initializes a system of atoms on an fcc lattice.
-    
-    NOTE CURRENTLY, ONLY WORKS FOR 4 ATOMS
-    Initial vectors are:
-    a1 = [D,0,0]
-    a2 = [0,D,0]
-    a3 = [0,0,D]
-    Here, D is the distance between 2 adjecent corner atoms.
-    
-    lattice basis vectors are:
-    r1 = [0,0,0]
-    r2 = 1/2(a1+a2)
-    r3 = 1/2(a2+a3)
-    r4 = 1/2(a3+a1)
-    
-    FCC lattice is only possible in 3D due to definition of FCC lattice
-    
-    https://solidstate.quantumtinkerer.tudelft.nl/10_xray/ can be used as a reference
-
-    Parameters
-    ----------
-    num_atoms : int
-        The number of particles in the system
-    lat_const : float
-        The lattice constant for an fcc lattice
-
-    Returns
-    -------
-    pos_vec : np.ndarray
-        Array of particle coordinates
-    """
-    if num_atoms % 4 == 0:
-        a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
-        BZ = np.int(num_atoms/4)
-        print('N = multiple of 4')
-        # below is not elegant at all, but it works without writing over complex code for a simple thing.
-        pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
-        # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
-        offset = [0, 0, 0] 
-        pos_vec = np.add(pos_vec, offset)
-        print('fcc lattice vector is', pos_vec)
-    else:
-        print('N is not multiple of 4, FCC lattice not possible ')
-        exit()
-    return pos_vec
-
-
 def fcc_lattice(num_atoms, lat_const):
     """
     Initializes a system of atoms on an fcc lattice.
@@ -609,7 +414,7 @@ def fcc_lattice(num_atoms, lat_const):
     """
     if num_atoms >=4:
         a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
-        BZ = np.int(num_atoms/4)
+        BZ = int(num_atoms/4)
         print('N = multiple of 4')
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
         pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
@@ -681,46 +486,19 @@ def kinetic_energy(vel):
         The total kinetic energy of the system.
     """
 
-    ke = 0;
-
-    for i in range(0, len(vel)):
-        if dimless:
-            velsquared = vel**2 ##np.power(vel, 2.0)
-            vel_summed = np.sum(velsquared, axis=1)
-            vel_abs = vel_summed**0.5 #np.power(vel_summed, 0.5) #the total velocity, of 1 particle stored in an array for each particle. Since a bug was present, This is rewritten in, over simplified steps.
-            ke_part = 0.5 * vel_abs**2 #np.power(vel_abs, 2)
-            ke_total = np.sum(ke_part)
-
-        else:
+    if dimless:
+        velsquared = vel ** 2  ##np.power(vel, 2.0)
+        vel_summed = np.sum(velsquared, axis=1)
+        vel_abs = vel_summed ** 0.5  # np.power(vel_summed, 0.5) #the total velocity, of 1 particle stored in an array for each particle. Since a bug was present, This is rewritten in, over simplified steps.
+        ke_part = 0.5 * vel_abs ** 2  # np.power(vel_abs, 2)
+        ke_total = np.sum(ke_part)
+    else:
+        ke = 0
+        for i in range(0, len(vel)):
             ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
+        return ke, ke
 
     return ke_part, ke_total
-
-
-def kinetic_energyold(vel):
-    """
-    Computes the kinetic energy of an atomic system.
-
-    Parameters
-    ----------
-    vel: np.ndarray
-        Velocity of particle
-
-    Returns
-    -------
-    ke : float
-        The total kinetic energy of the system.
-    """
-
-    ke = 0;
-
-    for i in range(0, len(vel)):
-        if dimless:
-            ke += 0.5 * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
-        else:
-            ke += 0.5 * ARG_MASS * np.power(np.math.sqrt(sum(i ** 2 for i in vel[i])), 2.0)
-
-    return ke
 
 
 def potential_energy(rel_dist):
