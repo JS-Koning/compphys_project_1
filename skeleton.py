@@ -21,7 +21,7 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
 rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
-rescaling_delta = 0.024 # delta for activation of rescaling
+rescaling_delta = 0.024-0.003 # delta for activation of rescaling
 rescaling_timesteps = steps / 100 # timesteps interval for rescaling check
 
 # Parameters physical, supplied by course, or related to Argon
@@ -336,6 +336,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
                 #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
                 #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
+                current_temperature = rescaling1 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                need_rescaling = np.abs(rescaling2 - rescaling1) < rescaling_delta*0.015
             else:
                 # target kin energy
                 rescaling1 = (num_atoms - 1) * 3 / 2 * temp * KB / EPSILON
@@ -343,11 +345,10 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
                 v_lambda = np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
+                current_temperature = rescaling1 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature
 
-            #print("Temperature: ", rescaling1*EPSILON/((num_atoms - 1) * 3 / 2 * KB))
-            current_temperature = rescaling1*EPSILON/((num_atoms - 1) * 3 / 2 * KB)
-
-            if np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature:
+            if need_rescaling:
                 # limit rescaling factor between 0.5 and 2.0
                 v_lambda = max(0.5,v_lambda)
                 v_lambda = min(2.0,v_lambda)
