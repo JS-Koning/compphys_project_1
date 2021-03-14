@@ -800,7 +800,7 @@ for k in range(len(program[0][0,0,:])):
             else:
                 displacement = 0.0
 
-plt.plot(p00[:,:,0])
+plt.plot(p00[:,:,2])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)
