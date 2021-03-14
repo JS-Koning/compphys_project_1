@@ -856,6 +856,9 @@ program = main()
 plt.plot(program[0][:,:,0])
 plt.show()
 
+q = fcc_lattice(32,1)
+locationplot(q,2)
+
 # make positions continuous
 p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,:,0]))
 plt.plot(p0)
@@ -889,6 +892,12 @@ for k in range(len(program[0][0,0,:])):
                 displacement = 0.0
 
 plt.plot(p00[:,:,0])
+plt.show()
+
+plt.plot(p00[:,:,1])
+plt.show()
+
+plt.plot(p00[:,:,2])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)

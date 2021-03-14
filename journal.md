@@ -196,6 +196,7 @@ useful.
     - Axis scaling when switching from dimensional to non-dimensionality.
     - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality. (optional)
     - Cleaning up old/unused code
+    - Use a fixed seed to reproduce 'pseudo-random' simulations
     
 4. Things that went right
     - Fixed kinetic energy as was advised in the feedback from Week 3.
@@ -340,8 +341,20 @@ useful.
         - The top plot shows the position data coming from our simulation data
         - The middle plot is a fast approximation for continuous position data (less accurate)
         - The bottom plot is a slower approach for continuous position data (more accurate)
-    - The slower but more accurate approach will be used to determine the diffusion constant 
+    - The slower but more accurate approach will be used to determine the diffusion constant
 
+    ![](Week5/Figure_6.png)
+    - In this plot a FCC lattice with 32 particles is made. It would be possible to create a full simulation, this would take an entire night to run approximately.
+    - This plot is merely to showcase that it is possible to have a FCC lattice simulation of 4N particles with N>0.
+
+    ![](Week5/Figure_7.png)
+    ![](Week5/Figure_8.png)
+    ![](Week5/Figure_9.png)
+    - The above plots are made using a random simulation (target temperature: 70K, particles: 4)
+    - The top plot shows x-components, the middle plot shows y-components and the bottom plot shows z-componenets.
+    - We are able to see that the particles seem to circle around each other in pairs (it seems that way).
+    - We are also able to see that all particles drift off (a little bit) in pairs in a negative x, positive y and positive z direction.
+    
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
