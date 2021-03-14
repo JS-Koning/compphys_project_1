@@ -303,7 +303,9 @@ useful.
     - Time management
 
 6. Review (w.r.t) original plan
-    - No original plan was created, except meeting milestones.
+    - First points of our plan were met. 
+    - The milestones were met more or less, there is room for improvement still.
+    - Further discussion can be found in point 8 below (as part of the milestones).
     
 7. Figures and plots
 
@@ -345,6 +347,11 @@ useful.
         - Maximum error in positions data:  1.5387716436236905
         - Maximum error in velocities data:  0.7546526287085809
     - Minimum and maximum rescale values (lambda) are given in the data values between the square brackets.
-    
-8. Notes
-    - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
+
+8. Future plan
+    - Report:
+        - 
+    - Code:
+
+9. Notes
+    - To run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
