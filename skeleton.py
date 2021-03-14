@@ -788,16 +788,19 @@ for i in range(3):
 displacement = 0.0
 # make array with same size
 p00 = np.zeros_like(program[0])
-# time iteratio
-for i in range(len(program[0][:,0,0])):
-    p00[i, 0, 0] = program[0][i,0,0] + displacement;
-    # last value check
-    if i != len(program[0][:,0,0])-1:
-        # check for discontinuity
-        if program[0][i+1,0,0] > program[0][i,0,0] + box_dim/2:
-            displacement -= box_dim
-        if program[0][i+1,0,0] + box_dim/2 < program[0][i,0,0]:
-            displacement += box_dim
+
+# time iteration
+for k in range(len(program[0][0,0,:])):
+    for j in range(len(program[0][0,:,0])):
+        for i in range(len(program[0][:,0,0])):
+            p00[i, 0, 0] = program[0][i,j,k] + displacement;
+            # last value check
+            if i != len(program[0][:,j,k])-1:
+                # check for discontinuity
+                if program[0][i+1,j,k] > program[0][i,j,k] + box_dim/2:
+                    displacement -= box_dim
+                if program[0][i+1,j,k] + box_dim/2 < program[0][i,j,k]:
+                    displacement += box_dim
 
 plt.plot(p00[:,0,0])
 plt.show()
