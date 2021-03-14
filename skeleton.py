@@ -658,9 +658,6 @@ def locationplot(locations, latmult):
     plt.show()
 
 
-locationplot(vector,2)
-
-
 def kinetic_energy(vel):
     """
     Computes the kinetic energy of an atomic system.
@@ -811,8 +808,15 @@ def ms_displacement(loc, timestep):
         -------
 
         """
-    init_loc = loc[timestep, :, :]
-    loc_usage = loc[timestep:-1, :, :]
+    
+    # make positions continuous
+    p = np.empty(np.shape(program[0]))
+    for i in range(num_atoms-1):
+        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
+        
+    #initiate reference values        
+    init_loc = p[timestep, :, :]
+    loc_usage = p[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
     # next
     for i in range(len(loc_usage[:,0,0])):
@@ -828,7 +832,7 @@ def ms_displacement(loc, timestep):
         
     plt.plot(D)
     plt.show()
-    print('the diff coeff is shown in the plot', D)
+    print('the diff coeff is shown in the plot above', D)
     return msd_1, msd_2, msd_3
 
 
@@ -858,9 +862,7 @@ def auto_corr(data_values):
     
     Parameters
     ---------------
-    exp_val: float
-        The expectation value a given parameter
-    data_values: np.ndarray
+    data_values: np.ndarray 1D
         The data values used corresponding to the expectation value. This should be an 1D array
     Returns
     -------------
@@ -869,14 +871,17 @@ def auto_corr(data_values):
     """
     N = len(data_values)
     autoc = np.zeros(N)
-    for i in range(N):
-        nmax = N - i - 1
-        Ant = data_values[i:nmax:1]
+    for i in range(N-1):
+        nmax = N - i 
+        Ant = data_values[i:N:1]
         An = data_values[0:nmax:1]
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
     return autoc
 
 
+qq = ms_displacement(program[0], 15000)
+qqq = auto_corr(qq[2])
+plt.plot(qqq)
 
 a = np.array([1,2,3,4])
 b = np.array([4,5,6,7])
@@ -985,16 +990,22 @@ def main():
 program = main()
 
 # original positions
-plt.plot(program[0][:,0,0])
+plt.plot(program[0][:,1,:])
 plt.show()
 
 # make positions continuous
-p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,1,:]))
 plt.plot(p0)
+
+# make positions continuous
+p = np.empty(np.shape(program[0]))
+for i in range(3):
+    p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
+plt.plot(p[:,1,:])
 plt.show()
 
-qq = ms_displacement(program[0], 100)
-plt.plot(qq[2]) #plot of msd particle 0 in 0 axis
+qq = ms_displacement(program[0], 15001)
+plt.plot(qq[2][1500:]) #plot of msd particle 0 in 0 axis
 plt.show()
 
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
