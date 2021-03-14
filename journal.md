@@ -277,10 +277,12 @@ useful.
     
 2. Milestones
     - [x] Implement calculation of errors and test your implementation on data with a known correlation time. You can get the code to generate random data with a specified autocorrelation time here.
-    - [x] Compute observables including errors.
+    - [ ] Compute observables including errors.
+        - [x] Observables
+        - [ ] Errors
     - [x] Make sure your code is structured logically.
-    - [ ] Make a plan for simulations to go into the report: How do you want to validate your simulation, and which observables/simulations do you want to run?
-    - [ ] Make a brief statement about the efficiency of your code: can you run the simulations you would like to do? Would it make sense to improve performance?
+    - [x] Make a plan for simulations to go into the report: How do you want to validate your simulation, and which observables/simulations do you want to run?
+    - [x] Make a brief statement about the efficiency of your code: can you run the simulations you would like to do? Would it make sense to improve performance?
 
 3. Things that need improvement
     - For loops need to be replaced with (element-wise) matrix/vector/array multiplications to improve performance
@@ -354,6 +356,7 @@ useful.
     - The top plot shows x-components, the middle plot shows y-components and the bottom plot shows z-componenets.
     - We are able to see that the particles seem to circle around each other in pairs (it seems that way).
     - We are also able to see that all particles drift off (a little bit) in pairs in a negative x, positive y and positive z direction.
+    - However, around t=0 we can see that the overall drift velocity for all components (for the sum of all particles) is about 0.
     
     ![](Week5/Figure_9a.png)
     ![](Week5/Figure_9b.png)
@@ -366,7 +369,7 @@ useful.
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
         - To validate our simulations we will compare Verlet's and Euler's algorithms to show the difference in errors matches our expectations (Our expectation: the error is higher with Euler)
-        - Our observables are: diffusion, center of mass, drift velocity and energy
+        - Our observables are: diffusion (optionally: center of mass, drift velocity and energy)
     - Code:
         - Our simulations run efficiently, however, there is room for improvement.
         - Our code could be improved by the points mentioned in point 3 above.
