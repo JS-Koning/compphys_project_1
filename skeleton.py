@@ -630,10 +630,6 @@ def fcc_lattice(num_atoms, lat_const):
     return pos_vec
 
 
-vector = fcc_lattice(32, 1)
-print(vector.shape)
-
-
 def locationplot(locations, latmult):
     """
     Plots locations of N particles
@@ -659,7 +655,6 @@ def locationplot(locations, latmult):
     ax.set_ylim3d(0, latmult)
     ax.set_zlim3d(0, latmult)
     plt.show()
-
 
 
 locationplot(vector,2)
@@ -856,6 +851,38 @@ def msd_plot(msd,partnum):
     return
 
 
+def auto_corr(data_values):
+    """"
+    gives the normalized autocorrelation function of an obersvable function.
+    
+    Parameters
+    ---------------
+    exp_val: float
+        The expectation value a given parameter
+    data_values: np.ndarray
+        The data values used corresponding to the expectation value. This should be an 1D array
+    Returns
+    -------------
+    Autocorrelation: np.ndarray
+        The autocorrelation function for t
+    """
+    N = len(data_values)
+    autoc = np.zeros(N)
+    for i in range(N):
+        nmax = N - i - 1
+        Ant = data_values[i:nmax:1]
+        An = data_values[0:nmax:1]
+        autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
+    return autoc
+
+
+
+a = np.array([1,2,3,4])
+b = np.array([4,5,6,7])
+a*b
+(a)**2
+
+
 def process_data():
     print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
@@ -966,7 +993,7 @@ plt.plot(p0)
 plt.show()
 
 qq = ms_displacement(program[0], 100)
-plt.plot(qq[0][:,0,0]) #plot of msd particle 0 in 0 axis
+plt.plot(qq[2]) #plot of msd particle 0 in 0 axis
 plt.show()
 
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
