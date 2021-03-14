@@ -799,11 +799,6 @@ def ms_displacement(loc, timestep):
     return msd_1, msd_2, msd_3
 
 
-qq = ms_displacement(program[0], 100)
-print(qq[0].shape)
-print(qq[0])
-
-
 def msd_plot(msd,partnum):
     """"
     plots the MSD of a single atom NOTE MIGHT NOW WORK
@@ -820,7 +815,7 @@ def msd_plot(msd,partnum):
     None
     """
     plt.plot(msd[:,0])
-    plt.show
+    plt.show()
     return
 
 
@@ -924,10 +919,21 @@ def main():
 
 program = main()
 
+# original positions
+plt.plot(program[0][:,0,0])
+plt.show()
+
+# make positions continuous
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
+plt.plot(p0)
+plt.show()
+
 qq = ms_displacement(program[0], 100)
 plt.plot(qq[0][:,0,0]) #plot of msd particle 0 in 0 axis
+plt.show()
 
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
+plt.show()
 
 print(qq[1])
 
