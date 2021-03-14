@@ -781,14 +781,10 @@ def ms_displacement(loc, timestep):
     init_loc = loc[timestep, :, :]
     msd_1 = np.abs((loc - init_loc)**2)
     msd_2 = np.sum(msd_1, axis=2)
-    msd_3 = np.sum(msd_2, axis=1)
+    N = len(program[0][0,:,0]) #number of particles
+
+    msd_3 = np.sum(msd_2, axis=1)/N
     return msd_1, msd_2, msd_3
-
-
-qq = ms_displacement(program[1], 0)
-print(qq[0])
-print('msd2', qq[1])
-print('msd3', qq[2])
 
 
 def process_data():
@@ -898,4 +894,9 @@ plt.show()
 
 plt.plot(program[0][:,0,0])
 plt.show()
+
+
+qq = ms_displacement(program[0], 1)
+plt.plot(qq[1][:,0])
+
 
