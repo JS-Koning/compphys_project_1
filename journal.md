@@ -361,11 +361,11 @@ useful.
     
     ![](Week5/Figure_9a.png)
     ![](Week5/Figure_9b.png)
-    - The top plot shows how the diffusion coefficient is derived.
-        - We expect the diffusion plot to go to 0 with an exponential decay.
-        - Although the plot does not match our expectation, it is still close.
+    - The top plot shows how the diffusion coefficient that is derived.
+        - We expect the diffusion plot to go to 0, however in this plot we clearly have a peak, which should not be the case when looking at the derived location plots above.
+        - For the autocorrelation function, the behaviour (up untill timestep 1000), is quite close to the literature of an $e^{-x}$ function. However, it is clearly visable that this D value problem is clearly a problem since the time locations match of the irrigularity.
     - The bottom plot shows the autocorrelation function.
-        - ...
+        - No error time ($\tau$)  was found. Writing a fit for an function that does not has a proper fitable function is not proper. 
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
