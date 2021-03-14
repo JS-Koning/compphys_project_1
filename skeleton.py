@@ -593,16 +593,12 @@ def ms_displacement(loc, timestep):
     # make positions continuous
     p = np.empty(np.shape(program[0]))
     for i in range(num_atoms-1):
-<<<<<<< HEAD
         p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-loc[:,i,:]))
 
         
-    #initiate reference values        
-=======
-        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
+    #initiate reference values
 
     #initiate reference values
->>>>>>> f3b556e3e1079f08fd0eae21c62ab8fa289276d3
     init_loc = p[timestep, :, :]
     loc_usage = p[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
@@ -665,14 +661,6 @@ def auto_corr(data_values):
         An = data_values[0:nmax:1]
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
     return autoc
-
-
-<<<<<<< HEAD
-=======
-#qq = ms_displacement(program[0], 15000)
-#qqq = auto_corr(qq[2])
-#plt.plot(qqq)
->>>>>>> f3b556e3e1079f08fd0eae21c62ab8fa289276d3
 
 a = np.array([1,2,3,4])
 b = np.array([4,5,6,7])
