@@ -808,8 +808,11 @@ program = main()
 plt.plot(program[0][:,:,0])
 plt.show()
 
+q = fcc_lattice(32,1)
+locationplot(q,2)
+
 # make positions continuous
-p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,:,0]))
 plt.plot(p0)
 plt.show()
 
@@ -837,6 +840,14 @@ for k in range(len(program[0][0,0,:])):
                     displacement -= box_dim
                 if program[0][i+1,j,k] + box_dim/2 < program[0][i,j,k]:
                     displacement += box_dim
+            else:
+                displacement = 0.0
+
+plt.plot(p00[:,:,0])
+plt.show()
+
+plt.plot(p00[:,:,1])
+plt.show()
 
 plt.plot(p00[:,:,0])
 plt.show()

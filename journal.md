@@ -196,6 +196,7 @@ useful.
     - Axis scaling when switching from dimensional to non-dimensionality.
     - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality. (optional)
     - Cleaning up old/unused code
+    - Use a fixed seed to reproduce 'pseudo-random' simulations
     
 4. Things that went right
     - Fixed kinetic energy as was advised in the feedback from Week 3.
@@ -292,6 +293,7 @@ useful.
         - Power ^7 was missing in LJ-force
         - Factor *2 was removed in LJ-force
     - Cleaned up old (unused) code
+    - Added FCC lattice plot
     - Improved temperature rescaling (with maximum rescaling amount, maximum rescaling time-window, delta parameter, etc.)
     - Converted 'discontinuous' position data to 'continuous' position data (discontinuity due to periodicity)
     - Fixed velocity initialization so negative values are also used
@@ -309,45 +311,50 @@ useful.
     
 7. Figures and plots
 
-    ![](Week4/Figure_5.jpeg)
-    - In the figures above a plot is shown of 16 particles in 3 dimensions, with initial vectors
-    
-        init_pos = using fcc lattice function
-                
-        init_vel = using init velocities function
-        
-        box size = 2 * 1.547
-    - The top plot shows the distribution of 1000 initial velocities to show it holds to a Gaussian/MB distribution.
-    - We can see the top plot somewhat matches a Maxwell-Boltzmann distribution.
-    - The middle and bottom plot show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
-    - The middle plot is created by a simulation using Verlet's algorithm
-    - The bottom plot is created by a simulation using Euler's algorithm
-    - We can see the errors are bigger in Euler's algorithm as expected
-    - Errors are now present in both position and velocity when comparing Verlet's and Euler's algorithms.
-    
-    ![](Week4/Figure_1.png)
-    ![](Week4/Figure_2.png)
+    ![](Week5/Figure_1.png)
+    ![](Week5/Figure_2.png)
     - Attempt to apply temperature rescaling to velocity.
-    - Uses time-averages for kinetic energy to see whether the later time-average has stabillized more than the previous time-average.
-    - The threshold value was chosen to be 0.0003 for better convergence.
+    - Uses time-averages for kinetic energy to see whether it converges to the target kinetic energy
     - In the top plot Verlet's algorithm is used, in the bottom plot Euler's algorithm is used.
+    - The simulation is done with 4 particles (in FCC lattice) with random velocities.
     - Data values Verlet's algorithm:
-        - Rescaled 17719 times [ 0.8568022650005982 ~ 1.1492767191445308 ]
+        - Rescaled 16 times with λ: [ 0.8093224429233407 ~ 1.09761289352804 ]
         - Test if the total energy is conserved
-        - Initial total energy: -4.580495360788052
-        - Final total energy:   -5.097683492887791
-        - Delta total energy:   -0.5171881320997391
+        - Initial total energy: -1.0618281341493052
+        - Final total energy:   -3.991753768577154
+        - Delta total energy:   -2.929925634427849
     - Data values Euler's algorithm:
-        - Rescaled 16979 times [ 0.8446877607516494 ~ 1.245855408163942 ]
+        - Rescaled 16 times with λ: [ 0.8093040879418126 ~ 1.1324341678961662 ]
         - Test if the total energy is conserved
-        - Initial total energy: -4.580495360788052
-        - Final total energy:   -5.091795563867885
-        - Delta total energy:   -0.5113002030798333
+        - Initial total energy: -1.0618281341493052
+        - Final total energy:   -3.6255841659786023
+        - Delta total energy:   -2.563756031829297
     - Verlet's algorithm versus Euler's algorithm:
-        - Maximum error in positions data:  1.5387716436236905
-        - Maximum error in velocities data:  0.7546526287085809
+        - Maximum error in positions data:  1.5468906302324594
+        - Maximum error in velocities data:  1.4041475121109088
     - Minimum and maximum rescale values (lambda) are given in the data values between the square brackets.
+    
+    ![](Week5/Figure_3.png)
+    ![](Week5/Figure_4.png)
+    ![](Week5/Figure_5.png)
+    - In the figures above a plot is shown of the x-component of the positions.
+        - The top plot shows the position data coming from our simulation data
+        - The middle plot is a fast approximation for continuous position data (less accurate)
+        - The bottom plot is a slower approach for continuous position data (more accurate)
+    - The slower but more accurate approach will be used to determine the diffusion constant
 
+    ![](Week5/Figure_6.png)
+    - In this plot a FCC lattice with 32 particles is made. It would be possible to create a full simulation, this would take an entire night to run approximately.
+    - This plot is merely to showcase that it is possible to have a FCC lattice simulation of 4N particles with N>0.
+
+    ![](Week5/Figure_7.png)
+    ![](Week5/Figure_8.png)
+    ![](Week5/Figure_9.png)
+    - The above plots are made using a random simulation (target temperature: 70K, particles: 4)
+    - The top plot shows x-components, the middle plot shows y-components and the bottom plot shows z-componenets.
+    - We are able to see that the particles seem to circle around each other in pairs (it seems that way).
+    - We are also able to see that all particles drift off (a little bit) in pairs in a negative x, positive y and positive z direction.
+    
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
@@ -357,5 +364,6 @@ useful.
         - Our simulations run efficiently, however, there is room for improvement.
         - Our code could be improved by the points mentioned in point 3 above.
         - It would make sense to optimize our code to increase the amount of testing/improving/bugfixing possible within a limited timeframe.
+        - It would also make sense to optimize our code to allow more complex simulations
 9. Notes
     - To run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
