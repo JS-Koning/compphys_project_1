@@ -26,7 +26,7 @@ rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 30  # Kelvin
+temp = 70  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -779,12 +779,49 @@ def ms_displacement(loc, timestep):
 
         """
     init_loc = loc[timestep, :, :]
-    msd_1 = np.abs((loc - init_loc)**2)
+    loc_usage = loc[timestep:-1, :, :]
+    msd_1 = np.abs((loc_usage - init_loc)**2)
+    # next
+    for i in range(len(loc_usage[:,0,0])):
+        msd_1[i, :, :] = msd_1[i,:,:] / (i + 1)
+        
     msd_2 = np.sum(msd_1, axis=2)
     N = len(program[0][0,:,0]) #number of particles
-
     msd_3 = np.sum(msd_2, axis=1)/N
+    print(len(msd_3))
+    D = np.empty(len(msd_3))
+    for i in range(len(msd_3)):
+        D[i] = msd_3[i] / (6*(i + 1))
+        
+    plt.plot(D)
+    plt.show()
+    print('the diff coeff is shown in the plot', D)
     return msd_1, msd_2, msd_3
+
+
+qq = ms_displacement(program[0], 100)
+print(qq[0].shape)
+print(qq[0])
+
+
+def msd_plot(msd,partnum):
+    """"
+    plots the MSD of a single atom NOTE MIGHT NOW WORK
+    Parameters
+    ----------
+    msd_2: np.ndarray
+        the msq time dependent array, summed over the dimensions, for M particles
+        [msd_part1(dtime=0), msd_part2(dtime=0),... ], [msd_part1(dtime=1), msd_part2(time=1),... ], ....
+        best use case: msd_2 from ms_displacement function
+    partnum: int
+        the particle that is to be plotted by the function
+    Returns
+    ----------
+    None
+    """
+    plt.plot(msd[:,0])
+    plt.show
+    return
 
 
 def process_data():
@@ -892,10 +929,7 @@ plt.plot(qq[0][:,0,0]) #plot of msd particle 0 in 0 axis
 
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
 
-print(program[0])
-print('sfsf', program[0][:,0,0])
-
-print(program[0])
+print(qq[1])
 
 print(qq[0])
 print('fsf', qq[0][:,0,0])
