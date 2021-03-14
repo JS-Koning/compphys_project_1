@@ -344,7 +344,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 # new kin energy avg
                 rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
-                v_lambda = np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
+                v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
                 current_temperature = rescaling1 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature
 
