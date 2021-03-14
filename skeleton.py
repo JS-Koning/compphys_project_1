@@ -686,7 +686,7 @@ def ms_displacement_old(loc, timestep):
     print('the diff coeff is shown in the plot above', D)
     return msd_1, msd_2, msd_3
 
-q = ms_displacement(program[0], 15000)
+#q = ms_displacement(program[0], 15000)
 
 
 def msd_plot(msd,partnum):
@@ -838,7 +838,7 @@ plt.plot(program[0][:,:,0])
 plt.show()
 
 # make positions continuous
-p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,:,0]))
 plt.plot(p0)
 plt.show()
 
@@ -869,7 +869,7 @@ for k in range(len(program[0][0,0,:])):
             else:
                 displacement = 0.0
 
-plt.plot(p00[:,:,2])
+plt.plot(p00[:,:,0])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)
