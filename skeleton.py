@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This is a suggestion for structuring your simulation code properly.
 However, it is not set in stone. You may modify it if you feel like
@@ -753,6 +754,43 @@ def total_energy(vel, rel_dist):
     return kinetic_energy(vel)[1] + potential_energy(rel_dist)[2]
 
 
+def ms_displacement(loc, timestep):
+    """
+        Computes the mean square displacement of a single atom.
+
+        Parameters
+        ----------
+        loc: np.ndarray
+            locations of particles over time [timestep, particle, dims]
+        timestep : int
+            the timestep of the particle which is used as initial value
+
+        Returns
+        -------
+        msd_1: np.ndarray
+            The msq time dependent array, for N dimensions and M particles 
+        msd_2: np.ndarray
+            the msq time dependent array, summed over the dimensions, for M particles
+            [msd_part1(dtime=0), msd_part2(dtime=0),... ], [msd_part1(dtime=1), msd_part2(time=1),... ], ....
+        msd_3: np.ndarray
+            the msq time dependent vector, summed over both dimensions and particles
+            [msd_total(dtime=0), msd_total(dtime=1),.....]
+        -------
+
+        """
+    init_loc = loc[timestep, :, :]
+    msd_1 = np.abs((loc - init_loc)**2)
+    msd_2 = np.sum(msd_1, axis=2)
+    msd_3 = np.sum(msd_2, axis=1)
+    return msd_1, msd_2, msd_3
+
+
+qq = ms_displacement(program[1], 0)
+print(qq[0])
+print('msd2', qq[1])
+print('msd3', qq[2])
+
+
 def process_data():
     print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
@@ -853,7 +891,7 @@ def main():
 
 program = main()
 
-print(velocities_store.shape)
+print(program[1][:,0,:])
 
 plt.plot(program[1][:,0,0])
 plt.show()
