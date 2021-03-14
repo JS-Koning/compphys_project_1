@@ -21,7 +21,7 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
 rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
-rescaling_delta = 0.003 # delta for activation of rescaling
+rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 
 # Parameters physical, supplied by course, or related to Argon
