@@ -590,7 +590,8 @@ def ms_displacement(loc, timestep):
     # make positions continuous
     p = np.empty(np.shape(program[0]))
     for i in range(num_atoms-1):
-        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
+        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-loc[:,i,:]))
+
         
     #initiate reference values        
     init_loc = p[timestep, :, :]
@@ -657,9 +658,6 @@ def auto_corr(data_values):
     return autoc
 
 
-qq = ms_displacement(program[0], 15000)
-qqq = auto_corr(qq[2])
-plt.plot(qqq)
 
 a = np.array([1,2,3,4])
 b = np.array([4,5,6,7])
@@ -782,8 +780,8 @@ for i in range(3):
 plt.plot(p[:,1,:])
 plt.show()
 
-qq = ms_displacement(program[0], 15001)
-plt.plot(qq[2][1500:]) #plot of msd particle 0 in 0 axis
+qq = ms_displacement(program[0], 14999)
+plt.plot(qq[2]) #plot of msd particle 0 in 0 axis
 plt.show()
 
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
