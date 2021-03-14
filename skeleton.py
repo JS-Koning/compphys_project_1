@@ -463,6 +463,9 @@ def locationplot(locations, latmult):
     plt.show()
 
 
+#locationplot(vector,2)
+
+
 def kinetic_energy(vel):
     """
     Computes the kinetic energy of an atomic system.
@@ -586,14 +589,20 @@ def ms_displacement(loc, timestep):
         -------
 
         """
-    
+
     # make positions continuous
     p = np.empty(np.shape(program[0]))
     for i in range(num_atoms-1):
+<<<<<<< HEAD
         p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-loc[:,i,:]))
 
         
     #initiate reference values        
+=======
+        p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
+
+    #initiate reference values
+>>>>>>> f3b556e3e1079f08fd0eae21c62ab8fa289276d3
     init_loc = p[timestep, :, :]
     loc_usage = p[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
@@ -651,13 +660,19 @@ def auto_corr(data_values):
     N = len(data_values)
     autoc = np.zeros(N)
     for i in range(N-1):
-        nmax = N - i 
+        nmax = N - i
         Ant = data_values[i:N:1]
         An = data_values[0:nmax:1]
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
     return autoc
 
 
+<<<<<<< HEAD
+=======
+#qq = ms_displacement(program[0], 15000)
+#qqq = auto_corr(qq[2])
+#plt.plot(qqq)
+>>>>>>> f3b556e3e1079f08fd0eae21c62ab8fa289276d3
 
 a = np.array([1,2,3,4])
 b = np.array([4,5,6,7])
@@ -766,18 +781,37 @@ def main():
 program = main()
 
 # original positions
-plt.plot(program[0][:,1,:])
+plt.plot(program[0][:,0,0])
 plt.show()
 
 # make positions continuous
-p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,1,:]))
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
 plt.plot(p0)
+plt.show()
 
 # make positions continuous
 p = np.empty(np.shape(program[0]))
 for i in range(3):
     p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
-plt.plot(p[:,1,:])
+#plt.plot(p[:,1,:])
+#plt.show()
+
+# make positions continuous fix
+displacement = 0.0
+# make array with same size
+p00 = np.zeros_like(program[0])
+# time iteratio
+for i in range(len(program[0][:,0,0])):
+    p00[i, 0, 0] = program[0][i,0,0] + displacement;
+    # last value check
+    if i != len(program[0][:,0,0])-1:
+        # check for discontinuity
+        if program[0][i+1,0,0] > program[0][i,0,0] + box_dim/2:
+            displacement -= box_dim
+        if program[0][i+1,0,0] + box_dim/2 < program[0][i,0,0]:
+            displacement += box_dim
+
+plt.plot(p00[:,0,0])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)
