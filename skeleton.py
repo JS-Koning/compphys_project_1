@@ -591,6 +591,73 @@ def ms_displacement(loc, timestep):
         """
 
     # make positions continuous
+    displacement = 0.0
+    # make array with same size
+    p00 = np.zeros_like(loc)
+    # time iteration
+    for k in range(len(loc[0,0,:])):
+        for j in range(len(loc[0,:,0])):
+            for i in range(len(loc[:,0,0])):
+                p00[i, j, k] = loc[i,j,k] + displacement;
+                # last value check
+                if i != len(loc[:,j,k])-1:
+                    # check for discontinuity
+                    if loc[i+1,j,k] > loc[i,j,k] + box_dim/2:
+                        displacement -= box_dim
+                    if loc[i+1,j,k] + box_dim/2 < loc[i,j,k]:
+                        displacement += box_dim
+
+        
+    #initiate reference values
+
+    #initiate reference values
+    init_loc = p00[timestep, :, :]
+    loc_usage = p00[timestep:-1, :, :]
+    msd_1 = np.abs((loc_usage - init_loc)**2)
+    # next
+    for i in range(len(loc_usage[:,0,0])):
+        msd_1[i, :, :] = msd_1[i,:,:] / (i + 1)
+        
+    msd_2 = np.sum(msd_1, axis=2)
+    N = len(program[0][0,:,0]) #number of particles
+    msd_3 = np.sum(msd_2, axis=1)/N
+    print(len(msd_3))
+    D = np.empty(len(msd_3))
+    for i in range(len(msd_3)):
+        D[i] = msd_3[i] / (6*(i + 1))
+        
+    plt.plot(D)
+    plt.show()
+    print('the diff coeff is shown in the plot above', D)
+    return msd_1, msd_2, msd_3
+
+
+def ms_displacement_old(loc, timestep):
+    """
+        Computes the mean square displacement of a single atom.
+
+        Parameters
+        ----------
+        loc: np.ndarray
+            locations of particles over time [timestep, particle, dims]
+        timestep : int
+            the timestep of the particle which is used as initial value
+
+        Returns
+        -------
+        msd_1: np.ndarray
+            The msq time dependent array, for N dimensions and M particles 
+        msd_2: np.ndarray
+            the msq time dependent array, summed over the dimensions, for M particles
+            [msd_part1(dtime=0), msd_part2(dtime=0),... ], [msd_part1(dtime=1), msd_part2(time=1),... ], ....
+        msd_3: np.ndarray
+            the msq time dependent vector, summed over both dimensions and particles
+            [msd_total(dtime=0), msd_total(dtime=1),.....]
+        -------
+
+        """
+
+    # make positions continuous
     p = np.empty(np.shape(program[0]))
     for i in range(num_atoms-1):
         p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-loc[:,i,:]))
@@ -618,6 +685,8 @@ def ms_displacement(loc, timestep):
     plt.show()
     print('the diff coeff is shown in the plot above', D)
     return msd_1, msd_2, msd_3
+
+q = ms_displacement(program[0], 15000)
 
 
 def msd_plot(msd,partnum):
@@ -765,7 +834,7 @@ def main():
 program = main()
 
 # original positions
-plt.plot(program[0][:,0,0])
+plt.plot(program[0][:,:,0])
 plt.show()
 
 # make positions continuous
