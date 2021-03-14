@@ -361,7 +361,7 @@ useful.
         - We expect the diffusion plot to go to 0 with an exponential decay.
         - Although the plot does not match our expectation, it is still close.
     - The bottom plot shows the autocorrelation function.
-        - 
+        - ...
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
