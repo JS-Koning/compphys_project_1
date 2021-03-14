@@ -354,6 +354,7 @@ useful.
     - The top plot shows x-components, the middle plot shows y-components and the bottom plot shows z-componenets.
     - We are able to see that the particles seem to circle around each other in pairs (it seems that way).
     - We are also able to see that all particles drift off (a little bit) in pairs in a negative x, positive y and positive z direction.
+    - However, around t=0 we can see that the overall drift velocity for all components (for the sum of all particles) is about 0.
     
     ![](Week5/Figure_9a.png)
     ![](Week5/Figure_9b.png)
