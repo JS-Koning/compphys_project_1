@@ -335,6 +335,7 @@ useful.
         - Maximum error in positions data:  1.5468906302324594
         - Maximum error in velocities data:  1.4041475121109088
     - Minimum and maximum rescale values (lambda) are given in the data values between the square brackets.
+    - total energy changes are (nearly) only introduced by rescaling 
     
     ![](Week5/Figure_3.png)
     ![](Week5/Figure_4.png)
@@ -364,12 +365,13 @@ useful.
         - We expect the diffusion plot to go to 0, however in this plot we clearly have a peak, which should not be the case when looking at the derived location plots above.
         - For the autocorrelation function, the behaviour (up untill timestep 1000), is quite close to the literature of an $e^{-x}$ function. However, it is clearly visable that this D value problem is clearly a problem since the time locations match of the irrigularity.
     - The bottom plot shows the autocorrelation function.
-        - No error time ($\tau$)  was found. Writing a fit for an function that does not has a proper fitable function is not proper. 
+        - No error time ($\tau$)  was found. Writing a fit for an function that does not has a proper fitable function is not a good method. 
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
         - To validate our simulations we will compare Verlet's and Euler's algorithms to show the difference in errors matches our expectations (Our expectation: the error is higher with Euler)
         - Our observables are: diffusion (optionally: center of mass, drift velocity and energy)
+            - for center of mass and drift velocity, the method of putting the particles in the periodic boundary condition to a "real" infinite box <strong> after </strong> simulations has been applied to the diffusion coefficient.
     - Code:
         - Our simulations run efficiently, however, there is room for improvement.
         - Our code could be improved by the points mentioned in point 3 above.
