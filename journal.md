@@ -262,4 +262,89 @@ useful.
 
 
 ## Week 5
-(due 14 March 2021, 23:59)
+1. General
+    - A small plan of work this week:
+        - Fix the kinetic energy first using a 2 particle simulation to find the culprit.
+        - Fix the temperature rescaling using the improved kinetic energy
+        - Add observable(s) after stable temperature rescaling
+        - Meet milestones of this week
+    - We decided to update eachother personally on Whatsapp when:
+        - Problems were solved
+        - Remarks on code
+        - Bugfixes of the code of partner
+    - In case of help or not understanding each other's code, Discord calls were made to discuss.
+    
+2. Milestones
+    - [x] Implement calculation of errors and test your implementation on data with a known correlation time. You can get the code to generate random data with a specified autocorrelation time here.
+    - [x] Compute observables including errors.
+    - [x] Make sure your code is structured logically.
+    - [ ] Make a plan for simulations to go into the report: How do you want to validate your simulation, and which observables/simulations do you want to run?
+    - [ ] Make a brief statement about the efficiency of your code: can you run the simulations you would like to do? Would it make sense to improve performance?
+
+3. Things that need improvement
+    - For loops need to be replaced with (element-wise) matrix/vector/array multiplications to improve performance
+    - Axis scaling when switching from dimensional to non-dimensionality.
+    - A time dependent 2D plot, like in the lecture notes of week 1,2 would be a nice functionality. (optional)
+    
+4. Things that went right
+    - Fixed kinetic energy as was advised in the feedback from Week 3 and 4.
+        - Bug was not present in kinetic energy but in LJ-force
+        - Power ^7 was missing in LJ-force
+        - Factor *2 was removed in LJ-force
+    - Cleaned up old (unused) code
+    - Improved temperature rescaling (with maximum rescaling amount, maximum rescaling time-window, delta parameter, etc.)
+    - Converted 'discontinuous' position data to 'continuous' position data (discontinuity due to periodicity)
+    - Fixed velocity initialization so negative values are also used
+    - Fixed initialization so now it is temperature dependant
+    - Fixed velocity initialization so the expected mean (from MB-distibution) also works in higher dimensions
+    - Improved velocity initialization so the final mean over all particles is 0 to avoid 'drift velocity'.
+
+5. Things that went wrong
+    - Time management
+
+6. Review (w.r.t) original plan
+    - No original plan was created, except meeting milestones.
+    
+7. Figures and plots
+
+    ![](Week4/Figure_5.jpeg)
+    - In the figures above a plot is shown of 16 particles in 3 dimensions, with initial vectors
+    
+        init_pos = using fcc lattice function
+                
+        init_vel = using init velocities function
+        
+        box size = 2 * 1.547
+    - The top plot shows the distribution of 1000 initial velocities to show it holds to a Gaussian/MB distribution.
+    - We can see the top plot somewhat matches a Maxwell-Boltzmann distribution.
+    - The middle and bottom plot show the energies: blue as kinetic energy, green as total energy and orange as potential energy.
+    - The middle plot is created by a simulation using Verlet's algorithm
+    - The bottom plot is created by a simulation using Euler's algorithm
+    - We can see the errors are bigger in Euler's algorithm as expected
+    - Errors are now present in both position and velocity when comparing Verlet's and Euler's algorithms.
+    
+    ![](Week4/Figure_1.png)
+    ![](Week4/Figure_2.png)
+    - Attempt to apply temperature rescaling to velocity.
+    - Uses time-averages for kinetic energy to see whether the later time-average has stabillized more than the previous time-average.
+    - The threshold value was chosen to be 0.0003 for better convergence.
+    - In the top plot Verlet's algorithm is used, in the bottom plot Euler's algorithm is used.
+    - Data values Verlet's algorithm:
+        - Rescaled 17719 times [ 0.8568022650005982 ~ 1.1492767191445308 ]
+        - Test if the total energy is conserved
+        - Initial total energy: -4.580495360788052
+        - Final total energy:   -5.097683492887791
+        - Delta total energy:   -0.5171881320997391
+    - Data values Euler's algorithm:
+        - Rescaled 16979 times [ 0.8446877607516494 ~ 1.245855408163942 ]
+        - Test if the total energy is conserved
+        - Initial total energy: -4.580495360788052
+        - Final total energy:   -5.091795563867885
+        - Delta total energy:   -0.5113002030798333
+    - Verlet's algorithm versus Euler's algorithm:
+        - Maximum error in positions data:  1.5387716436236905
+        - Maximum error in velocities data:  0.7546526287085809
+    - Minimum and maximum rescale values (lambda) are given in the data values between the square brackets.
+    
+8. Notes
+    - to run the code, please fully run skeleton.py file. Parameters can be set in the top section. main() function is the function to combine functions to produce plots.
