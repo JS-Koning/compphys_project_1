@@ -463,7 +463,7 @@ def locationplot(locations, latmult):
     plt.show()
 
 
-#locationplot(vector,2)
+# locationplot(vector,2)
 
 
 def kinetic_energy(vel):
@@ -662,10 +662,6 @@ def auto_corr(data_values):
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
     return autoc
 
-a = np.array([1,2,3,4])
-b = np.array([4,5,6,7])
-a*b
-(a)**2
 
 
 def process_data():
@@ -804,18 +800,23 @@ for k in range(len(program[0][0,0,:])):
             else:
                 displacement = 0.0
 
-plt.plot(p00[:,0,0])
+plt.plot(p00[:,:,0])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)
 plt.plot(qq[2]) #plot of msd particle 0 in 0 axis
 plt.show()
 
-plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
-plt.show()
+qqq = ms_displacement(p00, 15000)
 
-a = ms_displacement(program[0], 10000)
-
+a = ms_displacement(program[0], 15000)
+print(a)
 plt.plot(a[2])
+
+b = ms_displacement(p00,15000)
+plt.plot(b[1][:,0])
+
+plt.plot(p00[:,:,0])
+print(p00)
 
 
