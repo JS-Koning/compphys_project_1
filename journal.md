@@ -355,6 +355,13 @@ useful.
     - We are able to see that the particles seem to circle around each other in pairs (it seems that way).
     - We are also able to see that all particles drift off (a little bit) in pairs in a negative x, positive y and positive z direction.
     
+    ![](Week5/Figure_9a.png)
+    ![](Week5/Figure_9b.png)
+    - The top plot shows how the diffusion coefficient is derived.
+        - We expect the diffusion plot to go to 0 with an exponential decay.
+        - Although the plot does not match our expectation, it is still close.
+    - The bottom plot shows the autocorrelation function.
+        - 
 8. Future plan
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
