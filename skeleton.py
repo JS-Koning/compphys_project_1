@@ -21,8 +21,8 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm
 rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
-rescaling_delta = 0.024-0.003 # delta for activation of rescaling
-rescaling_timesteps = steps / 100 # timesteps interval for rescaling check
+rescaling_delta = 0.003 # delta for activation of rescaling
+rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 30  # Kelvin
@@ -329,9 +329,9 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             # Rescale velocity
             if rescaling_mode == 0:
                 # old kin energy avg
-                rescaling1 = np.sum([kinetic_energy(vel_steps[i-x, :, :])[1] for x in range(min(i+1,10))])/min(i+1,10)
+                rescaling1 = np.sum([kinetic_energy(vel_steps[i-x, :, :])[1] for x in range(min(i+1,5000))])/min(i+1,5000)
                 # new kin energy avg
-                rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
+                rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(i + 1, 5000)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
                 v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
                 #v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
@@ -342,7 +342,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 # target kin energy
                 rescaling1 = (num_atoms - 1) * 3 / 2 * temp * KB / EPSILON
                 # new kin energy avg
-                rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 10))]) / min(i + 1, 10)
+                rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(i + 1, 5000)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
                 v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
                 current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
