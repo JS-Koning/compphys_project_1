@@ -622,11 +622,48 @@ def fcc_lattice(num_atoms, lat_const):
             for i in range(2):
                 pos_ext = pos_vec+a[i,:]
                 pos_vec = np.append(pos_vec, pos_ext, axis=0)
+            pos_vec = np.append(pos_vec, pos_vec+a[2,:], axis=0)
             print('fcc lattice vector is', pos_vec)
+            
     else:
         print('N is not multiple of 4, FCC lattice not possible ')
         exit()
     return pos_vec
+
+
+vector = fcc_lattice(32, 1)
+print(vector.shape)
+
+
+def locationplot(locations, latmult):
+    """
+    Plots locations of N particles
+    
+
+    Parameters
+    ----------
+    locations : np.ndarray
+        locations of particles
+    latmult: scalar
+        How many lattices are to be plotted\
+        latmult=1 4particles; latmult=2 16particles
+    
+    Returns
+    -------
+    plot : plt.plot
+        plot of the locations of the particles.
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(locations[:, 0], locations[:, 1], locations[:, 2])
+    ax.set_xlim3d(0, latmult)
+    ax.set_ylim3d(0, latmult)
+    ax.set_zlim3d(0, latmult)
+    plt.show()
+
+
+
+locationplot(vector,2)
 
 
 def kinetic_energy(vel):
@@ -936,9 +973,8 @@ plt.show()
 plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
 plt.show()
 
-print(qq[1])
+a = ms_displacement(program[0], 10000)
 
-print(qq[0])
-print('fsf', qq[0][:,0,0])
+plt.plot(a[2])
 
 
