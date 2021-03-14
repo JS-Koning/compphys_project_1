@@ -586,6 +586,7 @@ def ms_displacement(loc, timestep):
         msd_3: np.ndarray
             the msq time dependent vector, summed over both dimensions and particles
             [msd_total(dtime=0), msd_total(dtime=1),.....]
+        D: Diffusion coefficient according to lecture notes. NEEDS ELABORATION
         -------
 
         """
@@ -629,7 +630,7 @@ def ms_displacement(loc, timestep):
     plt.plot(D)
     plt.show()
     print('the diff coeff is shown in the plot above', D)
-    return msd_1, msd_2, msd_3
+    return msd_1, msd_2, msd_3, D
 
 
 def ms_displacement_old(loc, timestep):
@@ -653,6 +654,7 @@ def ms_displacement_old(loc, timestep):
         msd_3: np.ndarray
             the msq time dependent vector, summed over both dimensions and particles
             [msd_total(dtime=0), msd_total(dtime=1),.....]
+
         -------
 
         """
@@ -686,8 +688,17 @@ def ms_displacement_old(loc, timestep):
     print('the diff coeff is shown in the plot above', D)
     return msd_1, msd_2, msd_3
 
-q = ms_displacement(program[0], 15000)
+#q = ms_displacement(program[0], 15000)
+#plt.plot(program[0][:,:,2])
 
+
+# +
+#plt.plot(q[0][:,:,2])
+#plt.plot(q[3])
+
+# +
+#plt.plot(q[3])
+# -
 
 def msd_plot(msd,partnum):
     """"
@@ -717,6 +728,7 @@ def auto_corr(data_values):
     ---------------
     data_values: np.ndarray 1D
         The data values used corresponding to the expectation value. This should be an 1D array
+        most likely, this is ms_deviation[2]
     Returns
     -------------
     Autocorrelation: np.ndarray
@@ -732,6 +744,13 @@ def auto_corr(data_values):
     return autoc
 
 
+# +
+#q = ms_displacement(program[0], 15000)
+#Q = auto_corr(q[3])
+
+# +
+#plt.plot(Q)
+# -
 
 def process_data():
     print("Test if the total energy is conserved")
@@ -866,8 +885,6 @@ for k in range(len(program[0][0,0,:])):
                     displacement -= box_dim
                 if program[0][i+1,j,k] + box_dim/2 < program[0][i,j,k]:
                     displacement += box_dim
-            else:
-                displacement = 0.0
 
 plt.plot(p00[:,:,0])
 plt.show()
