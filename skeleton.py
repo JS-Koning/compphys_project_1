@@ -660,9 +660,9 @@ def auto_corr(data_values):
     return autoc
 
 
-qq = ms_displacement(program[0], 15000)
-qqq = auto_corr(qq[2])
-plt.plot(qqq)
+#qq = ms_displacement(program[0], 15000)
+#qqq = auto_corr(qq[2])
+#plt.plot(qqq)
 
 a = np.array([1,2,3,4])
 b = np.array([4,5,6,7])
@@ -771,19 +771,20 @@ def main():
 program = main()
 
 # original positions
-plt.plot(program[0][:,1,:])
+plt.plot(program[0][:,0,0])
 plt.show()
 
 # make positions continuous
-p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,1,:]))
+p0 = (box_dim/2 - np.abs(box_dim/2-program[0][:,0,0]))
 plt.plot(p0)
+plt.show()
 
 # make positions continuous
 p = np.empty(np.shape(program[0]))
 for i in range(3):
     p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
-plt.plot(p[:,1,:])
-plt.show()
+#plt.plot(p[:,1,:])
+#plt.show()
 
 # make positions continuous fix
 displacement = 0.0
