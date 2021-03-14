@@ -340,6 +340,7 @@ useful.
         - The top plot shows the position data coming from our simulation data
         - The middle plot is a fast approximation for continuous position data (less accurate)
         - The bottom plot is a slower approach for continuous position data (more accurate)
+    - The slower but more accurate approach will be used to determine the diffusion constant 
 
 8. Future plan
     - Report:
