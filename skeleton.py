@@ -886,7 +886,7 @@ for k in range(len(program[0][0,0,:])):
                 if program[0][i+1,j,k] + box_dim/2 < program[0][i,j,k]:
                     displacement += box_dim
 
-plt.plot(p00[:,:,0])
+plt.plot(p00[:,:,2])
 plt.show()
 
 qq = ms_displacement(program[0], 14999)
