@@ -367,7 +367,7 @@ useful.
     - Report:
         - To validate our simulations we will go back to 2 particles with simple box dimensions. Here we can compare a few handpicked and handwritten solutions to handpicked and computed solutions.
         - To validate our simulations we will compare Verlet's and Euler's algorithms to show the difference in errors matches our expectations (Our expectation: the error is higher with Euler)
-        - Our observables are: diffusion, center of mass, drift velocity and energy
+        - Our observables are: diffusion, (optionally: center of mass, drift velocity and energy)
     - Code:
         - Our simulations run efficiently, however, there is room for improvement.
         - Our code could be improved by the points mentioned in point 3 above.
