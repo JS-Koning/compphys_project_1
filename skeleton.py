@@ -24,6 +24,7 @@ rescaling = True # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
+rescaling_max_timesteps = 15000 # max timesteps
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 70  # Kelvin
@@ -326,7 +327,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
-        if rescaling and (i %rescaling_timesteps==0):
+        if rescaling and (i %rescaling_timesteps==0) and (i < rescaling_max_timesteps+1):
             # Rescale velocity
             if rescaling_mode == 0:
                 # old kin energy avg
