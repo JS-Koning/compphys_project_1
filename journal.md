@@ -277,10 +277,12 @@ useful.
     
 2. Milestones
     - [x] Implement calculation of errors and test your implementation on data with a known correlation time. You can get the code to generate random data with a specified autocorrelation time here.
-    - [x] Compute observables including errors.
+    - [ ] Compute observables including errors.
+        - [x] Observables
+        - [ ] Errors
     - [x] Make sure your code is structured logically.
-    - [ ] Make a plan for simulations to go into the report: How do you want to validate your simulation, and which observables/simulations do you want to run?
-    - [ ] Make a brief statement about the efficiency of your code: can you run the simulations you would like to do? Would it make sense to improve performance?
+    - [x] Make a plan for simulations to go into the report: How do you want to validate your simulation, and which observables/simulations do you want to run?
+    - [x] Make a brief statement about the efficiency of your code: can you run the simulations you would like to do? Would it make sense to improve performance?
 
 3. Things that need improvement
     - For loops need to be replaced with (element-wise) matrix/vector/array multiplications to improve performance
