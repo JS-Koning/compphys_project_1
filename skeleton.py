@@ -793,7 +793,7 @@ p00 = np.zeros_like(program[0])
 for k in range(len(program[0][0,0,:])):
     for j in range(len(program[0][0,:,0])):
         for i in range(len(program[0][:,0,0])):
-            p00[i, 0, 0] = program[0][i,j,k] + displacement;
+            p00[i, j, k] = program[0][i,j,k] + displacement;
             # last value check
             if i != len(program[0][:,j,k])-1:
                 # check for discontinuity
