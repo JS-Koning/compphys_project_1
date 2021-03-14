@@ -887,16 +887,17 @@ def main():
 
 program = main()
 
-print(program[1][:,0,:])
+qq = ms_displacement(program[0], 100)
+plt.plot(qq[0][:,0,0]) #plot of msd particle 0 in 0 axis
 
-plt.plot(program[1][:,0,0])
-plt.show()
+plt.plot(program[0][:,0,0]) #location of particle 0 in 0 axis
 
-plt.plot(program[0][:,0,0])
-plt.show()
+print(program[0])
+print('sfsf', program[0][:,0,0])
 
+print(program[0])
 
-qq = ms_displacement(program[0], 1)
-plt.plot(qq[1][:,0])
+print(qq[0])
+print('fsf', qq[0][:,0,0])
 
 
