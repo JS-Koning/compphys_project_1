@@ -8,6 +8,9 @@ you have a good reason to do so.
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+import random
+random.seed(6545640)
 
 global positions_store, velocities_store
 
@@ -462,10 +465,6 @@ def locationplot(locations, latmult):
     ax.set_zlim3d(0, latmult)
     plt.show()
 
-
-q = fcc_lattice(32,1)
-locationplot(q,2)
-
 # q = fcc_lattice(32,1)
 # locationplot(q,2)
 
@@ -616,7 +615,11 @@ def ms_displacement(loc, timestep):
     #initiate reference values
 
     #initiate reference values
-    init_loc = p00[timestep, :, :]
+    init_loc2 = p00[timestep, :, :]
+    print('currently we take an average for initial location! see diff coefficient and autocorr function to see if it makes sense')
+    print(init_loc2)
+    init_loc = np.mean(p00[int(timestep*0.98):int(timestep*1.02), :, :], axis=0)
+    print(init_loc)
     loc_usage = p00[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
     # next
@@ -631,12 +634,25 @@ def ms_displacement(loc, timestep):
     for i in range(len(msd_3)):
         D[i] = msd_3[i] / (6*(i + 1))
         
-    plt.plot(D)
+
+    plt.plot(p00[:,:,0])
+    plt.title('continous location for x direction')
     plt.show()
-    print('the diff coeff is shown in the plot above', D)
+    plt.plot(p00[:,:,1])
+    plt.title('continous location for y direction')
+    plt.show()
     plt.plot(p00[:,:,2])
+    plt.title('continous location for z direction')
     plt.show()
     print('the MSD  is shown in the plot above for all particles in the z dir')
+    plt.plot(msd_2[:,:])
+    plt.title('the mean square displacement for each particle summed over all directions')
+    plt.show()
+    
+    plt.plot(D)
+    plt.title('The diffusion coefficient')
+    plt.show()
+    #print('the diff coeff is shown in the plot above', D)
     return msd_1, msd_2, msd_3, D
 
 
@@ -691,19 +707,21 @@ def auto_corr(data_values):
         Ant = data_values[i:N:1]
         An = data_values[0:nmax:1]
         autoc [i] = ((N-i) * np.sum( (Ant*An) ) - ( np.sum(An) * np.sum(Ant) )) / ( np.sqrt((N-i) * np.sum(An**2) - np.sum(An)**2) * np.sqrt((N-i) * np.sum(Ant**2) - np.sum(Ant)**2)  )
+    plt.plot(autoc)
+    plt.title('The autocorrelation function')
+    plt.show()
     return autoc
 
-#q = ms_displacement(program[0], 15000)
-#Q = auto_corr(q[3])
+
+
+# q = ms_displacement(program[0], 15000)
+# Q = auto_corr(q[3])
 
 
 # +
 #plt.plot(Q)
 #plt.plot(Q[0:4000])
 # -
-
-
-
 def process_data():
     print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
@@ -807,9 +825,16 @@ program = main()
 # +
 #BELOW HERE IS NOT RELATED TO FUNCTIONALITY OF THE PROGRAM
 # -
-
-
-
+# plot the autocorrelation function
+q = ms_displacement(program[0], int(rescaling_max_timesteps*1.2))
+focusdiff = 15
+plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
+plt.plot(q[3][focusdiff:-1])
+plt.show()
+qq = auto_corr(q[3])
+plotfocus = 300
+plt.plot(qq[0:plotfocus])
+plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
 
 
 
@@ -817,7 +842,7 @@ program = main()
 
 
 # original positions
-plt.plot(program[0][:,:,0])
+plt.plot(program[0][:,:,2])
 plt.show()
 
 # make positions continuous
