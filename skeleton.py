@@ -9,8 +9,8 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-import random
-random.seed(6545640)
+#import random
+#random.seed(6545640)
 
 global positions_store, velocities_store
 
@@ -47,6 +47,16 @@ dimless_energy = 1.0 / EPSILON  # J; dimensionless energy
 dimless_distance = 1.0 / SIGMA  # m; dimensionless distance
 dimless_velocity = 1.0 / np.math.sqrt(EPSILON / (ARG_MASS))  # m/s; dimensionless velocity
 
+# +
+# CURRENTLY ADDED 3 RANDOM SEEDS
+from pickle import load
+import numpy as np
+
+with open('state.obj', 'rb') as f:
+    np.random.set_state(load(f))
+
+
+# -
 
 def init_velocity(num_atoms, temp, dim):
     """
@@ -86,6 +96,7 @@ def init_velocity(num_atoms, temp, dim):
     vel_std = vel_msq - (vel_mean ** 2)
 
     # find the distribution
+    #np.random.seed(2021)                                                                           #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
     vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
 
     # get the magnitudes of the velocities
@@ -98,7 +109,8 @@ def init_velocity(num_atoms, temp, dim):
     for v in range(num_atoms):
         for i in range(dim):
             # either *1 or *-1
-            vel_vec[v,i] *= (1 - 2*random.getrandbits(1))
+            random.seed(3754688-i*35338)                                                                #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
+            vel_vec[v,i] *= (1 - 2*np.random.randint(2))
 
     # remove the mean velocity to keep 0 mean (no drift velocity)
     vel_vec -= np.mean(vel_vec)
@@ -126,13 +138,13 @@ def init_position(num_atoms, box_dim, dim):
     pos_vec : np.ndarray
         Array of particle positions
     """
-
-    random = np.random.random((num_atoms, dim))
+    #np.random.seed(5885592)                                                                                  #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
+    randoms = np.random.random((num_atoms, dim))
 
     # to test close to boundary
     # random *= 0.001
 
-    pos_vec = random * box_dim
+    pos_vec = randoms * box_dim
 
     return pos_vec
 
@@ -425,7 +437,7 @@ def fcc_lattice(num_atoms, lat_const):
         offset = [0, 0, 0] 
         pos_vec = np.add(pos_vec, offset)
         print(pos_vec)
-        print(a[0,:])
+        #print(a[0,:])
         if num_atoms>4:
             for i in range(2):
                 pos_ext = pos_vec+a[i,:]
@@ -836,11 +848,6 @@ plotfocus = 300
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
 
-
-
-
-
-
 # original positions
 plt.plot(program[0][:,:,2])
 plt.show()
@@ -906,5 +913,7 @@ plt.plot(Q[0:30000])
 plt.plot(Q[0:28000])
 
 plt.plot(program[0][:,:,2])
+
+random.getrandbits(1)
 
 
