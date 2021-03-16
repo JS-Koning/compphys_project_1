@@ -678,10 +678,10 @@ def ms_displacement(loc, timestep):
     #initiate reference values
 
     #initiate reference values
-    init_loc2 = p00[timestep, :, :]
+    #init_loc = p00[timestep, :, :]
     print('currently we take an average for initial location! see diff coefficient and autocorr function to see if it makes sense')
-    print(init_loc2)
-    init_loc = np.mean(p00[int(timestep*0.98):int(timestep*1.02), :, :], axis=0)
+    #print(init_loc2)
+    init_loc = np.mean(p00[int(timestep*0.99):int(timestep*1.01), :, :], axis=0)
     print(init_loc)
     loc_usage = p00[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
@@ -921,12 +921,12 @@ program = main()
 # -
 # plot the autocorrelation function
 q = ms_displacement(program[0], int(rescaling_max_timesteps*1.2))
-focusdiff = 15
+focusdiff = 45
 plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
 plt.plot(q[3][focusdiff:-1])
 plt.show()
 qq = auto_corr(q[3], 0)
-plotfocus = 3000
+plotfocus = 300
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
 plt.show()
@@ -971,9 +971,6 @@ for k in range(len(program[0][0,0,:])):
 plt.plot(p00[:,:,0])
 plt.show()
 
-qq = auto_corr(q[3])
-plt.plot(qq)
-
 # +
 #Above figure is the autocorrelation function using the same data as the previous figure
 # -
@@ -988,12 +985,5 @@ q = ms_displacement(program[0], 15000)
 print(q[3])
 Q = auto_corr(q[3])
 
-
-plt.plot(Q[0:30000])
-plt.plot(Q[0:28000])
-
-plt.plot(program[0][:,:,2])
-
-random.getrandbits(1)
 
 
