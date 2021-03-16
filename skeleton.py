@@ -30,7 +30,7 @@ rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 0.5  # Kelvin
+temp = 80  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -926,7 +926,7 @@ plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'valu
 plt.plot(q[3][focusdiff:-1])
 plt.show()
 qq = auto_corr(q[3], 0)
-plotfocus = 300
+plotfocus = 50
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
 plt.show()
