@@ -455,6 +455,52 @@ def fcc_lattice(num_atoms, lat_const):
     return pos_vec
 
 
+def fcc_lattice_big(num_atoms, lat_const):
+    """
+    Initializes a system of atoms on an fcc lattice.
+    
+    NOTE CURRENTLY, ONLY WORKS FOR 4 ATOMS
+    Initial vectors are:
+    a1 = [D,0,0]
+    a2 = [0,D,0]
+    a3 = [0,0,D]
+    Here, D is the distance between 2 adjecent corner atoms.
+    
+    lattice basis vectors are:
+    r1 = [0,0,0]
+    r2 = 1/2(a1+a2)
+    r3 = 1/2(a2+a3)
+    r4 = 1/2(a3+a1)
+    
+    FCC lattice is only possible in 3D due to definition of FCC lattice
+    
+    https://solidstate.quantumtinkerer.tudelft.nl/10_xray/ can be used as a reference
+
+    Parameters
+    ----------
+    num_atoms : int
+        The number of particles in the system
+    lat_const : float
+        The lattice constant for an fcc lattice
+
+    Returns
+    -------
+    pos_vec : np.ndarray
+        Array of particle coordinates
+    """
+    if num_atoms ==14:
+        a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
+        BZ = int(num_atoms/4)
+        print('N = multiple of 4')
+        # below is not elegant at all, but it works without writing over complex code for a simple thing.
+        pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
+        pos_vec_ext = np.array([a[0,:], a[1,:], a[2,:], a[0,:] + a[1,:], a[0,:] + a[2,:], a[1,:] + a[2,:], a[0,:] + a[1,:] + a[2,:], a[0, :] + 0.5*(a[1,:] + a[2,:]), a[1, :] + 0.5*(a[2,:] + a[0,:]), a[2, :] + 0.5*(a[1,:] + a[0,:])])
+        pos_vec = np.append(pos_vec, pos_vec_ext, axis=0)
+    else:
+        print('value not 14')
+    return pos_vec
+
+
 def locationplot(locations, latmult):
     """
     Plots locations of N particles
