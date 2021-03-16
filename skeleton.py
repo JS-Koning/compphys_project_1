@@ -8,7 +8,7 @@ you have a good reason to do so.
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+from scipy import optimize
 #import random
 #random.seed(6545640)
 
@@ -48,7 +48,7 @@ dimless_distance = 1.0 / SIGMA  # m; dimensionless distance
 dimless_velocity = 1.0 / np.math.sqrt(EPSILON / (ARG_MASS))  # m/s; dimensionless velocity
 
 # +
-# CURRENTLY ADDED 3 RANDOM SEEDS
+#LOAD SEED
 from pickle import load
 import numpy as np
 
@@ -56,6 +56,13 @@ with open('state.obj', 'rb') as f:
     np.random.set_state(load(f))
 
 
+# +
+#DUMP SEED
+#from pickle import dump
+#import numpy as np
+
+#with open('state2.obj', 'wb') as f:
+#    dump(np.random.get_state(), f)
 # -
 
 def init_velocity(num_atoms, temp, dim):
@@ -96,7 +103,6 @@ def init_velocity(num_atoms, temp, dim):
     vel_std = vel_msq - (vel_mean ** 2)
 
     # find the distribution
-    #np.random.seed(2021)                                                                           #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
     vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
 
     # get the magnitudes of the velocities
@@ -109,7 +115,6 @@ def init_velocity(num_atoms, temp, dim):
     for v in range(num_atoms):
         for i in range(dim):
             # either *1 or *-1
-            random.seed(3754688-i*35338)                                                                #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
             vel_vec[v,i] *= (1 - 2*np.random.randint(2))
 
     # remove the mean velocity to keep 0 mean (no drift velocity)
@@ -138,7 +143,6 @@ def init_position(num_atoms, box_dim, dim):
     pos_vec : np.ndarray
         Array of particle positions
     """
-    #np.random.seed(5885592)                                                                                  #SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
     randoms = np.random.random((num_atoms, dim))
 
     # to test close to boundary
@@ -648,19 +652,17 @@ def ms_displacement(loc, timestep):
         
 
     plt.plot(p00[:,:,0])
-    plt.title('continous location for x direction')
+    plt.title('continous location all particles for x direction')
     plt.show()
     plt.plot(p00[:,:,1])
-    plt.title('continous location for y direction')
+    plt.title('continous location all particles for y direction')
     plt.show()
     plt.plot(p00[:,:,2])
-    plt.title('continous location for z direction')
+    plt.title('continous location all particles for z direction')
     plt.show()
-    print('the MSD  is shown in the plot above for all particles in the z dir')
     plt.plot(msd_2[:,:])
     plt.title('the mean square displacement for each particle summed over all directions')
     plt.show()
-    
     plt.plot(D)
     plt.title('The diffusion coefficient')
     plt.show()
@@ -725,9 +727,39 @@ def auto_corr(data_values):
     return autoc
 
 
-
-# q = ms_displacement(program[0], 15000)
-# Q = auto_corr(q[3])
+def exponential_fit(y_data, cutoff):
+    """"
+    Gives exponential fit of ydata given, removing everything after the cutoff index. Note: does not use initial guesses. Check manually from graph if it is okay.
+    
+    Parameters
+    ---------------
+    ydata: np.ndarray 1D
+        The data that is to be fitted.
+    cutoff: int
+        the last datapoint of ydata that is to be used.
+    
+    Returns
+    -------------
+    Tau: float
+        fit parameters
+    Covarance of Tau: float
+        covariance of tau
+    """
+    numpoints = len(y_data[0:cutoff])
+    x_data = np.linspace(0,numpoints, num=numpoints)
+    
+    def funcexp(x, tau):
+        return np.exp(-x/tau)
+    
+    params, params_covariance = optimize.curve_fit(funcexp, x_data, y_data[0:cutoff])
+    print('Tau is ', params[0], 'and the covariance of Tau is', params_covariance[0])
+    
+    plt.plot(funcexp(x_data, params[0]), 'r', label='fitted autocorrelation')
+    plt.plot(y_data[0:cutoff], 'b', label='autocorrelation from data')
+    plt.title('The fitted and original autocorrelation function')
+    plt.legend()
+    plt.show()
+    return params, params_covariance
 
 
 # +
@@ -847,6 +879,9 @@ qq = auto_corr(q[3])
 plotfocus = 300
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
+qqq = exponential_fit(qq, 300)
+
+
 
 # original positions
 plt.plot(program[0][:,:,2])
