@@ -17,7 +17,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 1* 1.547 #10  # meters; bounding box dimension
+box_dim = 1.5 #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -30,7 +30,7 @@ rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 50  # Kelvin
+temp = 0.5  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -438,7 +438,7 @@ def fcc_lattice(num_atoms, lat_const):
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
         pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
         # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
-        offset = [0, 0, 0] 
+        offset = [0.1*box_dim, 0.1*box_dim, 0.1*box_dim]                                                                                                   #NOTE I ADDED OFFSET
         pos_vec = np.add(pos_vec, offset)
         print(pos_vec)
         #print(a[0,:])
@@ -498,6 +498,7 @@ def fcc_lattice_big(num_atoms, lat_const):
         pos_vec = np.append(pos_vec, pos_vec_ext, axis=0)
     else:
         print('value not 14')
+    print('fcc lattice vector is', pos_vec)
     return pos_vec
 
 
@@ -746,7 +747,7 @@ def msd_plot(msd,partnum):
     return
 
 
-def auto_corr(data_values):
+def auto_corr(data_values, skipvalues):
     """"
     gives the normalized autocorrelation function of an obersvable function.
     
@@ -755,11 +756,14 @@ def auto_corr(data_values):
     data_values: np.ndarray 1D
         The data values used corresponding to the expectation value. This should be an 1D array
         most likely, this is ms_deviation[2]
+    skipvalues: int
+        skips these initial values. NOTE KEEP AT 0 FOR REPORT.
     Returns
     -------------
     Autocorrelation: np.ndarray
         The autocorrelation function for t
     """
+    data_values = data_values[skipvalues:-1]
     N = len(data_values)
     autoc = np.zeros(N)
     for i in range(N-1):
@@ -884,7 +888,7 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # Below is the must be uncommented for the delivarble.
-    init_pos = fcc_lattice(num_atoms, 1.547)
+    init_pos = fcc_lattice(num_atoms, box_dim)
     init_vel = init_velocity(num_atoms,TEMP,dim)
 
     #init_pos = [[25,25,25], [28,25,25], [25,25,27]]
@@ -921,11 +925,12 @@ focusdiff = 15
 plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
 plt.plot(q[3][focusdiff:-1])
 plt.show()
-qq = auto_corr(q[3])
-plotfocus = 300
+qq = auto_corr(q[3], 0)
+plotfocus = 3000
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
-qqq = exponential_fit(qq, 300)
+plt.show()
+qqq = exponential_fit(qq, plotfocus)
 
 
 
@@ -966,18 +971,12 @@ for k in range(len(program[0][0,0,:])):
 plt.plot(p00[:,:,0])
 plt.show()
 
-q = ms_displacement(program[0], 15000)
-
 qq = auto_corr(q[3])
 plt.plot(qq)
 
 # +
 #Above figure is the autocorrelation function using the same data as the previous figure
 # -
-
-a = ms_displacement(program[0], 15000)
-print(a)
-plt.plot(a[2])
 
 b = ms_displacement(p00,15000)
 plt.plot(b[1][:,0])
