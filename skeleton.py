@@ -790,10 +790,11 @@ def exponential_fit(y_data, cutoff):
     
     Returns
     -------------
-    Tau: float
-        fit parameters
-    Covarance of Tau: float
-        covariance of tau
+    Params, Tau: float
+        fit parameters of the exponential fit
+    params_covariance, Covarance of Tau: float
+        covariance of tau    
+    All return values are only taking the data before the cutoff y_data
     """
     numpoints = len(y_data[0:cutoff])
     x_data = np.linspace(0,numpoints, num=numpoints)
