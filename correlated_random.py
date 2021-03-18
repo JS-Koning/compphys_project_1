@@ -110,39 +110,10 @@ def exponential_fit(y_data, cutoff):
     return params, params_covariance
 
 
-def errorauto(y_data, tau):
-     """"
-    Gives exponential fit of ydata given, removing everything after the cutoff index. Note: does not use initial guesses. Check manually from graph if it is okay.
-    
-    Parameters
-    ---------------
-    ydata: np.ndarray 1D
-        The data that is to be fitted.
-    cutoff: int
-        the last datapoint of ydata that is to be used.
-    
-    Returns
-    -------------
-    Params, Tau: float
-        fit parameters of the exponential fit
-    params_covariance, Covarance of Tau: float
-        covariance of tau    
-    All return values are only taking the data before the cutoff y_data
-    """
-    N = len(y_data)
-    squared = (1/N) * sum((y_data)**2)
-    mean = (1/N) * sum(y_data)
-    mean2 = mean**2
-    var = squared-mean
-    error2 = (2*tau/N) * (var)
-    sigmaA = np.sqrt(error2)
-    print('sigmaA is',sigmaA, 'var is', var, 'mean is ', mean)
-    return(sigmaA, var)
-
-
 def expectedvalues(y_data, cutoff):
-     """"
+    """"
     Gives expected value according to <A> = 1/N * sum(An) with n>0 as lower boundary, and N as upper boundary.
+    Please note, here the index starts at 0, not at 1 as in the literature.
     
     Parameters
     ---------------
@@ -160,16 +131,43 @@ def expectedvalues(y_data, cutoff):
     expected_squared
         the squared value of the expected value <A>**2    
     """
-    A = y_data[1:cutoff]
+    A = y_data[:cutoff]
     N = len(A)
     expected = 1/N * sum(A)
-    squared_expected = expected**2
-    expected_squared = 1/N * sum(A**2)
-    return(expected, squared_expected, expected_squared)
+    expected2 = expected**2
+    square_expected = 1/N * sum(A**2)
+
+    return(expected, expected2, square_expected)
+
+
+def errortau(y_data, tau):
+    """"
+    calculates the error in the mean of the autocorrelation function.
+    
+    Parameters
+    ---------------
+    ydata: np.ndarray 1D
+        The data that is to be fitted.
+    cutoff: int
+        the last datapoint of ydata that is to be used.
+        
+    Returns
+    -------------
+    Params, Tau: float
+        fit parameters of the exponential fit
+    params_covariance, Covarance of Tau: float
+        covariance of tau    
+    All return values are only taking the data before the cutoff y_data
+    """
+    N = len(y_data)
+    expectedA = expectedvalues(y_data, N)
+    sigma = expectedA[2] - expectedA[1]
+    sigmaA = np.sqrt(2*tau*sigma/N)
+    return(sigmaA, sigma)
 
 
 def block_data(y_data, block_length):
-      """"
+    """"
     Takes average of the block_length values, and puts this in a array.
     
     Parameters
@@ -181,40 +179,39 @@ def block_data(y_data, block_length):
     
     Returns
     -------------
-    expected: float
-        The expected value of y_data <A>
-    squared_expected: float
-        The squared expected value <A**2>
-    expected_squared
-        the squared value of the expected value <A>**2    
+    a: np.ndarray 1D
+        The new array of the block, created by taking the block averaged of the y_data.
     """
     Nb = len(y_data)//block_length
     a = np.empty(Nb)
-    for i in range(1, Nb):
-        a[i] = sum(y_data[(i-1)*block_length+1:i*block_length])
-
-
-def block_data(y_data, tau)
-    tau = int(tau)
-    Nb = int(len(y_data)/(2*tau))
-    blocksize = 2*tau
-    blockavg = np.empty(Nb)
     for i in range(1,Nb):
-        blockavg[i] = np.average(y_data[i*blocksize+1:(i+1)*blocksize:1])
-    return(blockavg)
+        a[i] = sum(y_data[((i-1)*block_length)+1:i*block_length])/block_length
+    np.delete(a, 0)
+    return(a)
 
 
-#data block error(b)
-def errora(block_data):
-    block_data = block_data[1:]
-    Nb = len(block_data)
-    squared = (1/Nb) * sum(block_data**2)
-    mean = (1/Nb) * sum(block_data)
-    mean2 = mean**2
-    error2 = (1/(Nb-1)) * (squared-mean2)
-    #error2 = squared-mean2
-    error = np.sqrt(error2)
-    return(error)
+def errorblock(meanblocks):
+    """"
+    Calculated the error of the mean, taking the datablocks as input. These datablocks can be found using the block_data function.
+    Note: This is dependent on the size of the block!
+    
+    Parameters
+    ---------------
+    meanblocks: np.ndarray 1D
+        Input array, in the literature of this course called a_i
+    y_data: np.ndarray 1D
+        The input array that requires data blocking.
+    block_length: integer
+        The required block length.
+    
+    Returns
+    -------------
+    sigmaAb: np.ndarray 1D
+        the standard deviation of the estimator of the mean (error of the mean).
+    """
+    expecteda = expectedvalues(meanblocks, len(meanblocks))
+    sigmaAb = np.sqrt((expecteda[2]-expecteda[1])/(len(meanblocks)-1))
+    return(sigmaAb)
 
 
 # +
@@ -225,34 +222,22 @@ N = 20000
 
 
 y_data = normal_autocorr(mu, sigma, tau, N)
-auto = auto_corr(y_data, 0)
+autofun = auto_corr(y_data, 0)
 plt.plot(y_data)
 plt.show()
 
 
 # -
 
-autocorr = auto_corr(y_data, 0)
-a = exponential_fit(autocorr, 150)
+fit = exponential_fit(autofun, 300)
 
-taufound = 41.8476123563759
-skimmed = y_data[0:int(taufound)]
-leng = len(skimmed)
-print(skimmed)
-print(sum(skimmed))
-a = sum(skimmed)
-b = sum(skimmed/leng)
-print(b)
-skimmed[0]
-
-xax = 290
-er = np.empty(xax)
-for i in range(1,xax):
-    q = block_data(y_data, i)
-    er[i] = errora(q)
-plt.plot(er)
-
-
-errorauto(y_data, 41.8476123563759)
+max_block_size=300
+errora = np.empty(max_block_size)
+for i in range(2,max_block_size):
+    blocks = block_data(y_data, i)
+    errora[i] = errorblock(blocks)
+plt.plot(errora)
+tauer = errortau(y_data, fit[0])
+print(tauer)
 
 
