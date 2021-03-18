@@ -17,7 +17,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 0.4 #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 1.7 #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -35,7 +35,7 @@ TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
 EPSILON = TEMP * KB  # depth of potential well/dispersion energy
-N_b = 6.02214076e23  # Avagadros number; 1/mol
+N_b = 6.02214076e23  # Avogadros number; 1/mol
 R = 8.31446261815324  # J/K/mole; universal gas constant
 ARG_UMASS = 39.95  # u; atomic mass of argon
 ARG_MMASS = ARG_UMASS / 1000  # kg/mol; mole mass of argon
@@ -922,13 +922,13 @@ program = main()
 # plot the autocorrelation function
 q = ms_displacement(program[0], int(rescaling_max_timesteps*1.2))
 focusdiff = 45
-plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
+plt.title(('The Diffusion coefficient skipping the first' + str(focusdiff) + 'values'))
 plt.plot(q[3][focusdiff:-1])
 plt.show()
 qq = auto_corr(q[3], 0)
 plotfocus = 50
 plt.plot(qq[0:plotfocus])
-plt.title(('The autocorrelation function for the first', str(plotfocus), 'values'))
+plt.title(('The autocorrelation function for the first' + str(plotfocus) + 'values'))
 plt.show()
 qqq = exponential_fit(qq, plotfocus)
 
