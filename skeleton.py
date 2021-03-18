@@ -17,7 +17,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.5 #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 0.4 #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -30,7 +30,7 @@ rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 80  # Kelvin
+temp = 1  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -678,10 +678,10 @@ def ms_displacement(loc, timestep):
     #initiate reference values
 
     #initiate reference values
-    #init_loc = p00[timestep, :, :]
-    print('currently we take an average for initial location! see diff coefficient and autocorr function to see if it makes sense')
+    init_loc = p00[timestep, :, :]
+    #print('currently we take an average for initial location! see diff coefficient and autocorr function to see if it makes sense')
     #print(init_loc2)
-    init_loc = np.mean(p00[int(timestep*0.99):int(timestep*1.01), :, :], axis=0)
+    #init_loc = np.mean(p00[int(timestep*0.99):int(timestep*1.01), :, :], axis=0)
     print(init_loc)
     loc_usage = p00[timestep:-1, :, :]
     msd_1 = np.abs((loc_usage - init_loc)**2)
@@ -917,7 +917,7 @@ def main():
 program = main()
 
 # +
-#BELOW HERE IS NOT RELATED TO FUNCTIONALITY OF THE PROGRAM
+#BELOW HERE IS NOT RELATED TO FUNCTIONALITY OF THE PROGRAM but the report
 # -
 # plot the autocorrelation function
 q = ms_displacement(program[0], int(rescaling_max_timesteps*1.2))
@@ -974,16 +974,5 @@ plt.show()
 # +
 #Above figure is the autocorrelation function using the same data as the previous figure
 # -
-
-b = ms_displacement(p00,15000)
-plt.plot(b[1][:,0])
-
-plt.plot(p00[:,:,0])
-print(p00)
-
-q = ms_displacement(program[0], 15000)
-print(q[3])
-Q = auto_corr(q[3])
-
 
 
