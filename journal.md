@@ -342,10 +342,10 @@ useful.
     ![](Week5/Figure_5.png)
     - In the figures above a plot is shown of the x-component of the positions.
         - The top plot shows the position data coming from our simulation data
-        - The middle plot is a fast approximation for continuous position data (less accurate)
-        - The bottom plot is a slower approach for continuous position data (more accurate)
+        - The middle plot is a fast approximation (from simulation position data) for continuous position data (less accurate)
+        - The bottom plot is a slower approach (from simulation position data) for continuous position data (more accurate)
     - The slower but more accurate approach will be used to determine the diffusion constant
-    - The discontinuity in the simulation position data is due to periodicity. This needs causes the position data to have jumps (discontinuity). In order to derive the diffusion constant, continuous data is needed. 
+    - The discontinuity in the simulation position data is due to periodicity. This causes the position data to have jumps (discontinuity). In order to derive the diffusion constant, continuous data is needed. 
 
     ![](Week5/Figure_6.png)
     - In this plot a FCC lattice with 32 particles is made. It would be possible to create a full simulation, this would take an entire night to run approximately.
