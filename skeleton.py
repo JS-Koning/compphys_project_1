@@ -17,7 +17,7 @@ global positions_store, velocities_store
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.7 #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 1.9 #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -678,9 +678,9 @@ def ms_displacement(loc, timestep):
     #initiate reference values
 
     #initiate reference values
+
     init_loc = p00[timestep, :, :]
     #print('currently we take an average for initial location! see diff coefficient and autocorr function to see if it makes sense')
-    #print(init_loc2)
     #init_loc = np.mean(p00[int(timestep*0.99):int(timestep*1.01), :, :], axis=0)
     print(init_loc)
     loc_usage = p00[timestep:-1, :, :]
@@ -921,16 +921,18 @@ program = main()
 # -
 # plot the autocorrelation function
 q = ms_displacement(program[0], int(rescaling_max_timesteps*1.2))
-focusdiff = 45
-plt.title(('The Diffusion coefficient skipping the first' + str(focusdiff) + 'values'))
-plt.plot(q[3][focusdiff:-1])
+focusdiff = 10000
+plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
+plt.plot(q[3][focusdiff:])
 plt.show()
-qq = auto_corr(q[3], 0)
-plotfocus = 50
+qq = auto_corr(q[2], 0)
+plotfocus = 2500
 plt.plot(qq[0:plotfocus])
-plt.title(('The autocorrelation function for the first' + str(plotfocus) + 'values'))
+plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
 plt.show()
 qqq = exponential_fit(qq, plotfocus)
+plt.plot(q[1][0:300])
+plt.show()
 
 
 
