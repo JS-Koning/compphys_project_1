@@ -13,7 +13,7 @@ from scipy import optimize
 global positions_store, velocities_store, energies_store
 
 # initalizing self defined system parameters
-num_atoms = 32  # amount of particles
+num_atoms = 4  # amount of particles
 dim = 3  # dimensions
 box_dim = 3.341995  #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
@@ -26,6 +26,7 @@ rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
+rescaling_limit = False # rescale limit [0.5~2.0]
 
 # +
 # for 32 particles
@@ -279,14 +280,17 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 # new kin energy avg
                 rescaling2 = np.sum([kinetic_energy(vel_steps[i+1-x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(i + 1, 5000)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
-                v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
+                #v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
+                v_lambda = np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))))  # / TEMP
                 current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature
 
             if need_rescaling:
                 # limit rescaling factor between 0.5 and 2.0
-                v_lambda = max(0.5,v_lambda)
-                v_lambda = min(2.0,v_lambda)
+                if rescaling_limit:
+                    v_lambda = max(0.5,v_lambda)
+                    v_lambda = min(2.0,v_lambda)
+
                 # apply rescaling factor
                 vel_steps[i + 1, :, :] *= v_lambda
                 # rescaling statistics below
