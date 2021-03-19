@@ -9,15 +9,13 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from scipy import optimize
-#import random
-#random.seed(6545640)
 
-global positions_store, velocities_store
+global positions_store, velocities_store, energies_store
 
 # initalizing self defined system parameters
 num_atoms = 32  # amount of particles
 dim = 3  # dimensions
-box_dim = 3.313  #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 3.341995  #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -47,7 +45,7 @@ rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 # -
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 1  # Kelvin
+temp = 0.5  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -121,9 +119,10 @@ def init_velocity(num_atoms, temp, dim):
 
     # find the distribution
     vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
-
+ 
     # get the magnitudes of the velocities
-    vel_mag = [np.sqrt(np.sum([v[i]**2 for i in range(dim)])) for v in vel_vec]
+    
+    vel_mag = np.sum(np.abs(vel_vec))
 
     # rescale the magnitudes to match the vel_mean speed
     vel_vec *= vel_mean / np.mean(vel_mag)
@@ -455,7 +454,7 @@ def fcc_lattice(num_atoms, lat_const):
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
         pos_vec = 0.5 * np.array([[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
         # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
-        offset = [0.1*box_dim, 0.1*box_dim, 0.1*box_dim]                                                                                                   #NOTE I ADDED OFFSET
+        offset = [0.01*box_dim, 0.01*box_dim, 0.01*box_dim]                                                                                                   #NOTE I ADDED OFFSET
         pos_vec = np.add(pos_vec, offset)
         print(pos_vec)
         #print(a[0,:])
@@ -943,7 +942,7 @@ focusdiff = 10000
 plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
 plt.plot(q[3][focusdiff:])
 plt.show()
-qq = auto_corr(q[2], 0)
+qq = auto_corr(q[2], 6000)
 plotfocus = 2500
 plt.plot(qq[0:plotfocus])
 plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
@@ -1004,7 +1003,7 @@ np.shape(program)
 
 import h5py
 
-h5f = h5py.File('liquid_32parts_3133L_1K.h5', 'w')
+h5f = h5py.File('gas_32parts_47425L_3K.h5', 'w')
 
 h5f.create_dataset('programarray', data=program)
 
