@@ -1,29 +1,24 @@
 # -*- coding: utf-8 -*-
-"""
-This is a suggestion for structuring your simulation code properly.
-However, it is not set in stone. You may modify it if you feel like
-you have a good reason to do so.
-"""
+import random
 
 import numpy as np
-import random
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 from scipy import optimize
-#import random
-#random.seed(6545640)
 
-global positions_store, velocities_store
+from constants import *
+
+global positions_store, velocities_store, energies_store
 
 # initalizing self defined system parameters
-num_atoms = 32  # amount of particles
+num_atoms = 2  # amount of particles
 dim = 3  # dimensions
-box_dim = 3.341995  #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 10  #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
-steps = 30000  # amount of steps
+steps = 10000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
-rescaling = True # use Temperature rescaling
+rescaling = False # use Temperature rescaling
 rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
@@ -48,15 +43,7 @@ rescaling_max_timesteps = steps/2 # max timesteps for rescaling
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 0.5  # Kelvin
-TEMP = 119.8  # Kelvin
-KB = 1.38064852e-23  # m^2*kg/s^2/K
-SIGMA = 3.405e-10  # meter
-EPSILON = TEMP * KB  # depth of potential well/dispersion energy
-N_b = 6.02214076e23  # Avogadros number; 1/mol
-R = 8.31446261815324  # J/K/mole; universal gas constant
-ARG_UMASS = 39.95  # u; atomic mass of argon
-ARG_MMASS = ARG_UMASS / 1000  # kg/mol; mole mass of argon
-ARG_MASS = ARG_UMASS * 1.6605e-27  # Kg mass of a single atom in Kg
+
 
 # conversion values for dimensionless units
 dimless_time = 1.0 / np.math.sqrt((ARG_MASS * SIGMA ** 2 / EPSILON))  # s; dimensionless time
@@ -69,7 +56,7 @@ dimless_velocity = 1.0 / np.math.sqrt(EPSILON / (ARG_MASS))  # m/s; dimensionles
 from pickle import load
 import numpy as np
 
-with open('state.obj', 'rb') as f:
+with open('state_F.obj', 'rb') as f:
     np.random.set_state(load(f))
 
 
@@ -834,7 +821,7 @@ def exponential_fit(y_data, cutoff):
 #plt.plot(Q)
 #plt.plot(Q[0:4000])
 # -
-def process_data():
+def process_data():    
     print("Test if the total energy is conserved")
     pos1 = positions_store[0, :, :]
     pos2 = positions_store[steps - 1, :, :]
@@ -869,11 +856,12 @@ def process_data():
 
     print("Print energy levels over time")
     if dimless:
-        energies = [(kinetic_energy(velocities_store[x, :, :])[1],
-                     potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
-                     total_energy(velocities_store[x, :, :],
-                                  atomic_distances(positions_store[x, :, :], box_dim)[1]))
-                    for x in range(steps)]
+        
+        energies = np.array([(kinetic_energy(velocities_store[x, :, :])[1],
+                         potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
+                         total_energy(velocities_store[x, :, :],
+                         atomic_distances(positions_store[x, :, :], box_dim)[1]))
+                         for x in range(steps)])
     else:
         energies = [kinetic_energy(velocities_store[x, :, :])[1] for x in range(steps)]
     # times = np.linspace(0, dt*steps, steps)
@@ -882,6 +870,11 @@ def process_data():
     plt.ylabel('Energy (dimless)')
     plt.legend(('kinetic energy', 'potential energy', 'total energy'))
     plt.show()
+    
+    global energies_store
+    energies_store = energies
+    
+    return()
 
 def test_initial_velocities(init_velocities):
     init_velocities = init_velocity(1000, TEMP, dim)
@@ -906,11 +899,11 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # Below is the must be uncommented for the delivarble.
-    init_pos = fcc_lattice(num_atoms, box_dim/2)
-    init_vel = init_velocity(num_atoms,TEMP,dim)
+    #init_pos = fcc_lattice(num_atoms, box_dim)
+    #init_vel = init_velocity(num_atoms,TEMP,dim)
 
-    #init_pos = [[25,25,25], [28,25,25], [25,25,27]]
-    #init_vel = [[1,0,0], [1,0,0], [1,0,0]]
+    init_pos = [[0.01,0,0], [2.5,0,0]]#, [25,25,27]]
+    init_vel = [[0.2, 0, 0], [0,0,0]]#, [1,0,0]]
 
     test_initial_velocities(init_vel)
 
@@ -918,6 +911,7 @@ def main():
     process_data()
     p1 = positions_store
     v1 = velocities_store
+    E1 = energies_store
 
 
     global verlet
@@ -927,10 +921,11 @@ def main():
     process_data()
     p2 = positions_store
     v2 = velocities_store
+    E2 = energies_store
 
     print("Maximum error in positions data: ", np.max(p2-p1))
     print("Maximum error in velocities data: ", np.max(v2-v1))
-    return p1, v1, p2, v2
+    return p1, v1, E1, p2, v2, E2
 
 program = main()
 
@@ -952,7 +947,12 @@ qqq = exponential_fit(qq, plotfocus)
 plt.plot(q[1][0:300])
 plt.show()
 
+np.shape(program[2
+                ])
 
+np.set_printoptions()
+
+np.shape(energies_store)
 
 # original positions
 plt.plot(program[0][:,:,2])
@@ -969,6 +969,8 @@ for i in range(3):
     p[:,i,:] = (box_dim/2 - np.abs(box_dim/2-program[0][:,i,:]))
 #plt.plot(p[:,1,:])
 #plt.show()
+
+print(energies_store)
 
 # make positions continuous fix
 displacement = 0.0

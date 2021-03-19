@@ -60,3 +60,6 @@ JupyterHub has been supplied by the Delft University of Technology to allow clou
 - Abi Kanagaratnam
 - Jim Koning
 
+## file explaination
+# constants.py
+These are the physical constants of the simulation or predetermined as optimal values by previous 
