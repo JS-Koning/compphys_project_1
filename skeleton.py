@@ -121,8 +121,7 @@ def init_velocity(num_atoms, temp, dim):
     vel_vec = np.random.normal(vel_mean, vel_std, (num_atoms, dim))
  
     # get the magnitudes of the velocities
-    
-    vel_mag = np.sum(np.abs(vel_vec))
+    vel_mag = np.linalg.norm(vel_vec, axis=1)
 
     # rescale the magnitudes to match the vel_mean speed
     vel_vec *= vel_mean / np.mean(vel_mag)
