@@ -15,9 +15,9 @@ from scipy import optimize
 global positions_store, velocities_store
 
 # initalizing self defined system parameters
-num_atoms = 4  # amount of particles
+num_atoms = 32  # amount of particles
 dim = 3  # dimensions
-box_dim = 1.9 #2* 1.547 #10  # meters; bounding box dimension
+box_dim = 3.313  #2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -28,6 +28,23 @@ rescaling_mode = 1 # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027 # delta for activation of rescaling
 rescaling_timesteps = steps / 30 # timesteps interval for rescaling check
 rescaling_max_timesteps = steps/2 # max timesteps for rescaling
+
+# +
+# for 32 particles
+# Lattice constant = box_dim/2
+# liquid
+# box_dim = 3.313
+# T = 1
+
+# solid
+# box_dim = 3.41995
+# T = 0.5
+
+# Gas
+# 4.7425
+# T = 3
+
+# -
 
 # Parameters physical, supplied by course, or related to Argon
 temp = 1  # Kelvin
@@ -889,7 +906,7 @@ def main():
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
     # Below is the must be uncommented for the delivarble.
-    init_pos = fcc_lattice(num_atoms, box_dim)
+    init_pos = fcc_lattice(num_atoms, box_dim/2)
     init_vel = init_velocity(num_atoms,TEMP,dim)
 
     #init_pos = [[25,25,25], [28,25,25], [25,25,27]]
@@ -977,5 +994,20 @@ plt.show()
 # +
 #Above figure is the autocorrelation function using the same data as the previous figure
 # -
+
+
+
+locationplot(check, 2)
+
+# saving to a file https://stackoverflow.com/questions/20928136/input-and-output-numpy-arrays-to-h5py
+np.shape(program)
+
+import h5py
+
+h5f = h5py.File('liquid_32parts_3133L_1K.h5', 'w')
+
+h5f.create_dataset('programarray', data=program)
+
+h5f.close()
 
 
