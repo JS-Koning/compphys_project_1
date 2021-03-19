@@ -894,7 +894,8 @@ def process_data():
 def test_initial_velocities(init_velocities):
     init_velocities = init_velocity(1000, TEMP, dim)
 
-    vel_mag = [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in init_velocities]
+    vel_mag = np.linalg.norm(init_velocities, axis=1)
+    #[np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in init_velocities]
 
     plt.hist(vel_mag, bins=15)
     plt.show()
