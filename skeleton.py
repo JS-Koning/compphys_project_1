@@ -850,8 +850,11 @@ def process_data():
     times = np.linspace(0, dt * steps, steps)
     if num_atoms == 2:
         print("Plot inter-atom distance over time")
+        distances = np.zeros(steps)
         if dimless:
-            distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
+            for x in range(steps):
+                distances[x] = np.max(atomic_distances(positions_store[x, :, :], box_dim)[1])
+            #distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         else:
             distances = [np.max(atomic_distances(positions_store[x, :, :], box_dim)[1]) for x in range(steps)]
         plt.plot(times, distances)
