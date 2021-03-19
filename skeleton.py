@@ -867,16 +867,24 @@ def process_data():
         plt.show()
 
     print("Print energy levels over time")
+    energies = np.zeros([3,steps])
     if dimless:
-        energies = [(kinetic_energy(velocities_store[x, :, :])[1],
-                     potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
-                     total_energy(velocities_store[x, :, :],
-                                  atomic_distances(positions_store[x, :, :], box_dim)[1]))
-                    for x in range(steps)]
+        for x in range(steps):
+            energies[0,x] = kinetic_energy(velocities_store[x, :, :])[1]
+            energies[1,x] = potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2]
+            energies[2,x] = total_energy(velocities_store[x, :, :],
+                                  atomic_distances(positions_store[x, :, :], box_dim)[1])
+        #energies = [(kinetic_energy(velocities_store[x, :, :])[1],
+        #             potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
+        #             total_energy(velocities_store[x, :, :],
+        #                          atomic_distances(positions_store[x, :, :], box_dim)[1]))
+        #           for x in range(steps)]
+        #energies = np.array(energies)
     else:
         energies = [kinetic_energy(velocities_store[x, :, :])[1] for x in range(steps)]
+
     # times = np.linspace(0, dt*steps, steps)
-    plt.plot(times, energies)
+    plt.plot(times, energies.T)
     plt.xlabel('Time (dimless)')
     plt.ylabel('Energy (dimless)')
     plt.legend(('kinetic energy', 'potential energy', 'total energy'))
@@ -917,7 +925,6 @@ def main():
     process_data()
     p1 = positions_store
     v1 = velocities_store
-
 
     global verlet
     verlet = False
