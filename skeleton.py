@@ -26,15 +26,14 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
-rescaling_delta_energy = 0.001 * num_atoms # delta for activation of rescaling
-rescaling_timesteps = steps / 20  # timesteps interval for rescaling check
-rescaling_max_timesteps = steps / 2  # max timesteps for rescaling
-rescaling_max_rescales = 40
+rescaling_delta_energy = 0.00001 * num_atoms # delta for activation of rescaling
+rescaling_max_timesteps = 5000  # max timesteps for rescaling
+rescaling_max_rescales = 60
 rescaling_limit = True  # rescale limit [lower~upper]
-rescaling_limit_lower = 0.5
-rescaling_limit_upper = 2.0
+rescaling_limit_lower = 0.33
+rescaling_limit_upper = 3.0
 rescaling_factor = 0.5  # 0.5 = sqrt
-average_rescale = 40
+average_rescale = 100
 # +
 # for 32 particles
 # Lattice constant = box_dim/2
@@ -53,7 +52,7 @@ average_rescale = 40
 # -
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 2  # Kelvin
+temp = 1  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -243,26 +242,24 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
         kin_steps[i] = kinetic_energy(vel_steps[i+1, :, :])[1]
-        if rescaling and (i < rescaling_max_timesteps+1 and i > steps*0.05 and rescaling_max_rescales and rescale_counter<rescaling_max_rescales and rescaling_moment + average_rescale < i):
+        if rescaling and (i < rescaling_max_timesteps+1 and i > steps*0.05 and rescale_counter<rescaling_max_rescales and rescaling_moment + average_rescale < i):
             # Rescale velocity
             if rescaling_mode == 0:
                 v_lambda = 1 # never use this
             else:
                 # target kin energy
-                target_energy = (num_atoms - 1) * 3 / 2 * temp
-                # new kin energy avg
-                current_energy = np.sum(kin_steps[i-average_rescale : i])/average_rescale
-                # rescaling factor (in sqrt(...) so values get closer to 1)
-                #v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum([np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
+                target_energy = (num_atoms - 1)*temp*EPSILON*3/2
+                current_energy = np.sum(kin_steps[i-average_rescale+1 : i])/average_rescale          #here something nice could have been implemented for efficiency
                 need_rescaling = np.abs(target_energy - current_energy) > rescaling_delta_energy
-                print(target_energy)
-                print(current_energy)
 
             if need_rescaling:
                 rescaling_moment = i
                 # limit rescaling factor between 0.5 and 2.0
-                v_lambda = np.sqrt(target_energy/current_energy)
-                print(v_lambda)
+                v_lambda = np.sqrt(2*target_energy/current_energy)
+                #print(v_lambda)
+                #print(target_energy)
+                #print(current_energy)
+
                 if rescaling_limit:
                     v_lambda = max(rescaling_limit_lower,v_lambda)
                     v_lambda = min(rescaling_limit_upper,v_lambda)
@@ -271,14 +268,14 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 vel_steps[i + 1, :, :] *= v_lambda
                 # rescaling statistics below
                 rescale_counter+=1
-                rescale_max = max(rescale_max,v_lambda)
-                rescale_min = min(rescale_min,v_lambda)
                 need_rescaling = False
+                rescale_max_print = max(rescale_max,v_lambda)
+                rescale_min_print = min(rescale_min,v_lambda)
 
 
     if rescaling:
         # print rescaling statistics
-        print("Rescaled",rescale_counter,"times with λ: [",rescale_min,"~",rescale_max,"]")
+        print("Rescaled",rescale_counter,"times with λ: [",rescale_min_print,"~",rescale_max_print,"]")
 
     return pos_steps, vel_steps
 
@@ -945,3 +942,5 @@ plt.show()
 qqq = exponential_fit(qq, plotfocus)
 plt.plot(q[1][0:300])
 plt.show()
+
+
