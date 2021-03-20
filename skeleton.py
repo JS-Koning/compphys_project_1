@@ -5,12 +5,15 @@ However, it is not set in stone. You may modify it if you feel like
 you have a good reason to do so.
 """
 
+# +
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize
 import time
 # LOAD SEED
+
 from pickle import load
+# -
 
 start_time = time.time()
 
@@ -26,7 +29,7 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
-rescaling_delta_energy = 0.0001 * num_atoms # delta for activation of rescaling
+rescaling_delta_energy = 0.0000001 * num_atoms # delta for activation of rescaling
 rescaling_max_timesteps = 5000  # max timesteps for rescaling
 rescaling_max_rescales = 60
 rescaling_limit = True  # rescale limit [lower~upper]
@@ -176,16 +179,28 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
     pos_steps = np.zeros((num_tsteps, num_atoms, dim))
     vel_steps = np.zeros((num_tsteps, num_atoms, dim))
     kin_steps = np.zeros(num_tsteps)
-
+    energy_steps = np.zeros((3, num_tsteps))
     
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
     kin_steps[0] = kinetic_energy(init_vel)[1]
     
+    rel_pos, rel_dis = atomic_distances(init_pos, box_dim)
+    energy_steps[0, 0] = kinetic_energy(init_vel)[1]
+    energy_steps[1, 0] = potential_energy(rel_dis)[2]
+    energy_steps[2, 0] = energy_steps[0, 0]+energy_steps[1, 0]
+    
+    init_rel_dist = atomic_distances(init_pos, box_dim)
+    print("Initial total energy: " + str(total_energy(init_vel, init_rel_dist[1])))
+    
+    
+ 
+
+    
     rescale_counter = 0
     rescale_max = 1.0                                          #WHY DIT?
     rescale_min = 1.0
-    rescaling_moment = 30
+    rescaling_moment = 10
 
 
     for i in range(num_tsteps-1):
@@ -211,8 +226,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (timestep ** 2) * force / 2)
 
             # force after position update (needed for verlet velocity)
-            new_rel_pos, new_rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dim)
-            new_force = lj_force(new_rel_pos, new_rel_dis)[1]
+            rel_pos, rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dim)
+            new_force = lj_force(rel_pos, rel_dis)[1]
 
             if dimless:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + timestep * (new_force + force) / 2
@@ -232,8 +247,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 else:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep)
 
-            rel_pos = atomic_distances(pos, box_dim)[0]
-            rel_dis = atomic_distances(pos, box_dim)[1]
+            rel_pos = atomic_distances(pos_steps[i + 1, :, :], box_dim)[0]
+            rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dim)[1]
             force = lj_force(rel_pos, rel_dis)[1]
 
             if dimless:
@@ -241,8 +256,15 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
-        kin_steps[i] = kinetic_energy(vel_steps[i+1, :, :])[1]
-        if rescaling and (i < rescaling_max_timesteps+1 and i > steps*0.05 and rescale_counter<rescaling_max_rescales and rescaling_moment + average_rescale < i):
+        kin_steps[i+1] = kinetic_energy(vel_steps[i+1, :, :])[1]
+        
+        energy_steps[0, i+1] = kinetic_energy(vel_steps[i+1, :, :])[1]
+        energy_steps[1, i+1] = potential_energy(rel_dis)[2]
+        energy_steps[2, i+1] = energy_steps[0, i+1]+energy_steps[1, i+1]
+
+        
+        if rescaling and (i < rescaling_max_timesteps+1 and rescale_counter<rescaling_max_rescales and rescaling_moment
+                          + average_rescale > i): #add rescaling moment
             # Rescale velocity
             if rescaling_mode == 0:
                 v_lambda = 1 # never use this
@@ -268,16 +290,25 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                 vel_steps[i + 1, :, :] *= v_lambda
                 # rescaling statistics below
                 rescale_counter+=1
+                print(v_lambda)
+
                 need_rescaling = False
-                rescale_max_print = max(rescale_max,v_lambda)
-                rescale_min_print = min(rescale_min,v_lambda)
+                #rescale_max_print = max(rescale_max,v_lambda)
+                #rescale_min_print = min(rescale_min,v_lambda)
 
 
-    if rescaling:
+    #if rescaling:
         # print rescaling statistics
-        print("Rescaled",rescale_counter,"times with λ: [",rescale_min_print,"~",rescale_max_print,"]")
+        #print("Rescaled",rescale_counter,"times with λ: [",rescale_min_print,"~",rescale_max_print,"]")
+    
+    times = np.linspace(0, num_tsteps*dt, num_tsteps)
+    plt.plot(times, energy_steps.T)
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Energy (dimless)')
+    plt.legend(('kinetic energy', 'potential energy', 'total energy'))
+    plt.show()
 
-    return pos_steps, vel_steps
+    return pos_steps, vel_steps, energy_steps
 
 
 def atomic_distances(pos, box_dimensions):
@@ -923,10 +954,10 @@ def main():
 
     test_initial_velocities(None)
 
-    p1, v1 = simulate(init_pos, init_vel, steps, dt, box_dim)
+    p1, v1, e1 = simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data(p1, v1)
 
-    return p1, v1
+    return p1, v1, e1
 
 
 program = main()
@@ -946,5 +977,16 @@ plt.show()
 qqq = exponential_fit(qq, plotfocus)
 plt.plot(q[1][0:300])
 plt.show()
+
+# +
+times = np.linspace(0, steps*dt, steps)
+plt.plot(times, energies.T)
+plt.xlabel('Time (seconds)')
+plt.ylabel('Energy (dimless)')
+plt.legend(('kinetic energy', 'potential energy', 'total energy'))
+plt.show()
+
+
+# -
 
 
