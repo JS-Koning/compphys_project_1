@@ -26,12 +26,12 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
-rescaling_delta_energy = 0.00001 * num_atoms # delta for activation of rescaling
+rescaling_delta_energy = 0.0001 * num_atoms # delta for activation of rescaling
 rescaling_max_timesteps = 5000  # max timesteps for rescaling
 rescaling_max_rescales = 60
 rescaling_limit = True  # rescale limit [lower~upper]
-rescaling_limit_lower = 0.33
-rescaling_limit_upper = 3.0
+rescaling_limit_lower = 0.5
+rescaling_limit_upper = 2.0
 rescaling_factor = 0.5  # 0.5 = sqrt
 average_rescale = 100
 # +
@@ -359,13 +359,17 @@ def lj_force(rel_pos, rel_dist):
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
                 if i != j:
-                    dudt[i, j] = -24 * ((2 / (rel_dist[i, j] ** 13)) - (1 / rel_dist[i, j] ** 7)) / (
+                    dudt[i, j] = -24 * ((2*(rel_dist[i, j]**-13)) - (rel_dist[i, j]**-7)) / (
                         rel_dist[i, j])
+                    
                 else:
                     dudt[i, j] = 0
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-                force[i, j, :] = dudt[i, j] * rel_pos[i, j, :]
+                if i!= j:
+                    force[i, j, :] = dudt[i, j] * rel_pos[i, j, :]
+                else:
+                    force[i, j, :] = 0
 
     else:
         for i in range(0, len(rel_pos[1])):  # particle i
