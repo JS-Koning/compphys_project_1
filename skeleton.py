@@ -960,7 +960,7 @@ def main():
     return p1, v1, e1
 
 
-program = main()
+program, vel, e1 = main()
 print("--- %s seconds ---" % (time.time() - start_time))
 
 # plot the autocorrelation function
@@ -980,7 +980,7 @@ plt.show()
 
 # +
 times = np.linspace(0, steps*dt, steps)
-plt.plot(times, energies.T)
+plt.plot(times, e1.T)
 plt.xlabel('Time (seconds)')
 plt.ylabel('Energy (dimless)')
 plt.legend(('kinetic energy', 'potential energy', 'total energy'))
