@@ -14,7 +14,7 @@ dim = 3  # dimensions
 box_dim = 3.313  # meters; bounding box dimension
 dt = 4e-3 # s; stepsize
 
-steps = 30000  # amount of steps
+steps = 2000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)

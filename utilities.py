@@ -45,10 +45,7 @@ def ms_displacement(loc, timestep):
                         displacement -= sim.box_dim
                     if loc[i + 1, j, k] + sim.box_dim / 2 < loc[i, j, k]:
                         displacement += sim.box_dim
-
-    # initiate reference values
-
-    # initiate reference values
+            displacement = 0.0
 
     init_loc = p00[timestep, :, :]
     # print('currently we take an average for initial location!
@@ -159,11 +156,11 @@ def auto_corr2(data):
     plt.plot(q[3][focusdiff:])
     plt.show()
     qq = auto_corr(q[2], 0)
-    plotfocus = 500
+    plotfocus = 75 #sim.steps/50
     plt.plot(qq[0:plotfocus])
     plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
     plt.show()
-    qqq = exponential_fit(qq, plotfocus)
+    exponential_fit(qq, plotfocus)
     plt.plot(q[1][0:300])
     plt.show()
 
