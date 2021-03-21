@@ -5,15 +5,12 @@ However, it is not set in stone. You may modify it if you feel like
 you have a good reason to do so.
 """
 
-# +
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize
 import time
 # LOAD SEED
-
 from pickle import load
-# -
 
 start_time = time.time()
 
@@ -29,14 +26,14 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
-rescaling_delta_energy = 0.0000001 * num_atoms # delta for activation of rescaling
-rescaling_max_timesteps = 5000  # max timesteps for rescaling
-rescaling_max_rescales = 60
+rescaling_delta = 0.0027  # delta for activation of rescaling
+rescaling_timesteps = steps / 10  # timesteps interval for rescaling check
+rescaling_max_timesteps = steps / 2  # max timesteps for rescaling
 rescaling_limit = True  # rescale limit [lower~upper]
 rescaling_limit_lower = 0.5
 rescaling_limit_upper = 2.0
 rescaling_factor = 0.5  # 0.5 = sqrt
-average_rescale = 100
+
 # +
 # for 32 particles
 # Lattice constant = box_dim/2
@@ -55,7 +52,7 @@ average_rescale = 100
 # -
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 1  # Kelvin
+temp = 2  # Kelvin
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
@@ -147,7 +144,7 @@ def init_position(number_atoms, box_dimensions, dimensions):
     return pos_vec
 
 
-def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
+def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
     """
     Molecular dynamics simulation using the Euler or Verlet's algorithms
     to integrate the equations of motion. Calculates energies and other
@@ -163,7 +160,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
         The total number of simulation steps
     timestep : float
         Duration of a single simulation step
-    box_dim : float
+    box_dimensions : float
         Dimensions of the simulation box
 
     Returns
@@ -178,46 +175,29 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
 
     pos_steps = np.zeros((num_tsteps, num_atoms, dim))
     vel_steps = np.zeros((num_tsteps, num_atoms, dim))
-    kin_steps = np.zeros(num_tsteps)
-    energy_steps = np.zeros((3, num_tsteps))
-    
+
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
-    kin_steps[0] = kinetic_energy(init_vel)[1]
-    
-    rel_pos, rel_dis = atomic_distances(init_pos, box_dim)
-    energy_steps[0, 0] = kinetic_energy(init_vel)[1]
-    energy_steps[1, 0] = potential_energy(rel_dis)[2]
-    energy_steps[2, 0] = energy_steps[0, 0]+energy_steps[1, 0]
-    
-    init_rel_dist = atomic_distances(init_pos, box_dim)
-    print("Initial total energy: " + str(total_energy(init_vel, init_rel_dist[1])))
-    
-    
- 
 
-    
     rescale_counter = 0
-    rescale_max = 1.0                                          #WHY DIT?
+    rescale_max = 1.0  # WHY DIT?
     rescale_min = 1.0
-    rescaling_moment = 10
 
-
-    for i in range(num_tsteps-1):
+    for i in range(num_tsteps - 1):
         pos = pos_steps[i, :, :]
 
         if verlet:
-            rel_pos, rel_dis = atomic_distances(pos, box_dim)
+            rel_pos, rel_dis = atomic_distances(pos, box_dimensions)
             force = lj_force(rel_pos, rel_dis)[1]
 
             # Keep particle inside box using modulus when periodic
             if periodic:
                 if dimless:
-                    pos_steps[i+1, :, :] = (pos + vel_steps[i, :, :]*timestep
-                                            + (timestep**2) * force / 2) % box_dim
+                    pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep
+                                              + (timestep ** 2) * force / 2) % box_dimensions
                 else:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (
-                            timestep ** 2) * force / 2) % box_dim
+                            timestep ** 2) * force / 2) % box_dimensions
 
             else:
                 if dimless:
@@ -226,8 +206,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep + (timestep ** 2) * force / 2)
 
             # force after position update (needed for verlet velocity)
-            rel_pos, rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dim)
-            new_force = lj_force(rel_pos, rel_dis)[1]
+            new_rel_pos, new_rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dimensions)
+            new_force = lj_force(new_rel_pos, new_rel_dis)[1]
 
             if dimless:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + timestep * (new_force + force) / 2
@@ -238,17 +218,17 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             if periodic:
                 # make sure it's inside box dimension -> modulus gives periodicity
                 if dimless:
-                    pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dim
+                    pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dimensions
                 else:
-                    pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dim
+                    pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep) % box_dimensions
             else:
                 if dimless:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep)
                 else:
                     pos_steps[i + 1, :, :] = (pos + vel_steps[i, :, :] * timestep)
 
-            rel_pos = atomic_distances(pos_steps[i + 1, :, :], box_dim)[0]
-            rel_dis = atomic_distances(pos_steps[i + 1, :, :], box_dim)[1]
+            rel_pos = atomic_distances(pos, box_dimensions)[0]
+            rel_dis = atomic_distances(pos, box_dimensions)[1]
             force = lj_force(rel_pos, rel_dis)[1]
 
             if dimless:
@@ -256,59 +236,59 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dim):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
-        kin_steps[i+1] = kinetic_energy(vel_steps[i+1, :, :])[1]
-        
-        energy_steps[0, i+1] = kinetic_energy(vel_steps[i+1, :, :])[1]
-        energy_steps[1, i+1] = potential_energy(rel_dis)[2]
-        energy_steps[2, i+1] = energy_steps[0, i+1]+energy_steps[1, i+1]
-
-        
-        if rescaling and (i < rescaling_max_timesteps+1 and rescale_counter<rescaling_max_rescales and rescaling_moment
-                          + average_rescale > i): #add rescaling moment
+        if rescaling and (i % rescaling_timesteps == 0) and (i < rescaling_max_timesteps + 1):
             # Rescale velocity
             if rescaling_mode == 0:
-                v_lambda = 1 # never use this
+                # old kin energy avg
+                rescaling1 = np.sum([kinetic_energy(vel_steps[i - x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(
+                    i + 1, 5000)
+                # new kin energy avg
+                rescaling2 = np.sum(
+                    [kinetic_energy(vel_steps[i + 1 - x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(i + 1, 5000)
+                # rescaling factor (in sqrt(...) so values get closer to 1)
+                v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum(
+                    [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
+                # v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2
+                # for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
+                # v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2
+                # for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
+                # current_temperature = rescaling1 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                need_rescaling = np.abs(rescaling2 - rescaling1) < rescaling_delta * 0.015
             else:
                 # target kin energy
-                target_energy = (num_atoms - 1)*temp*EPSILON*3/2
-                current_energy = np.sum(kin_steps[i-average_rescale+1 : i])/average_rescale          #here something nice could have been implemented for efficiency
-                need_rescaling = np.abs(target_energy - current_energy) > rescaling_delta_energy
+                rescaling1 = (num_atoms - 1) * 3 / 2 * temp * KB / EPSILON
+                # new kin energy avg
+                kin_nrg = np.zeros(int(min(i + 1, int(rescaling_timesteps))))
+                for x in range(len(kin_nrg)):
+                    kin_nrg[x] = kinetic_energy(vel_steps[i + 1 - x, :, :])[1]
+                rescaling2 = np.sum(kin_nrg) / int(min(i + 1, int(rescaling_timesteps)))
+                # rescaling factor (in sqrt(...) so values get closer to 1)
+                # v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum(
+                # [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
+                v_lambda = np.power((num_atoms - 1) * 3 / 2 * KB * temp / (
+                        EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))),
+                                    rescaling_factor)  # / TEMP
+                current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature
 
             if need_rescaling:
-                rescaling_moment = i
                 # limit rescaling factor between 0.5 and 2.0
-                v_lambda = np.sqrt(2*target_energy/current_energy)
-                #print(v_lambda)
-                #print(target_energy)
-                #print(current_energy)
-
                 if rescaling_limit:
-                    v_lambda = max(rescaling_limit_lower,v_lambda)
-                    v_lambda = min(rescaling_limit_upper,v_lambda)
+                    v_lambda = max(rescaling_limit_lower, v_lambda)
+                    v_lambda = min(rescaling_limit_upper, v_lambda)
 
                 # apply rescaling factor
                 vel_steps[i + 1, :, :] *= v_lambda
                 # rescaling statistics below
-                rescale_counter+=1
-                print(v_lambda)
+                rescale_counter += 1
+                rescale_max = max(rescale_max, v_lambda)
+                rescale_min = min(rescale_min, v_lambda)
 
-                need_rescaling = False
-                #rescale_max_print = max(rescale_max,v_lambda)
-                #rescale_min_print = min(rescale_min,v_lambda)
-
-
-    #if rescaling:
+    if rescaling:
         # print rescaling statistics
-        #print("Rescaled",rescale_counter,"times with λ: [",rescale_min_print,"~",rescale_max_print,"]")
-    
-    times = np.linspace(0, num_tsteps*dt, num_tsteps)
-    plt.plot(times, energy_steps.T)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Energy (dimless)')
-    plt.legend(('kinetic energy', 'potential energy', 'total energy'))
-    plt.show()
+        print("Rescaled", rescale_counter, "times with λ: [", rescale_min, "~", rescale_max, "]")
 
-    return pos_steps, vel_steps, energy_steps
+    return pos_steps, vel_steps
 
 
 def atomic_distances(pos, box_dimensions):
@@ -390,17 +370,13 @@ def lj_force(rel_pos, rel_dist):
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
                 if i != j:
-                    dudt[i, j] = -24 * ((2*(rel_dist[i, j]**-13)) - (rel_dist[i, j]**-7)) / (
+                    dudt[i, j] = -24 * ((2 / (rel_dist[i, j] ** 13)) - (1 / rel_dist[i, j] ** 7)) / (
                         rel_dist[i, j])
-                    
                 else:
                     dudt[i, j] = 0
         for i in range(0, len(rel_pos[1])):  # particle i
             for j in range(0, len(rel_pos[1])):  # particle i rel to j (!=i)
-                if i!= j:
-                    force[i, j, :] = dudt[i, j] * rel_pos[i, j, :]
-                else:
-                    force[i, j, :] = 0
+                force[i, j, :] = dudt[i, j] * rel_pos[i, j, :]
 
     else:
         for i in range(0, len(rel_pos[1])):  # particle i
@@ -954,13 +930,13 @@ def main():
 
     test_initial_velocities(None)
 
-    p1, v1, e1 = simulate(init_pos, init_vel, steps, dt, box_dim)
+    p1, v1 = simulate(init_pos, init_vel, steps, dt, box_dim)
     process_data(p1, v1)
 
-    return p1, v1, e1
+    return p1, v1
 
 
-program, vel, e1 = main()
+program = main()
 print("--- %s seconds ---" % (time.time() - start_time))
 
 # plot the autocorrelation function
@@ -977,16 +953,3 @@ plt.show()
 qqq = exponential_fit(qq, plotfocus)
 plt.plot(q[1][0:300])
 plt.show()
-
-# +
-times = np.linspace(0, steps*dt, steps)
-plt.plot(times, e1.T)
-plt.xlabel('Time (seconds)')
-plt.ylabel('Energy (dimless)')
-plt.legend(('kinetic energy', 'potential energy', 'total energy'))
-plt.show()
-
-
-# -
-
-
