@@ -8,10 +8,9 @@ from pickle import load
 import simulate as sim
 import utilities as utils
 
-start_time = time.time()
-
 with open('state.obj', 'rb') as f:
     np.random.set_state(load(f))
+
 
 def main():
     """"
@@ -20,6 +19,8 @@ def main():
 
 
     """
+    start_time = time.time()
+
     #    easy, handpicked initial positions and velocities.
     # init_pos = [[9.9, 9.6, 8.7], [0.3, 0.6, 0.3], [3.5, 4.6, 5.7], [9.9, 3.3, 6.6], [6.0, 7.5, 9.0],
     #            [0.6, 0.6, 9.0], [3.3, 3.3, 3.3], [8.8, 2.7, 6.3], [6.3, 8.7, 1.5]]
@@ -41,23 +42,12 @@ def main():
     p1, v1 = sim.simulate(init_pos, init_vel, sim.steps, sim.dt, sim.box_dim)
     utils.process_data(p1, v1)
 
+    utils.auto_corr2(p1)
+
+    # do tests here
+
+    print("--- %s seconds ---" % (time.time() - start_time))
     return p1, v1
 
 
-program = main()
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# plot the autocorrelation function (NEEDS TO BE MOVED TO utililities.py)
-q = utils.ms_displacement(program[0], int(sim.rescaling_max_timesteps * 1.2))
-focusdiff = 0
-plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
-plt.plot(q[3][focusdiff:])
-plt.show()
-qq = utils.auto_corr(q[2], 0)
-plotfocus = 500
-plt.plot(qq[0:plotfocus])
-plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
-plt.show()
-qqq = utils.exponential_fit(qq, plotfocus)
-plt.plot(q[1][0:300])
-plt.show()
+main()

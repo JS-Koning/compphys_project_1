@@ -151,6 +151,23 @@ def auto_corr(data_values, skipvalues):
     return autoc
 
 
+def auto_corr2(data):
+    # plot the autocorrelation function (NEEDS TO BE MOVED TO utililities.py)
+    q = ms_displacement(data, int(sim.rescaling_max_timesteps * 1.2))
+    focusdiff = 0
+    plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))
+    plt.plot(q[3][focusdiff:])
+    plt.show()
+    qq = auto_corr(q[2], 0)
+    plotfocus = 500
+    plt.plot(qq[0:plotfocus])
+    plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
+    plt.show()
+    qqq = exponential_fit(qq, plotfocus)
+    plt.plot(q[1][0:300])
+    plt.show()
+
+
 def exponential_fit(y_data, cutoff):
     """"
     Gives exponential fit of ydata given, removing everything after the cutoff index.
@@ -252,6 +269,37 @@ def process_data(positions, velocities):
     plt.legend(('kinetic energy', 'potential energy', 'total energy'))
     plt.show()
     return energies
+
+
+def locationplot(locations, latmult):
+    """
+    Plots locations of N particles
+
+
+    Parameters
+    ----------
+    locations : np.ndarray
+        locations of particles
+    latmult: scalar
+        How many lattices are to be plotted\
+        latmult=1 4particles; latmult=2 16particles
+
+    Returns
+    -------
+    plot : plt.plot
+        plot of the locations of the particles.
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(locations[:, 0], locations[:, 1], locations[:, 2])
+    ax.set_xlim3d(0, latmult)
+    ax.set_ylim3d(0, latmult)
+    ax.set_zlim3d(0, latmult)
+    plt.show()
+
+
+# q = fcc_lattice(32,1)
+# locationplot(q,2)
 
 
 def test_initial_velocities(init_velocities):

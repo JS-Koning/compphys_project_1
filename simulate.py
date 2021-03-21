@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import time
 
 # initalizing self defined system parameters
-num_atoms = 32  # amount of particles
+num_atoms = 4  # amount of particles
 dim = 3  # dimensions
 box_dim = 3.313  # 2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
@@ -516,37 +516,6 @@ def fcc_lattice_big(number_atoms, lat_const):
     return pos_vec
 
 
-def locationplot(locations, latmult):
-    """
-    Plots locations of N particles
-
-
-    Parameters
-    ----------
-    locations : np.ndarray
-        locations of particles
-    latmult: scalar
-        How many lattices are to be plotted\
-        latmult=1 4particles; latmult=2 16particles
-
-    Returns
-    -------
-    plot : plt.plot
-        plot of the locations of the particles.
-    """
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(locations[:, 0], locations[:, 1], locations[:, 2])
-    ax.set_xlim3d(0, latmult)
-    ax.set_ylim3d(0, latmult)
-    ax.set_zlim3d(0, latmult)
-    plt.show()
-
-
-# q = fcc_lattice(32,1)
-# locationplot(q,2)
-
-
 def kinetic_energy(vel):
     """
     Computes the kinetic energy of an atomic system.
@@ -641,7 +610,7 @@ def total_energy(vel, rel_dist):
         float
             The total energy of the system.
         -------
-        This is simply potential_energy[2]+kinetic_energy[0]
+        This is simply potential_energy[2]+kinetic_energy[1]
 
         """
 
