@@ -45,10 +45,10 @@ def main():
     sim.verlet = True
     # Simulation parameters
     sim.dim = 3
-    sim.box_dim = 4.7425
+    sim.box_dim = 3.41995
     sim.num_atoms = 32
     sim.rescaling = True
-    sim.temp = 3.0 * sim.EPSILON / sim.KB
+    sim.temp = 0.5 * sim.EPSILON / sim.KB
 
     # For 32 particles
     # Lattice constant = box_dim/2

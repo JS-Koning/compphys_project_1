@@ -11,8 +11,8 @@ import numpy as np
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
-box_dim = 3.313  # 2* 1.547 #10  # meters; bounding box dimension
-dt = 4e-3  # s; stepsize
+box_dim = 3.313  # meters; bounding box dimension
+dt = 4e-3 # s; stepsize
 
 steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
@@ -25,8 +25,8 @@ rescaling_delta = 0.09  # delta for activation of rescaling
 rescaling_timesteps = steps / 40  # timesteps interval for rescaling check
 rescaling_max_timesteps = steps / 2  # max timesteps for rescaling
 rescaling_limit = True  # rescale limit [lower~upper]
-rescaling_limit_lower = 0.5
-rescaling_limit_upper = 2.0
+rescaling_limit_lower = 0.8
+rescaling_limit_upper = 1.25
 rescaling_factor = 0.5  # 0.5 = sqrt
 
 
@@ -150,14 +150,17 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
     else:
         print("Simulating using Euler's algorithm")
 
+    # total for positions and velocities
     pos_steps = np.zeros((num_tsteps, num_atoms, dim))
     vel_steps = np.zeros((num_tsteps, num_atoms, dim))
 
+    # initial position and velocity
     pos_steps[0, :, :] = init_pos
     vel_steps[0, :, :] = init_vel
 
+    # statistics for rescaling
     rescale_counter = 0
-    rescale_max = 1.0  # WHY DIT?
+    rescale_max = 1.0
     rescale_min = 1.0
 
     for i in range(num_tsteps - 1):
@@ -224,12 +227,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                     [kinetic_energy(vel_steps[i + 1 - x, :, :])[1] for x in range(min(i + 1, 5000))]) / min(i + 1, 5000)
                 # rescaling factor (in sqrt(...) so values get closer to 1)
                 v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (EPSILON * np.sum(
-                    [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))  # / TEMP
-                # v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2
-                # for i in range(dim)])) for v in vel_steps[i + 1, :, :]]) * dimless_velocity))/1500
-                # v_lambda = np.sqrt((num_atoms - 1) * 3 * KB * temp / (ARG_MASS * np.sum([np.sqrt(np.sum([v[i] ** 2
-                # for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))) / TEMP
-                # current_temperature = rescaling1 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                    [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]])))
+                current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
                 need_rescaling = np.abs(rescaling2 - rescaling1) < rescaling_delta * 0.015
             else:
                 # target kin energy
@@ -239,15 +238,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                 for x in range(len(kin_nrg)):
                     kin_nrg[x] = kinetic_energy(vel_steps[i + 1 - x, :, :])[1]
                 rescaling2 = np.sum(kin_nrg) / int(min(i + 1, int(rescaling_timesteps)))
-                # rescaling factor (in sqrt(...) so values get closer to 1)
-                # v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum(
-                # [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
-                #v_lambda = np.power((num_atoms - 1) * 3 / 2 * KB * temp / (
-                #        EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))),
-                #                    rescaling_factor)  # / TEMP
                 v_lambda = np.power(rescaling1/rescaling2,rescaling_factor)
-                # current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
-                # print("Dimless temp", current_temperature*KB/EPSILON)
+                current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta
 
             if need_rescaling:
@@ -266,6 +258,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
     if rescaling:
         # print rescaling statistics
         print("Rescaled", rescale_counter, "times with λ: [", rescale_min, "~", rescale_max, "]")
+        print("Last temperature: ", current_temperature*KB/EPSILON, "(", current_temperature, "K )")
 
     return pos_steps, vel_steps
 
