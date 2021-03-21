@@ -308,7 +308,7 @@ def test_initial_velocities(init_velocities):
     # [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in init_velocities]
 
     gaussian_mean = np.mean(vel_mag)
-    gaussian_sigma = np.std(vel_mag)
+    gaussian_sigma = np.std(vel_mag)**2
     gaussian_max = np.max(vel_mag)
 
     x_axis = np.linspace(0.5,3.0,1000)
