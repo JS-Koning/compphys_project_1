@@ -7,16 +7,14 @@ you have a good reason to do so.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import time
 
 # initalizing self defined system parameters
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
 box_dim = 3.313  # 2* 1.547 #10  # meters; bounding box dimension
-dt = 1e-4  # s; stepsize
+dt = 4e-3  # s; stepsize
 
-steps = 10000  # amount of steps
+steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
@@ -215,7 +213,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
-        if rescaling and (int(i % rescaling_timesteps) == 0) and (i < (rescaling_max_timesteps + 1)):
+        if rescaling and (int((i+1) % rescaling_timesteps) == 0) and (i < (rescaling_max_timesteps + 1)):
             # Rescale velocity
             if rescaling_mode == 0:
                 # old kin energy avg
@@ -248,8 +246,8 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                 #        EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))),
                 #                    rescaling_factor)  # / TEMP
                 v_lambda = np.power(rescaling1/rescaling2,rescaling_factor)
-                current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
-                print("Dimless temp", current_temperature*KB/EPSILON)
+                # current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
+                # print("Dimless temp", current_temperature*KB/EPSILON)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta
 
             if need_rescaling:
@@ -593,9 +591,16 @@ def total_energy(vel, rel_dist):
         -------
         float
             The total energy of the system.
+        float
+            The kinetic energy of the system.
+        float
+            The potential energy of the system.
         -------
         This is simply potential_energy[2]+kinetic_energy[1]
 
         """
 
-    return (kinetic_energy(vel))[1] + (potential_energy(rel_dist))[2]
+    kin = kinetic_energy(vel)[1]
+    pot = potential_energy(rel_dist)[2]
+
+    return kin+pot, kin, pot

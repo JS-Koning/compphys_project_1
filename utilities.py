@@ -220,9 +220,9 @@ def process_data(positions, velocities):
     r_pos1 = sim.atomic_distances(pos1, sim.box_dim)
     r_pos2 = sim.atomic_distances(pos2, sim.box_dim)
 
-    print("Initial total energy: " + str(sim.total_energy(vel1, r_pos1[1])))
-    print("Final total energy:   " + str(sim.total_energy(vel2, r_pos2[1])))
-    print("Delta total energy:   " + str(sim.total_energy(vel2, r_pos2[1]) - sim.total_energy(vel1, r_pos1[1])))
+    print("Initial total energy: " + str(sim.total_energy(vel1, r_pos1[1])[0]))
+    print("Final total energy:   " + str(sim.total_energy(vel2, r_pos2[1])[0]))
+    print("Delta total energy:   " + str(sim.total_energy(vel2, r_pos2[1])[0] - sim.total_energy(vel1, r_pos1[1])[0]))
 
     times = np.linspace(0, sim.dt * sim.steps, sim.steps)
     if sim.num_atoms == 2:
@@ -249,10 +249,11 @@ def process_data(positions, velocities):
     energies = np.zeros([3, sim.steps])
     if sim.dimless:
         for x in range(sim.steps):
-            energies[0, x] = sim.kinetic_energy(velocities[x, :, :])[1]
-            energies[1, x] = sim.potential_energy(sim.atomic_distances(positions[x, :, :], sim.box_dim)[1])[2]
-            energies[2, x] = sim.total_energy(velocities[x, :, :],
+            t, k, p = sim.total_energy(velocities[x, :, :],
                                           sim.atomic_distances(positions[x, :, :], sim.box_dim)[1])
+            energies[0, x] = k
+            energies[1, x] = p
+            energies[2, x] = t
         # energies = [(kinetic_energy(velocities_store[x, :, :])[1],
         #             potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
         #             total_energy(velocities_store[x, :, :],
