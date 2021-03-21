@@ -45,10 +45,7 @@ def ms_displacement(loc, timestep):
                         displacement -= sim.box_dim
                     if loc[i + 1, j, k] + sim.box_dim / 2 < loc[i, j, k]:
                         displacement += sim.box_dim
-
-    # initiate reference values
-
-    # initiate reference values
+            displacement = 0.0
 
     init_loc = p00[timestep, :, :]
     # print('currently we take an average for initial location!
@@ -159,11 +156,11 @@ def auto_corr2(data):
     plt.plot(q[3][focusdiff:])
     plt.show()
     qq = auto_corr(q[2], 0)
-    plotfocus = 500
+    plotfocus = 75 #sim.steps/50
     plt.plot(qq[0:plotfocus])
     plt.title(('The autocorrelation function for the first ' + str(plotfocus) + ' values'))
     plt.show()
-    qqq = exponential_fit(qq, plotfocus)
+    exponential_fit(qq, plotfocus)
     plt.plot(q[1][0:300])
     plt.show()
 
@@ -220,9 +217,9 @@ def process_data(positions, velocities):
     r_pos1 = sim.atomic_distances(pos1, sim.box_dim)
     r_pos2 = sim.atomic_distances(pos2, sim.box_dim)
 
-    print("Initial total energy: " + str(sim.total_energy(vel1, r_pos1[1])))
-    print("Final total energy:   " + str(sim.total_energy(vel2, r_pos2[1])))
-    print("Delta total energy:   " + str(sim.total_energy(vel2, r_pos2[1]) - sim.total_energy(vel1, r_pos1[1])))
+    print("Initial total energy: " + str(sim.total_energy(vel1, r_pos1[1])[0]))
+    print("Final total energy:   " + str(sim.total_energy(vel2, r_pos2[1])[0]))
+    print("Delta total energy:   " + str(sim.total_energy(vel2, r_pos2[1])[0] - sim.total_energy(vel1, r_pos1[1])[0]))
 
     times = np.linspace(0, sim.dt * sim.steps, sim.steps)
     if sim.num_atoms == 2:
@@ -249,10 +246,11 @@ def process_data(positions, velocities):
     energies = np.zeros([3, sim.steps])
     if sim.dimless:
         for x in range(sim.steps):
-            energies[0, x] = sim.kinetic_energy(velocities[x, :, :])[1]
-            energies[1, x] = sim.potential_energy(sim.atomic_distances(positions[x, :, :], sim.box_dim)[1])[2]
-            energies[2, x] = sim.total_energy(velocities[x, :, :],
+            t, k, p = sim.total_energy(velocities[x, :, :],
                                           sim.atomic_distances(positions[x, :, :], sim.box_dim)[1])
+            energies[0, x] = k
+            energies[1, x] = p
+            energies[2, x] = t
         # energies = [(kinetic_energy(velocities_store[x, :, :])[1],
         #             potential_energy(atomic_distances(positions_store[x, :, :], box_dim)[1])[2],
         #             total_energy(velocities_store[x, :, :],

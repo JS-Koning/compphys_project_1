@@ -21,15 +21,15 @@ def main():
     start_time = time.time()
 
     # Compare Verlet vs. Euler using simple simulation
-    # Simple positions and velocities
-    init_pos = np.array([[1, 0.1, 0.1], [0.1, 0.1, 0.1]])
-    init_vel = np.array([[0.1, 0.1, 0.1], [0.01, 0.01, 0.01]])
-
     # Simulation parameters
     sim.dim = 3
     sim.box_dim = 3
     sim.num_atoms = 2
     sim.rescaling = False
+
+    # Simple positions and velocities
+    init_pos = np.array([[+0.30, +0.45, +0.60], [+2.70, +2.70, +2.70]])
+    init_vel = np.array([[-0.15, -0.30, -0.45], [+0.30, +0.45, +0.60]])
 
     # Verlet
     sim.verlet = True
@@ -42,16 +42,13 @@ def main():
     utils.process_data(pe, ve)
 
     # Keep Verlet for further simulations
-    # FCC lattice positions and random velocities
-    init_pos = sim.fcc_lattice(sim.num_atoms, sim.box_dim / 2)
-    init_vel = sim.init_velocity(sim.num_atoms, sim.TEMP, sim.dim)
-
+    sim.verlet = True
     # Simulation parameters
     sim.dim = 3
-    sim.box_dim = 3.313
+    sim.box_dim = 3.41995
     sim.num_atoms = 32
     sim.rescaling = True
-    sim.temp = 1.0 * sim.EPSILON / sim.KB
+    sim.temp = 0.5 * sim.EPSILON / sim.KB
 
     # For 32 particles
     # Lattice constant = box_dim/2
@@ -66,6 +63,10 @@ def main():
     # Gas
     # 4.7425
     # T = 3
+
+    # FCC lattice positions and random velocities
+    init_pos = sim.fcc_lattice(sim.num_atoms, sim.box_dim / 2)
+    init_vel = sim.init_velocity(sim.num_atoms, sim.TEMP, sim.dim)
 
     # Test if random velocities are in compliance with Maxwell-Boltzmann distribution
     utils.test_initial_velocities(init_vel)
