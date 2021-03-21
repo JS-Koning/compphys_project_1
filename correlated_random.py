@@ -133,11 +133,21 @@ def expectedvalues(y_data, cutoff):
     """
     A = y_data[:cutoff]
     N = len(A)
-    expected = 1/N * sum(A)
-    expected2 = expected**2
+
+    # Python 3.9 fix... (works fine in Python 3.8)
+    for x in range(len(A)):
+        val = A[x]
+        if (np.abs(val) > 1) or val == float("inf") or val != val:
+            print("Error:", val)
+            A[x] = 0
+
+    sumA = np.sum(A)
+
+    expected = 1/N * sumA
+    expected2 = np.power(expected,2.0)
     square_expected = 1/N * sum(A**2)
 
-    return(expected, expected2, square_expected)
+    return expected, expected2, square_expected
 
 
 def errortau(y_data, tau):
@@ -163,7 +173,7 @@ def errortau(y_data, tau):
     expectedA = expectedvalues(y_data, N)
     sigma = expectedA[2] - expectedA[1]
     sigmaA = np.sqrt(2*tau*sigma/N)
-    return(sigmaA, sigma)
+    return sigmaA, sigma
 
 
 def block_data(y_data, block_length):
@@ -187,7 +197,7 @@ def block_data(y_data, block_length):
     for i in range(1,Nb):
         a[i] = sum(y_data[((i-1)*block_length)+1:i*block_length])/block_length
     np.delete(a, 0)
-    return(a)
+    return a
 
 
 def errorblock(meanblocks):
@@ -211,7 +221,7 @@ def errorblock(meanblocks):
     """
     expecteda = expectedvalues(meanblocks, len(meanblocks))
     sigmaAb = np.sqrt((expecteda[2]-expecteda[1])/(len(meanblocks)-1))
-    return(sigmaAb)
+    return sigmaAb
 
 
 # +
@@ -237,6 +247,7 @@ for i in range(2,max_block_size):
     blocks = block_data(y_data, i)
     errora[i] = errorblock(blocks)
 plt.plot(errora)
+plt.show()
 tauer = errortau(y_data, fit[0])
 print(tauer)
 
