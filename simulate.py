@@ -265,7 +265,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                 #                    rescaling_factor)  # / TEMP
                 v_lambda = np.power(rescaling1/rescaling2,rescaling_factor)
                 current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
-                print(rescaling1,rescaling2, current_temperature, current_temperature*KB/EPSILON)
+                print("dimless temp", current_temperature*KB/EPSILON)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta
 
             if need_rescaling:
