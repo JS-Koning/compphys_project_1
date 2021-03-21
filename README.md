@@ -6,12 +6,23 @@ This is the first project for Computational Physics (AP3082) year 2020/2021, T-c
 The code is written for Python 3.8.6 using JupyterLab v2.2.9 web-based userinterface. 
 <br>
 
-This program plots the relative distance, force and energy of N argon particles with a maximum 3 dimensions.
+This program plots the relative distance, force and energy of 2 and 32 argon particles with 3 dimensions.
 The potential of the argon atoms is based on the Lennard-Jones potential and thus, so is the force. 
+Simulation should take a maximum of 15 minutes.
 <hr>
-To run the program: <br>
-optional: edit parameters <br>
-run skeleton.py (for supported versions of Python please see <strong>Installation</strong> 
+To run the program:
+Import all files in the directory and run main.py
+<br>
+optional:<br>
+-edit parameters<br>
+allowed parameters with full functionality:<br>
+-    sim.verlet<br>
+-    sim.box_dim <br>
+-    sim.num_atoms<br>
+-    sim.rescaling<br>
+-    sim.temp <br>
+<br>
+run main.py (for supported versions of Python please see <strong>Installation</strong>) 
 
 <hr> 
 <br>
@@ -20,19 +31,20 @@ run skeleton.py (for supported versions of Python please see <strong>Installatio
 ## functionality
 
 
-   - Dimensional, and non-dimensional SI units
-       - Currently, all inputs and outputs are in either dimensional or non-dimensional form, no combination is supported
+   - Non-dimensional SI units
+       - All inputs and outputs are non-dimensional
    - Periodic or non-periodic boundary conditions
    - Initial random locations
        - Only inside predefined box size
    - Initial 'random' velocities 
-       - loosely based on 3D equipartiton theorem, changing dimensions in parameters does not change random velocity algorithm
-   - Plots of total distance between atoms
+       - Based, but not exact, on 3D equipartiton theorem, changing dimensions in parameters does not change random velocity algorithm
    - Plots of total energy
    - Plots of kinetic energy
    - Plots of potential energy
    - Choice of Euler method numerical approximation or Verlet algorithm
    - Potential (and thus force) based on Lennard-Jones potential
+   - Rescaling of velocities based on target temperature
+   
    
    
 ## Installation
