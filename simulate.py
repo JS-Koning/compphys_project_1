@@ -23,7 +23,7 @@ verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.0027  # delta for activation of rescaling
-rescaling_timesteps = steps / 10  # timesteps interval for rescaling check
+rescaling_timesteps = steps / 30  # timesteps interval for rescaling check
 rescaling_max_timesteps = steps / 2  # max timesteps for rescaling
 rescaling_limit = True  # rescale limit [lower~upper]
 rescaling_limit_lower = 0.5
@@ -48,11 +48,13 @@ rescaling_factor = 0.5  # 0.5 = sqrt
 # -
 
 # Parameters physical, supplied by course, or related to Argon
-temp = 2  # Kelvin
+temp_dimless = 1.0
 TEMP = 119.8  # Kelvin
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
 EPSILON = TEMP * KB  # depth of potential well/dispersion energy
+temp = temp_dimless * EPSILON/KB # Kelvin
+
 N_b = 6.02214076e23  # Avogadros number; 1/mol
 R = 8.31446261815324  # J/K/mole; universal gas constant
 ARG_UMASS = 39.95  # u; atomic mass of argon
@@ -229,7 +231,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
             else:
                 vel_steps[i + 1, :, :] = vel_steps[i, :, :] + force * timestep / ARG_MASS
 
-        if rescaling and (i % rescaling_timesteps == 0) and (i < rescaling_max_timesteps + 1):
+        if rescaling and (int(i % rescaling_timesteps) == 0) and (i < (rescaling_max_timesteps + 1)):
             # Rescale velocity
             if rescaling_mode == 0:
                 # old kin energy avg
@@ -258,11 +260,13 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                 # rescaling factor (in sqrt(...) so values get closer to 1)
                 # v_lambda = np.sqrt(np.sqrt((num_atoms - 1) * 3 / 2 * KB * temp / (EPSILON * np.sum(
                 # [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in vel_steps[i + 1, :, :]]))))  # / TEMP
-                v_lambda = np.power((num_atoms - 1) * 3 / 2 * KB * temp / (
-                        EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))),
-                                    rescaling_factor)  # / TEMP
+                #v_lambda = np.power((num_atoms - 1) * 3 / 2 * KB * temp / (
+                #        EPSILON * np.sum(np.linalg.norm(vel_steps[i + 1, :, :], axis=1))),
+                #                    rescaling_factor)  # / TEMP
+                v_lambda = np.power(rescaling1/rescaling2,rescaling_factor)
                 current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
-                need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta * current_temperature
+                print(rescaling1,rescaling2, current_temperature, current_temperature*KB/EPSILON)
+                need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta
 
             if need_rescaling:
                 # limit rescaling factor between 0.5 and 2.0
@@ -327,7 +331,15 @@ def atomic_distances(pos, box_dimensions):
     rel_dist = np.zeros([len(pos), len(pos)])
     for i in range(0, len(rel_pos)):
         for j in range(0, len(rel_pos)):
-            rel_dist[i][j] = np.math.sqrt(sum(i ** 2 for i in rel_pos[i][j]))
+            # before:
+            # rel_dist[i][j] = np.math.sqrt(sum(i ** 2 for i in rel_pos[i][j]))
+            # print(rel_dist[i][j])
+
+            # after:
+            for val in rel_pos[i][j]:
+                rel_dist[i][j] += val**2
+            rel_dist[i][j] = np.math.sqrt(rel_dist[i][j])
+
 
     return rel_pos, rel_dist
 

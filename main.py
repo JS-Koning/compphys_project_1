@@ -26,7 +26,7 @@ def main():
     # init_vel = [[1.2, 0.8, 1.2], [-0.9, -0.67, -0.88], [-0.89, 0.94, 1.55], [1.52, -0.53, 0.97], [0.60, -1.55, 0.32]
     #    , [-0.22, 1.53, -0.34], [1.25, 0.66, -0.97], [-0.36, -1.29, 0.09], [1.22, 0.01, -0.61]]
 
-    # Below is the must be uncommented for the delivarble.
+    # Below is the random data (must be uncommented for the deliverable)
     init_pos = sim.fcc_lattice(sim.num_atoms, sim.box_dim / 2)
     init_vel = sim.init_velocity(sim.num_atoms, sim.TEMP, sim.dim)
 
