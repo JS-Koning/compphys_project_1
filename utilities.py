@@ -307,5 +307,16 @@ def test_initial_velocities(init_velocities):
     vel_mag = np.linalg.norm(init_velocities, axis=1)
     # [np.sqrt(np.sum([v[i] ** 2 for i in range(dim)])) for v in init_velocities]
 
-    plt.hist(vel_mag, bins=15)
+    gaussian_mean = np.mean(vel_mag)
+    gaussian_sigma = np.std(vel_mag)
+    gaussian_max = np.max(vel_mag)
+
+    x_axis = np.linspace(0.5,3.0,1000)
+
+    gaussian = np.exp(-np.power(x_axis-gaussian_mean,2.0)/gaussian_sigma/2)
+
+    y, x, _ = plt.hist(vel_mag, bins=15)
+
+    gaussian *= np.max(y)
+    plt.plot(x_axis, gaussian)
     plt.show()

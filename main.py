@@ -23,13 +23,13 @@ def main():
     # Compare Verlet vs. Euler using simple simulation
     # Simulation parameters
     sim.dim = 3
-    sim.box_dim = 3
+    sim.box_dim = 9
     sim.num_atoms = 2
     sim.rescaling = False
 
     # Simple positions and velocities
-    init_pos = np.array([[+0.30, +0.45, +0.60], [+2.70, +2.70, +2.70]])
-    init_vel = np.array([[-0.15, -0.30, -0.45], [+0.30, +0.45, +0.60]])
+    init_pos = np.array([[+0.300, +0.600, +0.900], [+2.400, +6.900, +8.100]])
+    init_vel = np.array([[-0.090, -0.060, -0.030], [+0.030, +0.060, +0.090]])
 
     # Verlet
     sim.verlet = True
@@ -68,16 +68,17 @@ def main():
     init_pos = sim.fcc_lattice(sim.num_atoms, sim.box_dim / 2)
     init_vel = sim.init_velocity(sim.num_atoms, sim.TEMP, sim.dim)
 
-    # Test if random velocities are in compliance with Maxwell-Boltzmann distribution
-    utils.test_initial_velocities(init_vel)
+    # Test if (1000) random velocities are in compliance with Maxwell-Boltzmann distribution
+    utils.test_initial_velocities(None)
 
-    #
+    # Complex Verlet simulation
     p1, v1 = sim.simulate(init_pos, init_vel, sim.steps, sim.dt, sim.box_dim)
     utils.process_data(p1, v1)
 
+    # Find MSD / Diffusion
     utils.auto_corr2(p1)
 
-    # do tests here
+    # Errors
 
     # End timer for program run-time
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -14,7 +14,7 @@ dim = 3  # dimensions
 box_dim = 3.313  # meters; bounding box dimension
 dt = 4e-3 # s; stepsize
 
-steps = 2000  # amount of steps
+steps = 30000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
@@ -417,21 +417,21 @@ def fcc_lattice(number_atoms, lat_const):
     if number_atoms >= 4:
         a = np.array([[lat_const, 0, 0], [0, lat_const, 0], [0, 0, lat_const]])
         # BZ = int(number_atoms / 4)
-        print('N = multiple of 4')
+        print('FCC lattice possible; N = multiple of 4')
         # below is not elegant at all, but it works without writing over complex code for a simple thing.
         pos_vec = 0.5 * np.array(
             [[0., 0., 0.], np.add(a[0, :], a[1, :]), np.add(a[1, :], a[2, :]), np.add(a[2, :], a[0, :])])
         # offset can be usefull for plotting purposes. Update required to match boxsize regarding offset
         offset = [0.01 * box_dim, 0.01 * box_dim, 0.01 * box_dim]  # NOTE I ADDED OFFSET
         pos_vec = np.add(pos_vec, offset)
-        print(pos_vec)
+        # print(pos_vec)
         # print(a[0,:])
         if number_atoms > 4:
             for i in range(2):
                 pos_ext = pos_vec + a[i, :]
                 pos_vec = np.append(pos_vec, pos_ext, axis=0)
             pos_vec = np.append(pos_vec, pos_vec + a[2, :], axis=0)
-            print('fcc lattice vector is', pos_vec)
+            # print('fcc lattice vector is', pos_vec)
 
     else:
         print('N is not multiple of 4, FCC lattice not possible ')
