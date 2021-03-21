@@ -21,6 +21,7 @@ dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
+fcc_lattice = True # use FCC lattice
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.09  # delta for activation of rescaling
 rescaling_timesteps = steps / 40  # timesteps interval for rescaling check
@@ -30,30 +31,13 @@ rescaling_limit_lower = 0.5
 rescaling_limit_upper = 2.0
 rescaling_factor = 0.5  # 0.5 = sqrt
 
-# +
-# for 32 particles
-# Lattice constant = box_dim/2
-# liquid
-# box_dim = 3.313
-# T = 1
-
-# solid
-# box_dim = 3.41995
-# T = 0.5
-
-# Gas
-# 4.7425
-# T = 3
-
-# -
 
 # Parameters physical, supplied by course, or related to Argon
-temp_dimless = 1.0
-TEMP = 119.8  # Kelvin
+TEMP = 119.8  # K
 KB = 1.38064852e-23  # m^2*kg/s^2/K
 SIGMA = 3.405e-10  # meter
 EPSILON = TEMP * KB  # depth of potential well/dispersion energy
-temp = temp_dimless * EPSILON/KB # Kelvin
+temp = 1.0 * EPSILON/KB # K (with dimless temp within brackets)
 
 N_b = 6.02214076e23  # Avogadros number; 1/mol
 R = 8.31446261815324  # J/K/mole; universal gas constant
@@ -62,10 +46,10 @@ ARG_MMASS = ARG_UMASS / 1000  # kg/mol; mole mass of argon
 ARG_MASS = ARG_UMASS * 1.6605e-27  # Kg mass of a single atom in Kg
 
 # conversion values for dimensionless units
-dimless_time = 1.0 / np.math.sqrt((ARG_MASS * SIGMA ** 2 / EPSILON))  # s; dimensionless time
-dimless_energy = 1.0 / EPSILON  # J; dimensionless energy
-dimless_distance = 1.0 / SIGMA  # m; dimensionless distance
-dimless_velocity = 1.0 / np.math.sqrt(EPSILON / ARG_MASS)  # m/s; dimensionless velocity
+DIMLESS_TIME = 1.0 / np.math.sqrt((ARG_MASS * SIGMA ** 2 / EPSILON))  # s; dimensionless time
+DIMLESS_ENERGY = 1.0 / EPSILON  # J; dimensionless energy
+DIMLESS_DISTANCE = 1.0 / SIGMA  # m; dimensionless distance
+DIMLESS_VELOCITY = 1.0 / np.math.sqrt(EPSILON / ARG_MASS)  # m/s; dimensionless velocity
 
 
 def init_velocity(number_atoms, temperature, dimensions):
@@ -93,7 +77,7 @@ def init_velocity(number_atoms, temperature, dimensions):
     vel_p = np.sqrt(2 * KB * temperature / ARG_MASS)
 
     if dimless:
-        vel_p *= dimless_velocity
+        vel_p *= DIMLESS_VELOCITY
 
     vel_mean = 2 * vel_p / np.sqrt(np.pi)
     vel_msq = (3 * vel_p ** 2) / 2
