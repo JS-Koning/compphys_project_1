@@ -237,6 +237,7 @@ for i in range(2,max_block_size):
     blocks = block_data(y_data, i)
     errora[i] = errorblock(blocks)
 plt.plot(errora)
+plt.show()
 tauer = errortau(y_data, fit[0])
 print(tauer)
 
