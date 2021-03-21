@@ -47,7 +47,7 @@ def main():
 program = main()
 print("--- %s seconds ---" % (time.time() - start_time))
 
-# plot the autocorrelation function
+# plot the autocorrelation function (NEEDS TO BE MOVED TO utililities.py)
 q = utils.ms_displacement(program[0], int(sim.rescaling_max_timesteps * 1.2))
 focusdiff = 0
 plt.title(('The Diffusion coefficient skipping the first', str(focusdiff), 'values'))

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import time
 
 # initalizing self defined system parameters
-num_atoms = 4  # amount of particles
+num_atoms = 32  # amount of particles
 dim = 3  # dimensions
 box_dim = 3.313  # 2* 1.547 #10  # meters; bounding box dimension
 dt = 1e-4  # s; stepsize
@@ -22,8 +22,8 @@ periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
-rescaling_delta = 0.0027  # delta for activation of rescaling
-rescaling_timesteps = steps / 30  # timesteps interval for rescaling check
+rescaling_delta = 0.09  # delta for activation of rescaling
+rescaling_timesteps = steps / 40  # timesteps interval for rescaling check
 rescaling_max_timesteps = steps / 2  # max timesteps for rescaling
 rescaling_limit = True  # rescale limit [lower~upper]
 rescaling_limit_lower = 0.5
@@ -265,7 +265,7 @@ def simulate(init_pos, init_vel, num_tsteps, timestep, box_dimensions):
                 #                    rescaling_factor)  # / TEMP
                 v_lambda = np.power(rescaling1/rescaling2,rescaling_factor)
                 current_temperature = rescaling2 * EPSILON / ((num_atoms - 1) * 3 / 2 * KB)
-                print("dimless temp", current_temperature*KB/EPSILON)
+                print("Dimless temp", current_temperature*KB/EPSILON)
                 need_rescaling = np.abs(rescaling2 - rescaling1) > rescaling_delta
 
             if need_rescaling:
