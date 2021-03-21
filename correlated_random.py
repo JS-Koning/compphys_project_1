@@ -224,6 +224,40 @@ def errorblock(meanblocks):
     return sigmaAb
 
 
+def error_mean(y_data, cutoff):
+    """"
+    Calculates the error in the mean of the observable
+    Shows the plot of the autocorrelation function.
+    To verify results:
+    Check where the errorvsblocksize converges.
+    
+    Parameters
+    ---------------
+    y_data: np.array 1D
+        observable
+    cutoff: int
+        the cutoff value determined by the autocorrelation function.
+    
+    Returns
+    -------------
+    none
+    """
+    
+    
+    autofun = auto_corr(y_data, 0)
+    fit = exponential_fit(autofun, cutoff)
+    max_block_size = int(len(y_data)/25)
+    errora = np.empty(max_block_size)
+    for i in range(2,max_block_size):
+        blocks = block_data(y_data, i)
+        errora[i] = errorblock(blocks)
+    plt.plot(errora)
+    plt.title('error vs block size')
+    plt.show()
+    tauer = errortau(y_data, fit[0])
+    print('uncertainty in the mean is ', tauer[0])
+    return
+
 
 # +
 tau = 50
@@ -252,4 +286,5 @@ plt.show()
 tauer = errortau(y_data, fit[0])
 #print(tauer)
 
-
+y_ata = normal_autocorr(mu, sigma, tau, N)
+error_mean(y_ata, 300)
