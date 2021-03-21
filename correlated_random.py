@@ -135,11 +135,11 @@ def expectedvalues(y_data, cutoff):
     N = len(A)
 
     # Python 3.9 fix... (works fine in Python 3.8)
-    for x in range(len(A)):
-        val = A[x]
-        if (np.abs(val) > 1) or val == float("inf") or val != val:
-            print("Error:", val)
-            A[x] = 0
+    #for x in range(len(A)):
+    #    val = A[x]
+    #    if (np.abs(val) > 1) or val == float("inf") or val != val:
+    #        print("Error:", val)
+    #        A[x] = 0
 
     sumA = np.sum(A)
 
@@ -224,6 +224,7 @@ def errorblock(meanblocks):
     return sigmaAb
 
 
+
 # +
 tau = 50
 mu = 0
@@ -249,6 +250,6 @@ for i in range(2,max_block_size):
 plt.plot(errora)
 plt.show()
 tauer = errortau(y_data, fit[0])
-print(tauer)
+#print(tauer)
 
 
