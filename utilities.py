@@ -76,7 +76,7 @@ def ms_displacement(loc, timestep):
     plt.plot(msd_2[:, :])
     plt.title('the mean square displacement for each particle summed over all directions')
     plt.show()
-    plt.plot(msd_3[:, :])
+    plt.plot(msd_3[:])
     plt.title('the mean square displacement')
     plt.show()
     plt.plot(diffusion)
