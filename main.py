@@ -76,8 +76,6 @@ def main():
     utils.process_data(p1, v1)
 
     # Find MSD / Diffusion
-    utils.auto_corr2(p1)
-
     # Errors
     utils.error_mean(p1[5000:, :, :], 1800) #last rescaling takes place at step 5000
     # End timer for program run-time
