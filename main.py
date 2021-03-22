@@ -45,10 +45,10 @@ def main():
     sim.verlet = True
     # Simulation parameters
     sim.dim = 3
-    sim.box_dim = 3.313
+    sim.box_dim = 4.7425
     sim.num_atoms = 32
     sim.rescaling = True
-    sim.temp = 1 * sim.EPSILON / sim.KB
+    sim.temp = 3.0 * sim.EPSILON / sim.KB
 
     # For 32 particles
     # Lattice constant = box_dim/2
@@ -77,7 +77,7 @@ def main():
 
     # Find MSD / Diffusion
     # Errors
-    utils.error_mean(p1[5000:, :, :], 1800) #last rescaling takes place at step 5000
+    utils.error_mean(p1[5000:, :, :], 1000) #last rescaling takes place at step 5000
     # End timer for program run-time
     print("--- %s seconds ---" % (time.time() - start_time))
     return p1, v1

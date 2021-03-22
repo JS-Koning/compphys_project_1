@@ -12,14 +12,14 @@ import numpy as np
 num_atoms = 4  # amount of particles
 dim = 3  # dimensions
 box_dim = 3.313  # meters; bounding box dimension
-dt = 4e-3 # s; stepsize
+dt = 4e-3  # s; stepsize
 
 steps = 10000  # amount of steps
 dimless = True  # use dimensionless units
 periodic = True  # use periodicity
 verlet = True  # use Verlet's algorithm (false: Euler's algorithm)
 rescaling = True  # use Temperature rescaling
-fcc_lattice = True # use FCC lattice
+fcc_lattice = True  # use FCC lattice
 rescaling_mode = 1  # 0 = kin-NRG-based | temp-based
 rescaling_delta = 0.09  # delta for activation of rescaling
 rescaling_timesteps = steps / 40  # timesteps interval for rescaling check
